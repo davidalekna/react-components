@@ -1,0 +1,59 @@
+{
+  "name": "alekna-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "David Alekna - alekna@live.co.uk",
+  "scripts": {
+    "postinstall": "lerna exec -- npm install --package-lock=false && lerna run prepare",
+    "diff": "check-if-folder-contents-changed-in-git-commit-range",
+    "build": "lerna run build",
+    "test": "jest --verbose",
+    "test-ci": "npm run coverage -- --ci --maxWorkers=2 --reporters=default --reporters=jest-junit",
+    "benchmark": "cd packages/apollo-client && npm run benchmark",
+    "prelint": "npm run lint-fix",
+    "lint": "lerna run lint",
+    "lint-fix": "prettier --ignore-path \"./config/prettierignore\" --trailing-comma all --single-quote --write \"packages/*/{src,tests,test,benchmark}/**/*.{j,t}s*\"",
+    "lint-staged": "lint-staged",
+    "filesize": "lerna run build && bundlesize",
+    "coverage": "jest --verbose --coverage",
+    "coverage:upload": "codecov",
+    "danger": "danger run --verbose --dangerfile=./config/dangerfile.ts",
+    "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
+    "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +"
+  },
+  "bundlesize": [
+    {
+      "name": "alekna-table",
+      "path": "./packages/alekna-table/lib/bundle.cjs.min.js",
+      "maxSize": "825 B"
+    },
+    {
+      "name": "alekna-forms",
+      "path": "./packages/alekna-forms/lib/bundle.cjs.min.js",
+      "maxSize": "4.95 kB"
+    },
+    {
+      "name": "alekna-organizer",
+      "path": "./packages/alekna-organizer/lib/bundle.cjs.min.js",
+      "maxSize": "10.6 kB"
+    }
+  ],
+  "lint-staged": {
+    "*.ts*": [
+      "prettier --ignore-path \"./config/prettierignore\" --trailing-comma all --single-quote --write"
+    ],
+    "*.js*": [
+      "prettier --ignore-path \"./config/prettierignore\" --trailing-comma all --single-quote --write"
+    ]
+  },
+  "pre-commit": "lint-staged",
+  "dependencies": {
+    "alekna-table": "file:packages/alekna-table",
+    "alekna-forms": "file:packages/alekna-forms",
+    "alekna-organizer": "file:packages/alekna-organizer"
+  },
+  "devDependencies": {
+    "lerna": "3.13.4"
+  }
+}

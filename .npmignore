@@ -1,0 +1,12 @@
+scripts
+test
+typings
+.gitignore
+.travis.yml
+.rpt2_cache
+ambient.d.ts
+CHANGELOG.md
+tsconfig.json
+tslint.json
+typings.json
+config

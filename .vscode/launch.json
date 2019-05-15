@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Test",
+      "request": "launch",
+      "type": "node",
+      "program": "${workspaceRoot}/packages/alekna-table/node_modules/jest/bin/jest.js",
+      "internalConsoleOptions": "openOnSessionStart",
+      "stopOnEntry": false,
+      "args": ["-i"],
+      "cwd": "${workspaceRoot}/packages/alekna-table",
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/lib/**/*"]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "extends": "./config/tsconfig.base.json",
+  "references": [
+    { "path": "packages/alekna-table" },
+    { "path": "packages/alekna-forms" },
+    { "path": "packages/alekna-organizer" }
+  ]
+}
