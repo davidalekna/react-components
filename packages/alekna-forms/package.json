@@ -1,5 +1,5 @@
 {
-  "name": "react-frm",
+  "name": "@alekna/forms",
   "version": "0.0.3-development",
   "description": "React Form. Renders inputs from streams, outputs errors from generators.",
   "main": "lib/index.js",
