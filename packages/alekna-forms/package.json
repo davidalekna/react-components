@@ -3,7 +3,6 @@
   "version": "1.0.2",
   "description": "A simple forms manager for react.",
   "author": "David Alekna <alekna@live.co.uk>",
-  "private": false,
   "license": "MIT",
   "main": "./lib/bundle.cjs.js",
   "module": "./lib/bundle.esm.js",
@@ -14,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidalekna/alekna"
+    "url": "git+https://github.com/davidalekna/alekna.git"
   },
   "keywords": [
     "react",
@@ -69,20 +68,15 @@
     "react": "^16.8.0-alpha.1",
     "react-dom": "^16.8.0-alpha.1"
   },
-  "release": {
-    "verifyConditions": [
-      "@semantic-release/changelog",
-      "@semantic-release/npm",
-      "@semantic-release/git"
-    ],
-    "prepare": [
-      "@semantic-release/changelog",
-      "@semantic-release/npm",
-      "@semantic-release/git"
-    ]
-  },
   "dependencies": {
     "rxjs": "^6.5.1"
   },
-  "gitHead": "314ab68121bd88eed2bc1c1668db845adfb49d50"
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "homepage": "https://github.com/davidalekna/alekna#readme",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  }
 }

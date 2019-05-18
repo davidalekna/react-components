@@ -1,8 +1,7 @@
 {
-  "name": "alekna-monorepo",
+  "name": "@alekna/react-components",
   "version": "1.0.0",
   "license": "MIT",
-  "private": false,
   "author": "David Alekna - alekna@live.co.uk",
   "scripts": {
     "postinstall": "lerna exec -- npm install --package-lock=false && lerna run prepare",
@@ -24,19 +23,9 @@
   },
   "bundlesize": [
     {
-      "name": "alekna-table",
-      "path": "./packages/alekna-table/lib/bundle.cjs.min.js",
-      "maxSize": "825 B"
-    },
-    {
       "name": "alekna-forms",
       "path": "./packages/alekna-forms/lib/bundle.cjs.min.js",
       "maxSize": "4.95 kB"
-    },
-    {
-      "name": "alekna-organizer",
-      "path": "./packages/alekna-organizer/lib/bundle.cjs.min.js",
-      "maxSize": "10.6 kB"
     }
   ],
   "lint-staged": {
@@ -53,5 +42,15 @@
   },
   "devDependencies": {
     "lerna": "^3.14.0"
-  }
+  },
+  "description": "@alekna",
+  "main": "jest.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidalekna/alekna.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "homepage": "https://github.com/davidalekna/alekna#readme"
 }
