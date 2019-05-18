@@ -1,3 +1,5 @@
-.babelrc
-lib
-CODE_OF_CONDUCT.md
+.gitignore
+.rpt2_cache
+CHANGELOG.md
+tsconfig.*.json
+tslint.json

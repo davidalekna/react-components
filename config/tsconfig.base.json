@@ -1,17 +1,25 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
-    "noUnusedParameters": false,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
+    "target": "es2018",
+    "module": "commonjs",
     "moduleResolution": "node",
+    "jsx": "react",
+    "declaration": true,
+    "pretty": true,
+    "sourceMap": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "noFallthroughCasesInSwitch": true,
+    "lib": ["es2018", "dom"],
+    "types": ["react", "jest"],
+    //
+    "skipLibCheck": true,
     "importHelpers": true,
     "removeComments": true,
-    "sourceMap": true,
-    "declaration": true,
     "declarationMap": true,
-    "target": "es5",
-    "module": "commonjs",
     "esModuleInterop": true
   }
 }

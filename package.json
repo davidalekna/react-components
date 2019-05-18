@@ -1,8 +1,6 @@
 {
-  "name": "@alekna/react-components",
-  "version": "1.0.0",
+  "name": "alekna-monorepo",
   "license": "MIT",
-  "author": "David Alekna - alekna@live.co.uk",
   "scripts": {
     "postinstall": "lerna exec -- npm install --package-lock=false && lerna run prepare",
     "diff": "check-if-folder-contents-changed-in-git-commit-range",
@@ -42,15 +40,5 @@
   },
   "devDependencies": {
     "lerna": "^3.14.0"
-  },
-  "description": "@alekna",
-  "main": "jest.config.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/davidalekna/alekna.git"
-  },
-  "bugs": {
-    "url": "https://github.com/davidalekna/alekna/issues"
-  },
-  "homepage": "https://github.com/davidalekna/alekna#readme"
+  }
 }
