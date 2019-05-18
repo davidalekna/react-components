@@ -22,7 +22,7 @@
     {
       "name": "alekna-forms",
       "path": "./packages/alekna-forms/lib/bundle.cjs.min.js",
-      "maxSize": "4.95 kB"
+      "maxSize": "10.6 kB"
     }
   ],
   "lint-staged": {

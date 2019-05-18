@@ -7,10 +7,7 @@
   "main": "./lib/bundle.cjs.js",
   "module": "./lib/bundle.esm.js",
   "typings": "./lib/index.d.ts",
-  "files": [
-    "lib/",
-    "esm/"
-  ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidalekna/alekna.git"
@@ -76,7 +73,6 @@
   },
   "homepage": "https://github.com/davidalekna/alekna#readme",
   "directories": {
-    "doc": "docs",
     "lib": "lib"
   },
   "gitHead": "6d195529f05f53bab02679ecb51502e923f1b2f4"
