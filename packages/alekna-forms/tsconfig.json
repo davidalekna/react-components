@@ -15,7 +15,8 @@
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": true,
     "outDir": "lib",
-    "lib": ["es2018", "dom", "esnext.array"]
+    "lib": ["es2018", "dom", "esnext.array"],
+    "types": ["react", "jest"]
   },
   "exclude": [
     "node_modules",
