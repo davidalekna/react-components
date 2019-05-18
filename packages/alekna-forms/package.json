@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "A simple forms manager for react.",
   "author": "David Alekna <alekna@live.co.uk>",
+  "private": false,
   "license": "MIT",
   "main": "./lib/bundle.cjs.js",
   "module": "./lib/bundle.esm.js",
@@ -83,5 +84,5 @@
   "dependencies": {
     "rxjs": "^6.5.1"
   },
-  "gitHead": "c518388e7d61f325bfe213f0c4d40c26db088264"
+  "gitHead": "314ab68121bd88eed2bc1c1668db845adfb49d50"
 }

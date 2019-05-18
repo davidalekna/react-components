@@ -2,6 +2,7 @@
   "name": "alekna-monorepo",
   "version": "1.0.0",
   "license": "MIT",
+  "private": false,
   "author": "David Alekna - alekna@live.co.uk",
   "scripts": {
     "postinstall": "lerna exec -- npm install --package-lock=false && lerna run prepare",
