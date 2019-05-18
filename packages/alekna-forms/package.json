@@ -10,6 +10,7 @@
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
   "scripts": {
+    "prepare": "npm run build",
     "start": "yarn storybook",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
