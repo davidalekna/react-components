@@ -49,9 +49,7 @@
   },
   "pre-commit": "lint-staged",
   "dependencies": {
-    "alekna-forms": "file:packages/alekna-forms",
-    "alekna-organizer": "file:packages/alekna-organizer",
-    "alekna-table": "file:packages/alekna-table"
+    "alekna-forms": "file:packages/alekna-forms"
   },
   "devDependencies": {
     "lerna": "^3.14.0"
