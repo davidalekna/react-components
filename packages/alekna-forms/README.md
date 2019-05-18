@@ -13,18 +13,32 @@
 
 ## Usage
 
+> [Try it out in the browser](https://codesandbox.io/s/aleknareactforms-utvy2)
+
 ```jsx
 import React from 'react';
 import { render } from 'react-dom';
 import { Form } from '@alekna/react-forms';
 
+const mustContainLetter = letter => value => {
+  return !value.includes(letter) ? `Must contain letter ${letter}` : undefined;
+};
+
 const fields = [
   {
+    value: '',
+    label: 'First Name',
     name: 'firstName',
     type: 'text',
-    requirements: [],
+    requirements: [
+      mustContainLetter('a'),
+      mustContainLetter('b'),
+      mustContainLetter('c'),
+    ],
   },
   {
+    value: '',
+    label: 'Last Name',
     name: 'lastName',
     type: 'text',
     requirements: [],
@@ -33,19 +47,33 @@ const fields = [
 
 render(
   <Form initialFields={fields} onSubmit={values => console.log(values)}>
-    {({ fields, handleSubmit, reset }) => (
-      <form onSubmit={handleSubmit}>
-        {fields.map((field, key) => (
-          <input key={key} {...field} />
-        ))}
-        <div>
-          <button type="submit">submit</button>
-          <button type="button" onClick={reset}>
-            cancel
-          </button>
+    {({ fields, handleSubmit, reset }) => {
+      return (
+        <div className="App">
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {fields.map((field, key) => (
+                <label style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span>{field.label}</span>
+                  <input key={key} {...field} />
+                  {field.meta && field.meta.errors && (
+                    <div style={{ color: 'red' }}>
+                      {field.meta.errors.join(', ')}
+                    </div>
+                  )}
+                </label>
+              ))}
+            </div>
+            <div>
+              <button type="submit">submit</button>
+              <button type="button" onClick={reset}>
+                reset
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
-    )}
+      );
+    }}
   </Form>,
   document.getElementById('root'),
 );
