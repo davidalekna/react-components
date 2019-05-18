@@ -1,5 +1,5 @@
 {
-  "name": "react-frm",
+  "name": "@alekna/react-forms",
   "private": true,
   "version": "1.0.0",
   "description": "A simple forms manager for react.",
@@ -23,11 +23,11 @@
     "release": "semantic-release",
     "semantic-release": "semantic-release"
   },
-  "author": "David Alekna",
+  "author": "David Alekna <alekna@live.co.uk>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "davidalekna/alekna/alekna-forms"
+    "url": "https://github.com/davidalekna/alekna"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
