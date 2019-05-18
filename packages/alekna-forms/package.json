@@ -78,5 +78,6 @@
   "directories": {
     "doc": "docs",
     "lib": "lib"
-  }
+  },
+  "gitHead": "6d195529f05f53bab02679ecb51502e923f1b2f4"
 }
