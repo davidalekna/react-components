@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/davidalekna/alekna.git"
   },
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "homepage": "https://github.com/davidalekna/alekna#readme",
   "keywords": [
     "react",
     "forms",
@@ -25,7 +29,9 @@
     "start": "yarn storybook",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "build": "yarn tsc -b .",
+    "build": "tsc -b .",
+    "postbuild": "npm run bundle",
+    "bundle": "../../node_modules/rollup/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
     "report-coverage": "codecov",
     "storybook": "start-storybook -p 6008",
@@ -68,10 +74,6 @@
   "dependencies": {
     "rxjs": "^6.5.1"
   },
-  "bugs": {
-    "url": "https://github.com/davidalekna/alekna/issues"
-  },
-  "homepage": "https://github.com/davidalekna/alekna#readme",
   "directories": {
     "lib": "lib"
   },
