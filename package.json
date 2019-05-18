@@ -7,16 +7,15 @@
     "build": "lerna run build",
     "test": "jest --verbose",
     "test-ci": "npm run coverage -- --ci --maxWorkers=2 --reporters=default --reporters=jest-junit",
-    "benchmark": "cd packages/apollo-client && npm run benchmark",
     "prelint": "npm run lint-fix",
     "lint": "lerna run lint",
-    "lint-fix": "prettier --ignore-path \"./config/prettierignore\" --trailing-comma all --single-quote --write \"packages/*/{src,tests,test,benchmark}/**/*.{j,t}s*\"",
+    "lint-fix": "prettier --ignore-path \"./config/prettierignore\" --trailing-comma all --single-quote --write \"packages/*/{src,tests,test}/**/*.{j,t}s*\"",
     "lint-staged": "lint-staged",
     "filesize": "lerna run build && bundlesize",
     "coverage": "jest --verbose --coverage",
     "coverage:upload": "codecov",
     "danger": "danger run --verbose --dangerfile=./config/dangerfile.ts",
-    "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
+    "deploy": "lerna publish",
     "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +"
   },
   "bundlesize": [
@@ -39,6 +38,7 @@
     "alekna-forms": "file:packages/alekna-forms"
   },
   "devDependencies": {
-    "lerna": "^3.14.0"
+    "lerna": "^3.14.0",
+    "prettier": "^1.17.1"
   }
 }
