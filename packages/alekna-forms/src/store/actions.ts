@@ -2,7 +2,7 @@ export const UPDATE = '@@frm/UPDATE';
 export const FIELD_BLUR = '@@frm/FIELD_BLUR';
 export const FIELD_ERROR_UPDATE = '@@frm/FIELD_ERROR_UPDATE';
 export const ERROR = '@@frm/ERROR';
-export const TOUCHED = '@@frm/TOUCHED';
+export const FIELD_FOCUS = '@@frm/FIELD_FOCUS';
 export const ERRORS = '@@frm/ERRORS';
 export const FORM_RESET = '@@frm/FORM_RESET';
 export const FORM_SUBMIT = '@@frm/FORM_SUBMIT';
@@ -26,9 +26,9 @@ export function fieldBlur({ index, item }: { index: number; item: IField }) {
   };
 }
 
-export function fieldTouched(name: string) {
+export function fieldFocus(name: string) {
   return {
-    type: TOUCHED,
+    type: FIELD_FOCUS,
     payload: { name },
   };
 }

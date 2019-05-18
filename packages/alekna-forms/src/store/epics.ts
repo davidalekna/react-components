@@ -10,8 +10,8 @@ import {
   scan,
   map,
   takeUntil,
-  debounceTime,
   tap,
+  throttleTime,
 } from 'rxjs/operators';
 import { FormActions } from './types';
 import { FormState, IField } from '../types';
@@ -26,30 +26,35 @@ const fieldValidator = (action$: Observable<FormActions>) => {
   return switchMap(({ payload }) => {
     // add requests into an Observable from
     const requests = payload.item.requirements
+      // only function allowed in requests
+      .filter(fn => typeof fn === 'function')
+      // make each one an observable
       .map(fn => from(Promise.resolve(fn(payload.item.value))))
+      // filter falsy values
       .filter(Boolean);
 
-    // error$ stream generates errors over time and applies to field errors
+    // error$ stream generator generates errors over
+    // time and applies to field errors
     return of(...requests).pipe(
       mergeAll(),
       scan((allResponses: any, currentResponse) => {
         return [...allResponses, currentResponse];
       }, []),
-      mergeMap(errors =>
-        of(
+      mergeMap(errors => {
+        return of(
           fieldErrorUpdate({
             ...payload,
             item: {
               ...payload.item,
-              errors: errors.filter(Boolean),
               meta: {
                 ...payload.item.meta,
                 loading: requests.length !== errors.length,
+                errors: errors.filter(Boolean),
               },
             },
           }),
-        ),
-      ),
+        );
+      }),
       takeUntil(
         merge(
           action$.pipe(ofType(FORM_RESET)),
@@ -65,7 +70,7 @@ const fieldValidator = (action$: Observable<FormActions>) => {
   });
 };
 
-export function fieldBlurEpic(action$: Observable<FormActions>) {
+export function onBlurEpic(action$: Observable<FormActions>) {
   return action$.pipe(
     ofType(FIELD_BLUR),
     mergeMap((action: any) => {
@@ -81,10 +86,10 @@ export function fieldBlurEpic(action$: Observable<FormActions>) {
   );
 }
 
-export function validateAllFieldsEpic(action$) {
+export function onSubmitEpic(action$) {
   return action$.pipe(
     ofType(FORM_SUBMIT),
-    debounceTime(250),
+    throttleTime(1500),
     switchMap(
       ({ payload, onSubmit }: { payload: FormState; onSubmit: Function }) => {
         const errorsBuffer: IField[] = [];

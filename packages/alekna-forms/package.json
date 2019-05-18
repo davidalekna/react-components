@@ -1,7 +1,8 @@
 {
-  "name": "@alekna/forms",
-  "version": "0.0.3-development",
-  "description": "React Form. Renders inputs from streams, outputs errors from generators.",
+  "name": "react-frm",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A simple forms manager for react.",
   "main": "lib/index.js",
   "files": [
     "lib/"
@@ -25,12 +26,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidalekna/react-frm.git"
+    "url": "davidalekna/alekna/alekna-forms"
   },
-  "bugs": {
-    "url": "https://github.com/davidalekna/react-frm/issues"
-  },
-  "homepage": "https://github.com/davidalekna/react-frm#readme",
   "devDependencies": {
     "@babel/core": "^7.4.4",
     "@material-ui/core": "^3.9.3",
@@ -58,15 +55,14 @@
     "style-loader": "^0.23.1",
     "styled-components": "^4.2.0",
     "ts-jest": "^24.0.2",
-    "ts-loader": "^5.4.4",
+    "ts-loader": "^6.0.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
     "react": "^16.8.0-alpha.1",
     "react-dom": "^16.8.0-alpha.1",
-    "recompose": "^0.30.0",
-    "rxjs": "^6.5.1"
+    "lodash": "^4.17.11"
   },
   "release": {
     "verifyConditions": [
@@ -81,6 +77,6 @@
     ]
   },
   "dependencies": {
-    "lodash": "^4.17.11"
+    "rxjs": "^6.5.1"
   }
 }

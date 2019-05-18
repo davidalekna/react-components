@@ -1,4 +1,4 @@
-import { createObject, isBoolean } from '../utils/helpers';
+import { createObject, isBoolean } from '../store/helpers';
 
 test('should detect boolean value', () => {
   expect(isBoolean(true)).toBe(true);

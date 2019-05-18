@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import { FormActions } from './types';
 import { FormState, IFinalValues, IField } from '../types';
 
-const createObject = (obj: { [key: string]: unknown } | void) => {
+export const createObject = (obj: { [key: string]: unknown } | void) => {
   if (!obj) return {};
   const isPlainObject = obj => !!obj && obj.constructor === {}.constructor;
   const getNestedObject = obj =>
@@ -22,7 +22,7 @@ const createObject = (obj: { [key: string]: unknown } | void) => {
   return getNestedObject(obj);
 };
 
-const isBoolean = (val: unknown) => typeof val === 'boolean';
+export const isBoolean = (val: unknown) => typeof val === 'boolean';
 
 export function ofType(actionType: string) {
   return filter(({ type }: FormActions) => type === actionType);
@@ -31,7 +31,7 @@ export function ofType(actionType: string) {
 export function containsNoErrors(fields: IField[]) {
   return (
     fields
-      .map((field: any) => field.errors)
+      .map((field: any) => field.meta.errors)
       .reduce((acc, val) => {
         return acc.concat(val);
       }, []).length === 0

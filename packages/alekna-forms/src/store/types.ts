@@ -4,7 +4,7 @@ import {
   FIELD_BLUR,
   FIELD_ERROR_UPDATE,
   ERROR,
-  TOUCHED,
+  FIELD_FOCUS,
   ERRORS,
   FORM_RESET,
   FORM_SUBMIT,
@@ -35,7 +35,7 @@ class FieldError implements IAction {
 }
 
 class FieldTouched implements IAction {
-  readonly type = TOUCHED;
+  readonly type = FIELD_FOCUS;
   constructor(public payload: { name: string; loading?: boolean }) {}
 }
 

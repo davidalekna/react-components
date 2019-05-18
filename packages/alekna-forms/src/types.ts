@@ -3,10 +3,10 @@ export interface IField {
   value: any;
   type: string;
   meta: {
-    touched?: boolean;
-    loading?: boolean;
+    touched: boolean;
+    loading: boolean;
+    errors: unknown[];
   };
-  errors?: any[];
   label?: string;
   placeholder?: string;
   requirements?: Function[];
@@ -28,12 +28,14 @@ export interface IFinalValues {
 
 export interface IDefaultProps {
   children: Function | unknown;
-  initialFields?: any[];
-  validate?: Function;
-  onSubmit?: Function;
+  initialFields: any[];
+  onSubmit: Function;
+  epics?: Function[];
 }
 
-export interface IFrmContext {
+export interface IFormContext {
   fields: FormState;
-  [key: string]: any;
+  handleSubmit: Function;
+  reset: Function;
+  touched: Boolean;
 }

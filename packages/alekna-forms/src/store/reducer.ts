@@ -1,12 +1,12 @@
 import { merge, cloneDeep } from 'lodash';
-import { FormState } from '../types';
+import { FormState, IField } from '../types';
 import { FormActions } from './types';
 import {
   UPDATE,
   FIELD_BLUR,
   FIELD_ERROR_UPDATE,
   ERROR,
-  TOUCHED,
+  FIELD_FOCUS,
   ERRORS,
   FORM_RESET,
   FORM_SUBMIT,
@@ -35,7 +35,9 @@ const formReducer = (initialState: FormState) => (
   switch (action.type) {
     case UPDATE: {
       const { item, index } = findByName(action.payload.name);
-      state[index] = Object.assign(item, { ...action.payload, errors: [] });
+      const newItem: IField = Object.assign(item, action.payload);
+      newItem.meta.errors = [];
+      state[index] = newItem;
       return cloneDeep(state);
     }
     case ERROR: {
@@ -49,7 +51,7 @@ const formReducer = (initialState: FormState) => (
       state[index] = item;
       return cloneDeep(state);
     }
-    case TOUCHED: {
+    case FIELD_FOCUS: {
       const { name, loading } = action.payload;
       const { item, index } = findByName(name);
       state[index] = merge(item, {

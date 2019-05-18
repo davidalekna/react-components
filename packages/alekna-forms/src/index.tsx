@@ -5,7 +5,7 @@ import useObservable from './useObservable';
 import {
   fieldUpdate,
   fieldBlur,
-  fieldTouched,
+  fieldFocus,
   formReset,
   formSubmit,
 } from './store/actions';
@@ -15,31 +15,50 @@ import {
   InputEvent,
   ICustomInput,
   IDefaultProps,
-  IFrmContext,
+  IFormContext,
 } from './types';
 
-const FrmContext = React.createContext<IFrmContext>({
+export const FormContext = React.createContext<IFormContext>({
   fields: [],
   handleSubmit: () => {},
-  onChange: () => {},
-  onBlur: () => {},
-  clearValues: () => {},
-  addFields: () => {},
+  reset: () => {},
+  touched: false,
 });
+
+function transformFields(initialFields: FormState) {
+  const meta = { touched: false, loading: false, errors: [] };
+  return cloneDeep(
+    initialFields.map(({ requirements, ...field }: IField) => {
+      if (
+        Array.isArray(requirements) &&
+        requirements.filter(fn => typeof fn === 'function').filter(Boolean)
+          .length > 0
+      ) {
+        return {
+          ...field,
+          requirements,
+          meta,
+        };
+      }
+
+      return {
+        ...field,
+        meta,
+      };
+    }),
+  );
+}
 
 export function Form({
   children,
   initialFields = [],
   onSubmit = () => {},
+  epics = [],
 }: IDefaultProps) {
-  const initialValue: FormState = cloneDeep(
-    initialFields.map((fld: IField) => ({
-      ...fld,
-      meta: { touched: false, loading: false },
-    })),
+  const { state, dispatch } = useObservable(
+    transformFields(initialFields),
+    epics,
   );
-
-  const { state, dispatch } = useObservable(cloneDeep(initialValue));
 
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');
@@ -96,11 +115,11 @@ export function Form({
     if ('target' in input) {
       const { target } = input;
       if (!target.name) throw Error('no input name');
-      dispatch(fieldTouched(target.name));
+      dispatch(fieldFocus(target.name));
     } else {
       const { name } = input;
       if (!name) throw Error('no input name');
-      dispatch(fieldTouched(name));
+      dispatch(fieldFocus(name));
     }
   };
 
@@ -124,31 +143,31 @@ export function Form({
 
   const fns = {
     handleSubmit,
-    onChange,
-    onBlur,
-    onFocus,
-    clearValues, // deprecated!
     reset: clearValues,
     touched: findTouched(),
   };
 
+  const fieldsWithHandlers = state.map(({ requirements, ...field }) => ({
+    ...field,
+    onBlur,
+    onFocus,
+    onChange,
+  }));
+
   const ui =
     typeof children === 'function'
-      ? children({ fields: state, ...fns })
+      ? children({ fields: fieldsWithHandlers, ...fns })
       : children;
 
-  return React.useMemo(() => {
-    return (
-      <FrmContext.Provider value={{ fields: state, ...fns }}>
-        {ui}
-      </FrmContext.Provider>
-    );
-    // todo: some optimization
-  }, [state]);
+  return (
+    <FormContext.Provider value={{ fields: fieldsWithHandlers, ...fns }}>
+      {ui}
+    </FormContext.Provider>
+  );
 }
 
 export function useFormContext() {
-  const context = React.useContext(FrmContext);
+  const context = React.useContext(FormContext);
   if (!context) {
     throw new Error(
       `Form compound components cannot be rendered outside the Form component`,
@@ -160,40 +179,42 @@ export function useFormContext() {
 /**
  * Useful when rendering fields from a map. Works with and without context.
  */
-export const FieldContainer = React.memo(
-  // remove unused props from the dom
-  ({ children, render, requirements, ...props }: IField) => {
-    const { onChange, onBlur, onFocus } = useFormContext();
-    const passProps = { onChange, onBlur, onFocus, ...props };
+export const MemoField = React.memo(
+  ({ children, render, field }: any) => {
     if (children && render) {
       throw Error('children and render cannot be used together!');
     }
-    if (render) return render(passProps);
-    return children(passProps);
+
+    const { requirements, ...fieldProps } = field;
+
+    if (render) return render(fieldProps);
+    return children(fieldProps);
   },
-  (
-    { value: prevValue, errors: prevErrors = [] },
-    { value: nextValue, errors: nextErrors = [] },
-  ) => isEqual([prevValue, prevErrors], [nextValue, nextErrors]),
+  ({ field: prevField }, { field: nextField }) =>
+    isEqual(
+      [prevField.value, prevField.meta],
+      [nextField.value, nextField.meta],
+    ),
 );
 
 /**
  * If form has to have some shape, this component will select field by name
  */
 export const Field = ({
+  name,
   children,
   render,
-  name,
 }: {
+  name: string;
   children?: Function;
   render?: Function;
-  name: string;
 }) => {
-  const { fields, onChange, onBlur, onFocus } = useFormContext();
+  const { fields } = useFormContext();
   const field = fields.find((f: IField) => f.name === name);
 
-  if (children && render)
+  if (children && render) {
     throw Error('children and render cannot be used together!');
+  }
   if (!field) {
     const hasMatch = fields.find(f => f.name.includes(name));
     if (hasMatch) {
@@ -210,8 +231,12 @@ export const Field = ({
   return React.useMemo(() => {
     // remove unused props from the dom
     const { requirements, ...fieldProps } = field;
-    const passProps = { onChange, onBlur, onFocus, ...fieldProps };
-    if (render) return render(passProps);
-    if (children) return children(passProps);
-  }, [field.value, field.errors]);
+    if (render) return render(fieldProps);
+    if (children) return children(fieldProps);
+  }, [
+    field.value,
+    field.meta.touched,
+    field.meta.loading,
+    field.meta.errors.length,
+  ]);
 };
