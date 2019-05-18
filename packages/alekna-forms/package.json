@@ -1,7 +1,7 @@
 {
   "name": "@alekna/react-forms",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple forms manager for react.",
   "main": "lib/index.js",
   "files": [
@@ -61,9 +61,9 @@
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
+    "lodash": "^4.17.11",
     "react": "^16.8.0-alpha.1",
-    "react-dom": "^16.8.0-alpha.1",
-    "lodash": "^4.17.11"
+    "react-dom": "^16.8.0-alpha.1"
   },
   "release": {
     "verifyConditions": [
