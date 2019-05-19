@@ -19,10 +19,10 @@ to install.
 
 ### Install dependencies
 
-| Package                    | Version                                                                       |
-| -------------------------- | ----------------------------------------------------------------------------- |
-| @alekna/react-forms        | [![npm version][react-forms npm version]][react-forms npm link]               |
-| @alekna/react-data-browser | [![npm version][react-data-browser npm version]][react-data-browser npm link] |
+| Package                                                     | Version                                                                       |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [`@alekna/react-forms`](packages/react-forms)               | [![npm version][react-forms npm version]][react-forms npm link]               |
+| [`@alekna/react-data-browser`](packages/react-data-browser) | [![npm version][react-data-browser npm version]][react-data-browser npm link] |
 
 ```sh
 # Install alekna package
@@ -33,3 +33,8 @@ npm install @alekna/react-forms
 [react-forms npm link]: https://www.npmjs.com/package/@alekna/react-forms
 [react-data-browser npm version]: https://img.shields.io/npm/v/@alekna/react-data-browser.svg?style=flat-square
 [react-data-browser npm link]: https://www.npmjs.com/package/@alekna/react-data-browser
+
+<!-- Packages -->
+
+[packages/react-forms]: https://github.com/davidalekna/alekna/tree/master/packages/alekna-forms
+[packages/react-data-browser]: https://github.com/davidalekna/alekna/tree/master/packages/alekna-data-browser
