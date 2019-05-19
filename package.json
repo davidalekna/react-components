@@ -40,8 +40,8 @@
   },
   "pre-commit": "lint-staged",
   "dependencies": {
-    "alekna-forms": "file:packages/alekna-forms",
-    "alekna-data-browser": "file:packages/alekna-data-browser"
+    "alekna-data-browser": "file:packages/alekna-data-browser",
+    "alekna-forms": "file:packages/alekna-forms"
   },
   "devDependencies": {
     "lerna": "^3.14.0",
