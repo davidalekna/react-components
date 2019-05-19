@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-data-browser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DataBrowser is a lightweight, fast and extendable render props component",
   "author": "David Alekna <alekna@live.co.uk>",
   "license": "MIT",
@@ -43,7 +43,6 @@
     "storybook:upload": "gh-pages -d storybook-static",
     "storybook:clean": "rimraf storybook-static"
   },
-  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.4",
