@@ -23,6 +23,11 @@
       "name": "alekna-forms",
       "path": "./packages/alekna-forms/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
+    },
+    {
+      "name": "alekna-data-browser",
+      "path": "./packages/alekna-data-browser/lib/bundle.cjs.min.js",
+      "maxSize": "10.6 kB"
     }
   ],
   "lint-staged": {
@@ -35,7 +40,8 @@
   },
   "pre-commit": "lint-staged",
   "dependencies": {
-    "alekna-forms": "file:packages/alekna-forms"
+    "alekna-forms": "file:packages/alekna-forms",
+    "alekna-data-browser": "file:packages/alekna-data-browser"
   },
   "devDependencies": {
     "lerna": "^3.14.0",

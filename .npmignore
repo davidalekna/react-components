@@ -4,6 +4,7 @@ typings
 .gitignore
 .travis.yml
 .rpt2_cache
+.storybook
 ambient.d.ts
 CHANGELOG.md
 tsconfig.json

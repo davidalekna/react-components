@@ -3,3 +3,5 @@
 CHANGELOG.md
 tsconfig.*.json
 tslint.json
+.storybook
+src
