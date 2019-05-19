@@ -1,0 +1,5 @@
+.gitignore
+.rpt2_cache
+CHANGELOG.md
+tsconfig.*.json
+tslint.json
