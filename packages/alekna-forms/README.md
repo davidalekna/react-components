@@ -1,9 +1,8 @@
 <br />
-<h1 align="center">
-  @alekna/react-forms
-</h1>
+<h1 align="center">@alekna/react-forms</h1>
 
-[![size][size-badge]][unpkg-lib] [![gzip size][gzip-badge]][unpkg-lib]
+[![size][size-badge]][unpkg-lib]
+[![gzip size][gzip-badge]][unpkg-lib]
 
 <br />
 <br />
