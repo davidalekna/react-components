@@ -8,6 +8,9 @@
   "module": "./lib/bundle.esm.js",
   "typings": "./lib/index.d.ts",
   "sideEffects": false,
+  "files": [
+    "lib/"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidalekna/alekna.git"
@@ -77,5 +80,5 @@
   "directories": {
     "lib": "lib"
   },
-  "gitHead": "6d195529f05f53bab02679ecb51502e923f1b2f4"
+  "gitHead": "7068104f92bec91ce8353fe030c9792c89554d8a"
 }

@@ -1,6 +1,7 @@
 {
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
     "rootDir": "src",
     "outDir": "lib",
     "jsx": "react",
@@ -12,7 +13,7 @@
     "esModuleInterop": true,
     "lib": ["es2018", "dom"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
     "node_modules",
     "lib",
