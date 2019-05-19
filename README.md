@@ -19,10 +19,10 @@ to install.
 
 ### Install dependencies
 
-| Package             | Version                                                         |
-| ------------------- | --------------------------------------------------------------- |
-| @alekna/react-forms | [![npm version][react-forms npm version]][react-forms npm link] |
-| @alekna/react-table | [![npm version][react-table npm version]][react-table npm link] |
+| Package                  | Version                                                                   |
+| ------------------------ | ------------------------------------------------------------------------- |
+| @alekna/react-forms      | [![npm version][react-forms npm version]][react-forms npm link]           |
+| @alekna/react-data-table | [![npm version][react-data-table npm version]][react-data-table npm link] |
 
 ```sh
 # Install alekna package
@@ -31,5 +31,5 @@ npm install @alekna/react-forms
 
 [react-forms npm version]: https://img.shields.io/npm/v/@alekna/react-forms.svg?style=flat-square
 [react-forms npm link]: https://www.npmjs.com/package/@alekna/react-forms
-[react-table npm version]: https://img.shields.io/npm/v/@alekna/react-table.svg?style=flat-square
-[react-table npm link]: https://www.npmjs.com/package/@alekna/react-table
+[react-data-table npm version]: https://img.shields.io/npm/v/@alekna/react-data-table.svg?style=flat-square
+[react-data-table npm link]: https://www.npmjs.com/package/@alekna/react-data-table
