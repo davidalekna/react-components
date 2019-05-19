@@ -1,5 +1,5 @@
 <h1 align="center">
-  DataBrowser 🗄 
+  DataBrowser 🗄
 </h1>
 <p align="center" style="font-size: 1.2rem;">Primitive to build simple, flexible, enhanced flexbox tables or grid React components</p>
 
@@ -70,7 +70,7 @@ This module is distributed via [npm][npm] which is bundled with [node][node] and
 should be installed as one of your project's `dependencies`:
 
 ```
-npm install --save react-data-browser
+npm install --save @alekna/react-data-browser
 ```
 
 > This package also depends on `react` and `prop-types`. Please make sure you have those installed as well.
