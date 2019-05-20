@@ -1,18 +1,54 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
+import { isClient } from './helpers';
+import { useSafeSetState } from './useSetState';
+import { State } from './types';
 
-export const ToastContext = React.createContext<{}>({});
+export const ToastContext = React.createContext<State>({
+  toasts: [],
+});
 
-export function Toast({ children }) {
-  const [state, setState] = React.useState();
+const portal = toasts => {
+  return createPortal(
+    <div>
+      {toasts.map(({ content, id, onDismiss, ...rest }) => (
+        <div key={id} {...rest}>
+          {content}
+        </div>
+      ))}
+    </div>,
+    document.body,
+  );
+};
 
-  const fns = {};
+export function ToastProvider({
+  children,
+  autoDismissTimeout = 6000,
+  placement = 'bottom-center',
+}) {
+  const [state, setState] = useSafeSetState<State>({
+    toasts: [],
+  });
+
+  const create = (jsx, toastProps) => {
+    // add toast
+  };
+
+  const clear = id => {
+    // removes toast
+  };
+
+  // RENDERER BELLOW
+
+  const fns = { create, clear };
 
   const ui =
-    typeof children === 'function' ? children({ state, ...fns }) : children;
+    typeof children === 'function' ? children({ ...state, ...fns }) : children;
 
   return (
-    <ToastContext.Provider value={{ state, ...fns }}>
+    <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
+      {isClient && portal(state.toasts)}
     </ToastContext.Provider>
   );
 }
@@ -25,9 +61,4 @@ export function useToastContext() {
     );
   }
   return context;
-}
-
-export function ToastProvider({ children, ...props }) {
-  const context = useToastContext();
-  return children({ ...context, ...props });
 }
