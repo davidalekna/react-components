@@ -2,8 +2,9 @@ import React from 'react';
 import uuid from 'uuid';
 import { createPortal } from 'react-dom';
 import { isClient } from './helpers';
-import { useSafeSetState } from './useSetState';
 import { State } from './types';
+import useObservable from './useObservable';
+import { createToast, dismissToast } from './store/actions';
 
 export const ToastContext = React.createContext<State>({
   toasts: [],
@@ -20,9 +21,9 @@ const placements = {
 
 const Toast = ({ id, jsx, onDismiss }) => {
   React.useEffect(() => {
-    const timer = setTimeout(() => onDismiss(id), 3000);
+    const timer = setTimeout(() => onDismiss(id), 5000);
     return () => clearTimeout(timer);
-  });
+  }, [id]);
 
   return (
     <div
@@ -63,13 +64,12 @@ export function ToastProvider({
   // portal with inner functions. We also give
   // a timeout for each toast.
 
-  const [state, setState] = useSafeSetState<State>({
+  const { state, dispatch } = useObservable<State>({
     toasts: [],
   });
 
   const dismiss = (id: string) => {
-    // ERROR: removes all toasts at the same time 🤔
-    setState({ toasts: [...state.toasts.filter(toast => toast.id !== id)] });
+    dispatch(dismissToast(id));
   };
 
   const create = (
@@ -79,10 +79,7 @@ export function ToastProvider({
       autoDismiss?: boolean;
     },
   ) => {
-    const newToast = { id: uuid(), onDismiss: dismiss, jsx, ...props };
-    setState({
-      toasts: [...state.toasts, newToast],
-    });
+    dispatch(createToast({ id: uuid(), onDismiss: dismiss, jsx, ...props }));
   };
 
   // RENDERER BELLOW
