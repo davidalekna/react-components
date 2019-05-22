@@ -9,8 +9,23 @@ const Demo = () => {
       {({ create }) => {
         return (
           <div>
-            <button onClick={() => create(`toast is showing! ${uuid()}`)}>
-              create toast
+            <button
+              onClick={() =>
+                create(`toast is showing! ${uuid()}`, {
+                  position: 'topRight',
+                })
+              }
+            >
+              create topRight
+            </button>
+            <button
+              onClick={() =>
+                create(`toast is showing! ${uuid()}`, {
+                  position: 'bottomRight',
+                })
+              }
+            >
+              create topRight
             </button>
             <div>whats poppin</div>
           </div>

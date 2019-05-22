@@ -2,29 +2,29 @@ import React from 'react';
 import uuid from 'uuid';
 import { createPortal } from 'react-dom';
 import { isClient } from './helpers';
-import { State } from './types';
+import { State, Placement, Options } from './types';
 import useObservable from './useObservable';
 import { createToast, dismissToast } from './store/actions';
 
 export const ToastContext = React.createContext<State>({
-  toasts: [],
+  topLeft: [],
+  topCenter: [],
+  topRight: [],
+  bottomLeft: [],
+  bottomCenter: [],
+  bottomRight: [],
 });
 
 const placements = {
-  'top-left': { top: 0, left: 0 },
-  'top-center': { top: 0, left: '50%', transform: 'translateX(-50%)' },
-  'top-right': { top: 0, right: 0 },
-  'bottom-left': { bottom: 0, left: 0 },
-  'bottom-center': { bottom: 0, left: '50%', transform: 'translateX(-50%)' },
-  'bottom-right': { bottom: 0, right: 0 },
+  topLeft: { top: 0, left: 0 },
+  topCenter: { top: 0, left: '50%', transform: 'translateX(-50%)' },
+  topRight: { top: 0, right: 0 },
+  bottomLeft: { bottom: 0, left: 0 },
+  bottomCenter: { bottom: 0, left: '50%', transform: 'translateX(-50%)' },
+  bottomRight: { bottom: 0, right: 0 },
 };
 
 const Toast = ({ id, jsx, onDismiss }) => {
-  // React.useEffect(() => {
-  //   const timer = setTimeout(() => onDismiss(id), 5000);
-  //   return () => clearTimeout(timer);
-  // }, [id]);
-
   return (
     <div
       style={{
@@ -41,42 +41,56 @@ const Toast = ({ id, jsx, onDismiss }) => {
   );
 };
 
-const toastsPortal = toasts => {
-  return createPortal(
-    <div
-      style={Object.assign({ position: 'absolute' }, placements['top-right'])}
-    >
-      {toasts.map(toast => (
-        <Toast key={toast.id} {...toast} />
-      ))}
-    </div>,
-    document.body,
-  );
+// const toastsPortal = toasts => {
+//   // TODO: portal should hold position style
+//   // position will be provided when creating toast
+//   return createPortal(
+//     <div
+//       style={Object.assign({ position: 'absolute' }, placements['topRight'])}
+//     >
+//       {toasts.map(toast => (
+//         <Toast key={toast.id} {...toast} />
+//       ))}
+//     </div>,
+//     document.body,
+//   );
+// };
+
+const createPortals = (state: State) => {
+  return Object.keys(state).map(position => {
+    if (Array.isArray(state[position]) && state[position].length) {
+      return createPortal(
+        <div
+          style={Object.assign({ position: 'absolute' }, placements[position])}
+        >
+          {state[position].map(toast => (
+            <Toast key={toast.id} {...toast} />
+          ))}
+        </div>,
+        document.body,
+      );
+    }
+
+    return null;
+  });
 };
 
-export function ToastProvider({
-  children,
-  autoDismissTimeout = 5000,
-  placement = 'bottom-center',
-}) {
-  // basic toasts idea is that we have a portal
-  // and we control what goes in and out of the
-  // portal with inner functions. We also give
-  // a timeout for each toast.
-
+export function ToastProvider({ children, autoDismissTimeout = 5000 }) {
   const { state, dispatch } = useObservable<State>({
-    toasts: [],
+    topLeft: [],
+    topCenter: [],
+    topRight: [],
+    bottomLeft: [],
+    bottomCenter: [],
+    bottomRight: [],
   });
 
-  const dismiss = (id: string) => {
-    dispatch(dismissToast(id));
-  };
+  const dismiss = (id: string) => dispatch(dismissToast(id));
 
   const create = (
     jsx: Node,
-    props?: {
-      appearance?: 'error' | 'info' | 'success';
-      autoDismiss?: boolean;
+    props: Options = {
+      position: 'topRight',
     },
   ) => {
     dispatch(createToast({ id: uuid(), onDismiss: dismiss, jsx, ...props }));
@@ -92,7 +106,7 @@ export function ToastProvider({
   return (
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
-      {isClient && toastsPortal(state.toasts)}
+      {isClient && createPortals(state)}
     </ToastContext.Provider>
   );
 }
