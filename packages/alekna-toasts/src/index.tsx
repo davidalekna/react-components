@@ -20,10 +20,10 @@ const placements = {
 };
 
 const Toast = ({ id, jsx, onDismiss }) => {
-  React.useEffect(() => {
-    const timer = setTimeout(() => onDismiss(id), 5000);
-    return () => clearTimeout(timer);
-  }, [id]);
+  // React.useEffect(() => {
+  //   const timer = setTimeout(() => onDismiss(id), 5000);
+  //   return () => clearTimeout(timer);
+  // }, [id]);
 
   return (
     <div

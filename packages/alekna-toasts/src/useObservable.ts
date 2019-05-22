@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react';
-import { Subject, merge } from 'rxjs';
-import { scan, tap, filter } from 'rxjs/operators';
+import { Subject, of, merge, combineLatest } from 'rxjs';
+import {
+  scan,
+  filter,
+  distinctUntilChanged,
+  switchMap,
+  takeLast,
+  tap,
+  take,
+  last,
+  combineAll,
+} from 'rxjs/operators';
 import reducer from './store/reducer';
 import { CREATE } from './store/actions';
-import combineEpics from './store/combineEpics';
+import { dismissToast } from './store/actions';
+
+function ofType(actionType: string) {
+  return filter(({ type }: any) => type === actionType);
+}
 
 const action$ = new Subject();
-
-const epic = action$ => {
-  return action$.pipe(
-    filter((action: any) => action.type === CREATE),
-    tap(action => console.log(action)),
-  );
-};
 
 const useObservable = <T>(initialState?: T) => {
   const [state, update] = useState<T>(initialState);
@@ -22,7 +29,23 @@ const useObservable = <T>(initialState?: T) => {
   // TODO: combineEpics
 
   useEffect(() => {
-    const s = merge(action$, epic)
+    const s = merge(
+      action$,
+      action$.pipe(
+        ofType(CREATE),
+        switchMap(payload => {
+          // TODO: dispatch onDismiss in some amount of time
+          return of(payload);
+        }),
+      ),
+      action$,
+      action$,
+    )
+      .pipe(
+        tap(item => console.log('before', item)),
+        distinctUntilChanged(),
+        tap(item => console.log('after', item)),
+      )
       .pipe(scan<any>(reducer, initialState))
       .subscribe(update);
 
