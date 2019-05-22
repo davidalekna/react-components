@@ -1,4 +1,4 @@
-import { CREATE, DISMISS } from './actions';
+import { CREATE, DISMISS, CLEAR_ALL } from './actions';
 
 const findPosition = state => id => {
   return Object.keys(state).find(key => {
@@ -26,6 +26,12 @@ export default function reducer(state, action) {
           toast => toast.id !== action.payload,
         ),
       };
+    case CLEAR_ALL:
+      return Object.keys(state).reduce((acc, key) => {
+        return Object.assign(acc, {
+          [key]: [],
+        });
+      }, {});
     default:
       return state;
   }

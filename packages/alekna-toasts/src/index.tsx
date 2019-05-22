@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import { isClient } from './helpers';
 import { State, Options } from './types';
 import useObservable from './useObservable';
-import { createToast, dismissToast } from './store/actions';
+import { createToast, dismissToast, clearAll } from './store/actions';
 import { createPortals } from './renderer';
 
 export const ToastContext = React.createContext<State>({
@@ -40,9 +40,11 @@ export function ToastProvider({ children }) {
     );
   };
 
+  const reset = () => dispatch(clearAll());
+
   // RENDERER BELLOW
 
-  const fns = { create, dismiss };
+  const fns = { create, dismiss, reset };
 
   const ui =
     typeof children === 'function' ? children({ ...state, ...fns }) : children;

@@ -6,7 +6,7 @@ import uuid from 'uuid';
 const Demo = () => {
   return (
     <ToastProvider>
-      {({ create }) => {
+      {({ create, reset }) => {
         return (
           <div>
             <button
@@ -27,6 +27,7 @@ const Demo = () => {
             >
               create topRight
             </button>
+            <button onClick={reset}>reset all</button>
             <div>whats poppin</div>
           </div>
         );
