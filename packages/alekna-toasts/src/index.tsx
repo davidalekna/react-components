@@ -1,10 +1,10 @@
 import React from 'react';
 import uuid from 'uuid';
-import { createPortal } from 'react-dom';
 import { isClient } from './helpers';
-import { State, Placement, Options } from './types';
+import { State, Options } from './types';
 import useObservable from './useObservable';
 import { createToast, dismissToast } from './store/actions';
+import { createPortals } from './renderer';
 
 export const ToastContext = React.createContext<State>({
   topLeft: [],
@@ -15,67 +15,7 @@ export const ToastContext = React.createContext<State>({
   bottomRight: [],
 });
 
-const placements = {
-  topLeft: { top: 0, left: 0 },
-  topCenter: { top: 0, left: '50%', transform: 'translateX(-50%)' },
-  topRight: { top: 0, right: 0 },
-  bottomLeft: { bottom: 0, left: 0 },
-  bottomCenter: { bottom: 0, left: '50%', transform: 'translateX(-50%)' },
-  bottomRight: { bottom: 0, right: 0 },
-};
-
-const Toast = ({ id, jsx, onDismiss }) => {
-  return (
-    <div
-      style={{
-        position: 'relative',
-        background: 'green',
-        width: 200,
-        height: 100,
-        marginTop: 10,
-      }}
-    >
-      {jsx}
-      <button onClick={() => onDismiss(id)}>clear</button>
-    </div>
-  );
-};
-
-// const toastsPortal = toasts => {
-//   // TODO: portal should hold position style
-//   // position will be provided when creating toast
-//   return createPortal(
-//     <div
-//       style={Object.assign({ position: 'absolute' }, placements['topRight'])}
-//     >
-//       {toasts.map(toast => (
-//         <Toast key={toast.id} {...toast} />
-//       ))}
-//     </div>,
-//     document.body,
-//   );
-// };
-
-const createPortals = (state: State) => {
-  return Object.keys(state).map(position => {
-    if (Array.isArray(state[position]) && state[position].length) {
-      return createPortal(
-        <div
-          style={Object.assign({ position: 'absolute' }, placements[position])}
-        >
-          {state[position].map(toast => (
-            <Toast key={toast.id} {...toast} />
-          ))}
-        </div>,
-        document.body,
-      );
-    }
-
-    return null;
-  });
-};
-
-export function ToastProvider({ children, autoDismissTimeout = 5000 }) {
+export function ToastProvider({ children }) {
   const { state, dispatch } = useObservable<State>({
     topLeft: [],
     topCenter: [],
@@ -87,13 +27,17 @@ export function ToastProvider({ children, autoDismissTimeout = 5000 }) {
 
   const dismiss = (id: string) => dispatch(dismissToast(id));
 
-  const create = (
-    jsx: Node,
-    props: Options = {
-      position: 'topRight',
-    },
-  ) => {
-    dispatch(createToast({ id: uuid(), onDismiss: dismiss, jsx, ...props }));
+  const create = (jsx: Node, props: Options) => {
+    dispatch(
+      createToast({
+        id: uuid(),
+        onDismiss: dismiss,
+        position: 'topRight',
+        delay: 5000,
+        jsx,
+        ...props,
+      }),
+    );
   };
 
   // RENDERER BELLOW

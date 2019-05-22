@@ -23,4 +23,5 @@ export type Options = {
   appearance?: 'error' | 'info' | 'success';
   autoDismiss?: boolean;
   position: Placement;
+  delay: number;
 };
