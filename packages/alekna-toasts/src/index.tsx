@@ -15,6 +15,14 @@ export const ToastContext = React.createContext<State>({
   bottomRight: [],
 });
 
+// Disable auto-close
+// Hide progress bar(less fanciness!)
+// Newest on top*
+// Close on click
+// Pause delay on hover
+// Right to left layout*
+// Allow to drag and close the toast
+
 export function ToastProvider({ children }) {
   const { state, dispatch } = useObservable<State>({
     topLeft: [],

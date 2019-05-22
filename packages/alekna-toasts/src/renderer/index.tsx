@@ -14,6 +14,7 @@ const placements = {
 const Toast = ({ id, jsx, onDismiss }) => {
   return (
     <div
+      onClick={() => onDismiss(id)}
       style={{
         position: 'relative',
         background: 'green',
@@ -23,7 +24,6 @@ const Toast = ({ id, jsx, onDismiss }) => {
       }}
     >
       {jsx}
-      <button onClick={() => onDismiss(id)}>clear</button>
     </div>
   );
 };

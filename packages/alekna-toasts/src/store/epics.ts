@@ -1,5 +1,5 @@
 import { of, merge } from 'rxjs';
-import { filter, tap, delay, mergeMap, takeUntil, mapTo } from 'rxjs/operators';
+import { filter, delay, mergeMap, takeUntil, mapTo } from 'rxjs/operators';
 import { CREATE, DISMISS, CLEAR_ALL } from './actions';
 import { dismissToast } from './actions';
 import { ofType } from './helpers';
@@ -22,7 +22,6 @@ export function createEpic(action$) {
           ),
         ),
         mapTo(dismissToast(action.payload.id)),
-        tap(a => console.log(a)),
       );
     }),
   );
