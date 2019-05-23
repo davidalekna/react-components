@@ -1,11 +1,11 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { ToastProvider } from '../index';
+import { ToastsProvider } from '../index';
 import uuid from 'uuid';
 
 const Demo = () => {
   return (
-    <ToastProvider>
+    <ToastsProvider>
       {({ create, reset }) => {
         return (
           <div>
@@ -32,7 +32,7 @@ const Demo = () => {
           </div>
         );
       }}
-    </ToastProvider>
+    </ToastsProvider>
   );
 };
 

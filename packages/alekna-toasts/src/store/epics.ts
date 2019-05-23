@@ -8,6 +8,10 @@ export function createEpic(action$) {
   return action$.pipe(
     ofType(CREATE),
     mergeMap((action: any) => {
+      if (!action.payload.autoClose) {
+        return of(action);
+      }
+
       return of(action).pipe(
         delay(action.payload.delay),
         takeUntil(

@@ -23,7 +23,7 @@ export const ToastContext = React.createContext<State>({
 // Right to left layout*
 // Allow to drag and close the toast
 
-export function ToastProvider({ children }) {
+export function ToastsProvider({ children }) {
   const { state, dispatch } = useObservable<State>({
     topLeft: [],
     topCenter: [],
@@ -35,15 +35,16 @@ export function ToastProvider({ children }) {
 
   const dismiss = (id: string) => dispatch(dismissToast(id));
 
-  const create = (jsx: Node, props: Options) => {
+  const create = (jsx: Node, overrides: Options) => {
     dispatch(
       createToast({
         id: uuid(),
         onDismiss: dismiss,
         position: 'topRight',
         delay: 5000,
+        autoClose: true,
         jsx,
-        ...props,
+        ...overrides,
       }),
     );
   };
