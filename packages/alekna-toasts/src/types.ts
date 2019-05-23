@@ -3,18 +3,25 @@ export interface IToast {
 }
 
 export type State = {
-  toasts: IToast[];
+  topLeft: IToast[];
+  topCenter: IToast[];
+  topRight: IToast[];
+  bottomLeft: IToast[];
+  bottomCenter: IToast[];
+  bottomRight: IToast[];
 };
 
 export type Placement =
-  | 'bottom-left'
-  | 'bottom-center'
-  | 'bottom-right'
-  | 'top-left'
-  | 'top-center'
-  | 'top-right';
+  | 'bottomLeft'
+  | 'bottomCenter'
+  | 'bottomRight'
+  | 'topLeft'
+  | 'topCenter'
+  | 'topRight';
 
 export type Options = {
   appearance?: 'error' | 'info' | 'success';
   autoDismiss?: boolean;
+  position: Placement;
+  delay: number;
 };
