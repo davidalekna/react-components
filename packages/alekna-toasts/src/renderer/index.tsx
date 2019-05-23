@@ -11,24 +11,7 @@ const placements = {
   bottomRight: { bottom: 0, right: 0 },
 };
 
-const Toast = ({ id, jsx, onDismiss }) => {
-  return (
-    <div
-      onClick={() => onDismiss(id)}
-      style={{
-        position: 'relative',
-        background: 'green',
-        width: 200,
-        height: 100,
-        marginTop: 10,
-      }}
-    >
-      {jsx}
-    </div>
-  );
-};
-
-export const createPortals = (state: State) => {
+export const createPortals = (state: State, Toast: any) => {
   return Object.keys(state).map(position => {
     if (Array.isArray(state[position]) && state[position].length) {
       return createPortal(

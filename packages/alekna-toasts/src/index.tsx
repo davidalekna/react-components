@@ -1,10 +1,13 @@
 import React from 'react';
 import uuid from 'uuid';
+import useObservable from './useObservable';
 import { isClient } from './helpers';
 import { State, Options } from './types';
-import useObservable from './useObservable';
 import { createToast, dismissToast, clearAll } from './store/actions';
 import { createPortals } from './renderer';
+import DefaultToast from './renderer/toast';
+
+export { DefaultToast as ToastContainer };
 
 export const ToastContext = React.createContext<State>({
   topLeft: [],
@@ -15,15 +18,14 @@ export const ToastContext = React.createContext<State>({
   bottomRight: [],
 });
 
-// Disable auto-close
+// Disable auto-close 😋
 // Hide progress bar(less fanciness!)
 // Newest on top*
-// Close on click
+// Close on click 😋
 // Pause delay on hover
-// Right to left layout*
 // Allow to drag and close the toast
 
-export function ToastsProvider({ children }) {
+export function ToastsProvider({ children, Toast = DefaultToast }) {
   const { state, dispatch } = useObservable<State>({
     topLeft: [],
     topCenter: [],
@@ -39,7 +41,7 @@ export function ToastsProvider({ children }) {
     dispatch(
       createToast({
         id: uuid(),
-        onDismiss: dismiss,
+        dismiss,
         position: 'topRight',
         delay: 5000,
         autoClose: true,
@@ -61,7 +63,7 @@ export function ToastsProvider({ children }) {
   return (
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
-      {isClient && createPortals(state)}
+      {isClient && createPortals(state, Toast)}
     </ToastContext.Provider>
   );
 }
