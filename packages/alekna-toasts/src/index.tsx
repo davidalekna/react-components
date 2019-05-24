@@ -25,7 +25,17 @@ export const ToastContext = React.createContext<State>({
 // Pause delay on hover
 // Allow to drag and close the toast
 
-export function ToastsProvider({ children, Toast = DefaultToast }) {
+export function ToastsProvider({
+  children,
+  components = {
+    topLeft: DefaultToast,
+    topCenter: DefaultToast,
+    topRight: DefaultToast,
+    bottomLeft: DefaultToast,
+    bottomCenter: DefaultToast,
+    bottomRight: DefaultToast,
+  },
+}) {
   const { state, dispatch } = useObservable<State>({
     topLeft: [],
     topCenter: [],
@@ -63,7 +73,7 @@ export function ToastsProvider({ children, Toast = DefaultToast }) {
   return (
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
-      {isClient && createPortals(state, Toast)}
+      {isClient && createPortals(state, components)}
     </ToastContext.Provider>
   );
 }

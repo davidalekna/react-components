@@ -11,16 +11,20 @@ const placements = {
   bottomRight: { bottom: 0, right: 0 },
 };
 
-export const createPortals = (state: State, Toast: any) => {
+export const createPortals = (state: State, components: any) => {
   return Object.keys(state).map(position => {
     if (Array.isArray(state[position]) && state[position].length) {
       return createPortal(
         <div
-          style={Object.assign({ position: 'absolute' }, placements[position])}
+          style={Object.assign(
+            { position: 'absolute', padding: 10, border: '1px dashed black' },
+            placements[position],
+          )}
         >
-          {state[position].map(toast => (
-            <Toast key={toast.id} {...toast} />
-          ))}
+          {state[position].map(toast => {
+            const Toast = components[position];
+            return <Toast key={toast.id} {...toast} />;
+          })}
         </div>,
         document.body,
       );
