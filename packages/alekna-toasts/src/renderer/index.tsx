@@ -11,7 +11,7 @@ const placements = {
   bottomRight: { bottom: 0, right: 0 },
 };
 
-export const createPortals = (state: State, components: any) => {
+export const createPortals = (state: State, components: any, fns) => {
   return Object.keys(state).map(position => {
     if (Array.isArray(state[position]) && state[position].length) {
       return createPortal(
@@ -23,7 +23,14 @@ export const createPortals = (state: State, components: any) => {
         >
           {state[position].map(toast => {
             const Toast = components[position];
-            return <Toast key={toast.id} {...toast} />;
+            return (
+              <Toast
+                key={toast.id}
+                onMouseEnter={() => fns.onMouseEnter(toast.id)}
+                onMouseLeave={() => fns.onMouseLeave(toast.id)}
+                {...toast}
+              />
+            );
           })}
         </div>,
         document.body,

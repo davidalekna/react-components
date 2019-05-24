@@ -1,11 +1,17 @@
 import React from 'react';
 import uuid from 'uuid';
 import useObservable from './useObservable';
+import DefaultToast from './renderer/toast';
 import { isClient } from './helpers';
 import { State, Options } from './types';
-import { createToast, dismissToast, clearAll } from './store/actions';
 import { createPortals } from './renderer';
-import DefaultToast from './renderer/toast';
+import {
+  createToast,
+  dismissToast,
+  clearAll,
+  mouseEnter,
+  mouseLeave,
+} from './store/actions';
 
 export { DefaultToast as ToastContainer };
 
@@ -63,6 +69,9 @@ export function ToastsProvider({
 
   const reset = () => dispatch(clearAll());
 
+  const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
+  const onMouseLeave = (id: string) => dispatch(mouseLeave(id));
+
   // RENDERER BELLOW
 
   const fns = { create, dismiss, reset };
@@ -73,7 +82,8 @@ export function ToastsProvider({
   return (
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
-      {isClient && createPortals(state, components)}
+      {isClient &&
+        createPortals(state, components, { onMouseEnter, onMouseLeave })}
     </ToastContext.Provider>
   );
 }
