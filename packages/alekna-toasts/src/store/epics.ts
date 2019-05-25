@@ -1,4 +1,5 @@
-import { of, merge, interval, empty } from 'rxjs';
+import { merge as lodashMerge } from 'lodash';
+import { of, merge, interval, empty, concat } from 'rxjs';
 import {
   filter,
   delay,
@@ -9,6 +10,8 @@ import {
   switchMap,
   scan,
   takeWhile,
+  tap,
+  mergeAll,
 } from 'rxjs/operators';
 import {
   CREATE,
@@ -17,7 +20,7 @@ import {
   MOUSE_ENTER,
   MOUSE_LEAVE,
 } from './actions';
-import { dismissToast } from './actions';
+import { dismissToast, updateToast } from './actions';
 import { ofType } from './helpers';
 
 export function createEpic(action$) {
@@ -28,39 +31,60 @@ export function createEpic(action$) {
         return of(action);
       }
 
-      // TODO: re implement the timer
+      const actionWithCounter = lodashMerge(action, {
+        payload: {
+          countDown: true,
+        },
+      });
 
-      // const interval$ = interval(1000).pipe(mapTo(-1));
-      // const pause$ = action$.pipe(ofType(MOUSE_ENTER)).pipe(mapTo(false));
-      // const resume$ = action$.pipe(ofType(MOUSE_LEAVE)).pipe(mapTo(true));
+      const interval$ = interval(1000).pipe(mapTo(-1000));
+      const pause$ = action$.pipe(ofType(MOUSE_ENTER)).pipe(
+        mapTo(
+          lodashMerge(actionWithCounter, {
+            payload: { countDown: false },
+          }),
+        ),
+      );
+      const resume$ = action$.pipe(ofType(MOUSE_LEAVE)).pipe(
+        mapTo(
+          lodashMerge(actionWithCounter, {
+            payload: { countDown: true },
+          }),
+        ),
+      );
 
-      // const timer$ = merge(pause$, resume$).pipe(
-      //   startWith(true),
-      //   switchMap(val => (val ? interval$ : empty())),
-      //   scan(
-      //     (acc, curr) => (curr ? curr + acc : acc),
-      //     action.payload.delay / 1000,
-      //   ),
-      //   takeWhile(v => v >= 0),
-      // );
-
-      return of(action).pipe(
-        // start delay
-        delay(action.payload.delay),
-        // take until CLEAR_ALL or DISMISS and map to action dismissToast
-        takeUntil(
-          merge(
-            action$.pipe(ofType(CLEAR_ALL)),
-            action$.pipe(
-              ofType(DISMISS),
-              filter(({ payload }: any) => {
-                return payload === action.payload.id;
-              }),
+      return merge(pause$, resume$)
+        .pipe(
+          startWith(actionWithCounter),
+          switchMap(val => (val.payload.countDown ? interval$ : empty())),
+          scan((acc, curr: any) => {
+            return lodashMerge(acc, {
+              payload: {
+                delay: curr + acc.payload.delay,
+              },
+            });
+          }, actionWithCounter),
+          takeWhile(v => v.payload.delay >= 0),
+          mergeMap(({ payload: toast }) => {
+            return of(updateToast(toast));
+          }),
+          tap(a => console.log('after', a)),
+        )
+        .pipe(
+          // take until is not working
+          takeUntil(
+            merge(
+              action$.pipe(ofType(CLEAR_ALL)),
+              action$.pipe(
+                ofType(DISMISS),
+                filter(({ payload }: any) => {
+                  return payload === action.payload.id;
+                }),
+              ),
             ),
           ),
-        ),
-        mapTo(dismissToast(action.payload.id)),
-      );
+          // mapTo(dismissToast(action.payload.id)),
+        );
     }),
   );
 }

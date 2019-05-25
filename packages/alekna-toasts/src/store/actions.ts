@@ -3,6 +3,7 @@ export const DISMISS = '@@toasts/DISMISS';
 export const CLEAR_ALL = '@@toasts/CLEAR_ALL';
 export const MOUSE_ENTER = '@@toasts/MOUSE_ENTER';
 export const MOUSE_LEAVE = '@@toasts/MOUSE_LEAVE';
+export const UPDATE = '@@toasts/UPDATE';
 
 export function createToast(toast) {
   return {
@@ -35,5 +36,12 @@ export function mouseLeave(id: string) {
   return {
     type: MOUSE_LEAVE,
     payload: id,
+  };
+}
+
+export function updateToast(toast) {
+  return {
+    type: UPDATE,
+    payload: toast,
   };
 }
