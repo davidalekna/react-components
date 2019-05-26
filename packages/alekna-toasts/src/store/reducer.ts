@@ -51,6 +51,7 @@ export default function reducer(state, action) {
         action.payload.position,
         action.payload.id,
       );
+      console.log(item);
       state[position][index] = item;
       return cloneDeep(state);
     }
