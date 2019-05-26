@@ -1,4 +1,3 @@
-import { merge as lodashMerge } from 'lodash';
 import { of, merge, interval, empty } from 'rxjs';
 import {
   filter,
@@ -9,7 +8,7 @@ import {
   scan,
   takeWhile,
   last,
-  takeUntil,
+  tap,
 } from 'rxjs/operators';
 import { CREATE, MOUSE_ENTER, MOUSE_LEAVE } from './actions';
 import { dismissToast, updateToast } from './actions';
@@ -49,18 +48,16 @@ export function createEpic(action$) {
           action.payload.delay / 1000,
         ),
         takeWhile(v => v >= 0),
-        mergeMap(v => {
-          return of(
-            updateToast(
-              lodashMerge(action.payload, {
-                countdown: v,
-              }),
-            ),
-          );
-        }),
+        // ERROR: wont stop on termination
+        tap(countdown => console.log(countdown)),
         // TODO: update countdown on Toast object
+        // switchMap(countdown => {
+        //   console.log('mergeMap', countdown);
+        //   return of(updateToast(countdown));
+        // }),
         last(),
         mapTo(dismissToast(action.payload.id)),
+        // bring back takeUntil to cancel inflight requests!
       );
     }),
   );

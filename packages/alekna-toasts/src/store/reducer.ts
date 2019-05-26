@@ -47,11 +47,12 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
+      console.log(action);
+
       const { item, index, position } = findItem(
         action.payload.position,
         action.payload.id,
       );
-      console.log(item);
       state[position][index] = item;
       return cloneDeep(state);
     }
