@@ -47,11 +47,11 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
-      const { index, position } = findItem(
+      const { item, index, position } = findItem(
         action.payload.position,
         action.payload.id,
       );
-      state[position][index] = action.payload;
+      state[position][index] = { ...item, countdown: action.payload.countdown };
       return cloneDeep(state);
     }
     case CLEAR_ALL: {

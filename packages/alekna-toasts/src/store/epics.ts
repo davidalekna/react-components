@@ -49,9 +49,9 @@ export function createEpic(action$) {
           action.payload.delay / 1000,
         ),
         takeWhile(v => v >= 0),
-        map(countdown => {
-          if (countdown === 0) return dismissToast(action.payload.id);
-          return updateToast({ ...action.payload, countdown });
+        map(cd => {
+          if (cd === 0) return dismissToast(action.payload.id);
+          return updateToast({ ...action.payload, countdown: cd });
         }),
         takeUntil(
           merge(

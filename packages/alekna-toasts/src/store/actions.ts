@@ -39,9 +39,21 @@ export function mouseLeave(id: string) {
   };
 }
 
-export function updateToast(toast) {
+export function updateToast({
+  id,
+  position,
+  countdown,
+}: {
+  id: string;
+  position: string;
+  countdown: number;
+}) {
   return {
     type: UPDATE,
-    payload: toast,
+    payload: {
+      id,
+      position,
+      countdown,
+    },
   };
 }
