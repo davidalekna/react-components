@@ -66,6 +66,7 @@
     "react-dom": "^16.8.0-alpha.1"
   },
   "dependencies": {
+    "lodash": "^4.17.11",
     "rxjs": "^6.5.1",
     "uuid": "^3.3.2"
   },

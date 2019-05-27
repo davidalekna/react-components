@@ -1,11 +1,17 @@
 import React from 'react';
 import uuid from 'uuid';
 import useObservable from './useObservable';
+import DefaultToast from './renderer/toast';
 import { isClient } from './helpers';
 import { State, Options } from './types';
-import { createToast, dismissToast, clearAll } from './store/actions';
 import { createPortals } from './renderer';
-import DefaultToast from './renderer/toast';
+import {
+  createToast,
+  dismissToast,
+  clearAll,
+  mouseEnter,
+  mouseLeave,
+} from './store/actions';
 
 export { DefaultToast as ToastContainer };
 
@@ -25,7 +31,17 @@ export const ToastContext = React.createContext<State>({
 // Pause delay on hover
 // Allow to drag and close the toast
 
-export function ToastsProvider({ children, Toast = DefaultToast }) {
+export function ToastsProvider({
+  children,
+  components = {
+    topLeft: DefaultToast,
+    topCenter: DefaultToast,
+    topRight: DefaultToast,
+    bottomLeft: DefaultToast,
+    bottomCenter: DefaultToast,
+    bottomRight: DefaultToast,
+  },
+}) {
   const { state, dispatch } = useObservable<State>({
     topLeft: [],
     topCenter: [],
@@ -53,6 +69,9 @@ export function ToastsProvider({ children, Toast = DefaultToast }) {
 
   const reset = () => dispatch(clearAll());
 
+  const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
+  const onMouseLeave = (id: string) => dispatch(mouseLeave(id));
+
   // RENDERER BELLOW
 
   const fns = { create, dismiss, reset };
@@ -63,7 +82,8 @@ export function ToastsProvider({ children, Toast = DefaultToast }) {
   return (
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
-      {isClient && createPortals(state, Toast)}
+      {isClient &&
+        createPortals(state, components, { onMouseEnter, onMouseLeave })}
     </ToastContext.Provider>
   );
 }
