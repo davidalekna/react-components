@@ -28,11 +28,15 @@ export const ToastContext = React.createContext<State>({
 // Hide progress bar(less fanciness!)
 // Newest on top*
 // Close on click 😋
-// Pause delay on hover
+// Pause delay on hover 😋
 // Allow to drag and close the toast
 
 export function ToastsProvider({
   children,
+  style = {
+    padding: 10,
+    border: '1px dashed #ddd',
+  },
   components = {
     topLeft: DefaultToast,
     topCenter: DefaultToast,
@@ -59,7 +63,7 @@ export function ToastsProvider({
         id: uuid(),
         dismiss,
         position: 'topRight',
-        delay: 20000,
+        delay: 5000,
         autoClose: true,
         jsx,
         ...overrides,
@@ -83,7 +87,10 @@ export function ToastsProvider({
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
       {isClient &&
-        createPortals(state, components, { onMouseEnter, onMouseLeave })}
+        createPortals(state, components, style, {
+          onMouseEnter,
+          onMouseLeave,
+        })}
     </ToastContext.Provider>
   );
 }
