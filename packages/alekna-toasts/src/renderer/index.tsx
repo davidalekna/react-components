@@ -17,7 +17,7 @@ export const createPortals = (state: State, components: any, fns) => {
       return createPortal(
         <div
           style={Object.assign(
-            { position: 'absolute', padding: 10, border: '1px dashed black' },
+            { position: 'absolute', padding: 10, border: '1px dashed #ddd' },
             placements[position],
           )}
         >

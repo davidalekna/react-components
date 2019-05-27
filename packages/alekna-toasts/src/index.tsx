@@ -59,7 +59,7 @@ export function ToastsProvider({
         id: uuid(),
         dismiss,
         position: 'topRight',
-        delay: 5000,
+        delay: 20000,
         autoClose: true,
         jsx,
         ...overrides,
