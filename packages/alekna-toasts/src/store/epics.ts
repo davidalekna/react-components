@@ -9,8 +9,16 @@ import {
   takeWhile,
   last,
   tap,
+  takeUntil,
+  map,
 } from 'rxjs/operators';
-import { CREATE, MOUSE_ENTER, MOUSE_LEAVE } from './actions';
+import {
+  CREATE,
+  MOUSE_ENTER,
+  MOUSE_LEAVE,
+  CLEAR_ALL,
+  DISMISS,
+} from './actions';
 import { dismissToast, updateToast } from './actions';
 import { ofType } from './helpers';
 
@@ -48,16 +56,23 @@ export function createEpic(action$) {
           action.payload.delay / 1000,
         ),
         takeWhile(v => v >= 0),
-        // ERROR: wont stop on termination
-        tap(countdown => console.log(countdown)),
         // TODO: update countdown on Toast object
-        // switchMap(countdown => {
-        //   console.log('mergeMap', countdown);
-        //   return of(updateToast(countdown));
-        // }),
+        // NOTE: map not working
+        map(countdown => updateToast({ ...action.payload, countdown })),
+        tap(i => console.log('end', i)),
         last(),
         mapTo(dismissToast(action.payload.id)),
-        // bring back takeUntil to cancel inflight requests!
+        takeUntil(
+          merge(
+            action$.pipe(ofType(CLEAR_ALL)),
+            action$.pipe(
+              ofType(DISMISS),
+              filter(({ payload }: any) => {
+                return payload === action.payload.id;
+              }),
+            ),
+          ),
+        ),
       );
     }),
   );

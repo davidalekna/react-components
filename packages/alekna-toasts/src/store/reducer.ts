@@ -7,7 +7,7 @@ const findPosition = state => id => {
   });
 };
 
-export const getFromStateByName = state => (position, id) => {
+const getFromStateByName = state => (position, id) => {
   let itemIndex: number = 0;
   const item = state[position].find((toast, index) => {
     itemIndex = index;
@@ -26,6 +26,7 @@ export const getFromStateByName = state => (position, id) => {
 export default function reducer(state, action) {
   const findPlacement = findPosition(state);
   const findItem = getFromStateByName(state);
+  console.log(action.type);
   switch (action.type) {
     case CREATE: {
       return {
@@ -47,8 +48,6 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
-      console.log(action);
-
       const { item, index, position } = findItem(
         action.payload.position,
         action.payload.id,
