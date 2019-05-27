@@ -26,7 +26,6 @@ const getFromStateByName = state => (position, id) => {
 export default function reducer(state, action) {
   const findPlacement = findPosition(state);
   const findItem = getFromStateByName(state);
-  console.log(action.type);
   switch (action.type) {
     case CREATE: {
       return {
@@ -48,11 +47,11 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
-      const { item, index, position } = findItem(
+      const { index, position } = findItem(
         action.payload.position,
         action.payload.id,
       );
-      state[position][index] = item;
+      state[position][index] = action.payload;
       return cloneDeep(state);
     }
     case CLEAR_ALL: {

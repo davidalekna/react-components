@@ -1,14 +1,11 @@
 import { of, merge, interval, empty } from 'rxjs';
 import {
-  filter,
   mergeMap,
   mapTo,
   startWith,
   switchMap,
   scan,
   takeWhile,
-  last,
-  tap,
   takeUntil,
   map,
 } from 'rxjs/operators';
@@ -20,7 +17,7 @@ import {
   DISMISS,
 } from './actions';
 import { dismissToast, updateToast } from './actions';
-import { ofType } from './helpers';
+import { ofType, filterById } from './helpers';
 
 export function createEpic(action$) {
   return action$.pipe(
@@ -34,17 +31,13 @@ export function createEpic(action$) {
       const pause$ = action$
         .pipe(
           ofType(MOUSE_ENTER),
-          filter(({ payload }: any) => {
-            return payload === action.payload.id;
-          }),
+          filterById(action.payload.id),
         )
         .pipe(mapTo(false));
       const resume$ = action$
         .pipe(
           ofType(MOUSE_LEAVE),
-          filter(({ payload }: any) => {
-            return payload === action.payload.id;
-          }),
+          filterById(action.payload.id),
         )
         .pipe(mapTo(true));
 
@@ -56,22 +49,18 @@ export function createEpic(action$) {
           action.payload.delay / 1000,
         ),
         takeWhile(v => v >= 0),
-        // TODO: update countdown on Toast object
-        // NOTE: map not working
-        map(countdown => updateToast({ ...action.payload, countdown })),
-        tap(i => console.log('end', i)),
-        last(),
-        mapTo(dismissToast(action.payload.id)),
+        map(countdown => {
+          if (countdown === 0) return dismissToast(action.payload.id);
+          return updateToast({ ...action.payload, countdown });
+        }),
         takeUntil(
           merge(
             action$.pipe(ofType(CLEAR_ALL)),
             action$.pipe(
               ofType(DISMISS),
-              filter(({ payload }: any) => {
-                return payload === action.payload.id;
-              }),
+              filterById(action.payload.id),
             ),
-          ),
+          ).pipe(mapTo(dismissToast(action.payload.id))),
         ),
       );
     }),

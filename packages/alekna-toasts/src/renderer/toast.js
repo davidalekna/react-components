@@ -13,9 +13,10 @@ const StyledToast = styled.div`
   border-radius: 3px;
 `;
 
-export default function Toast({ id, jsx, dismiss, ...props }) {
+export default function Toast({ id, jsx, dismiss, countdown, ...props }) {
   return (
     <StyledToast onClick={() => dismiss(id)} {...props}>
+      {countdown}
       {jsx}
     </StyledToast>
   );
