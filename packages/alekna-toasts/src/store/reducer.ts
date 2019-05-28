@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import { CREATE, DISMISS, CLEAR_ALL, UPDATE } from './actions';
 
 const findPosition = state => id => {
@@ -47,12 +46,12 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
-      const { index, position } = findItem(
+      const { item, index, position } = findItem(
         action.payload.position,
         action.payload.id,
       );
-      state[position][index] = action.payload;
-      return cloneDeep(state);
+      state[position][index] = { ...item, countdown: action.payload.countdown };
+      return { ...state };
     }
     case CLEAR_ALL: {
       return Object.keys(state).reduce((acc, key) => {
