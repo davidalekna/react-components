@@ -1,5 +1,6 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
 import typescriptPlugin from 'rollup-plugin-typescript2';
+import commonjs from 'rollup-plugin-commonjs';
 import typescript from 'typescript';
 import path from 'path';
 import invariantPlugin from 'rollup-plugin-invariant';
@@ -76,6 +77,10 @@ export function rollup({
           // errors back to the unminified code where they were thrown,
           // where the full error string can be found. See #4519.
           errorCodes: true,
+        }),
+        commonjs({
+          include: /node_modules/,
+          ignore: ['conditional-runtime-dependency'],
         }),
       ],
       onwarn,

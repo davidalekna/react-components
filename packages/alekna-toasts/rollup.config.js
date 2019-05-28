@@ -7,6 +7,5 @@ export default rollup({
     'react-dom': 'react-dom',
     'prop-types': 'prop-types',
     'styled-components': 'styled-components',
-    'node_modules/react-dom/index.js': ['render', 'createPortal'],
   },
 });
