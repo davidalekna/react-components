@@ -1,8 +1,8 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Container } from './animations';
 import { State } from '../types';
-import './styles.css';
 
 const placements = {
   topLeft: {
@@ -54,28 +54,30 @@ export const createPortals = (
   return Object.keys(state).map(position => {
     if (Array.isArray(state[position]) && state[position].length) {
       return createPortal(
-        <TransitionGroup
-          style={Object.assign(
-            {
-              position: 'absolute',
-              ...style,
-            },
-            placements[position],
-          )}
-        >
-          {state[position].map(toast => {
-            const Toast: any = components[position];
-            return (
-              <CSSTransition key={toast.id} timeout={500} classNames="toast">
-                <Toast
-                  onMouseEnter={() => fns.onMouseEnter(toast.id)}
-                  onMouseLeave={() => fns.onMouseLeave(toast.id)}
-                  {...toast}
-                />
-              </CSSTransition>
-            );
-          })}
-        </TransitionGroup>,
+        <Container>
+          <TransitionGroup
+            style={Object.assign(
+              {
+                position: 'absolute',
+                ...style,
+              },
+              placements[position],
+            )}
+          >
+            {state[position].map(toast => {
+              const Toast: any = components[position];
+              return (
+                <CSSTransition key={toast.id} timeout={500} classNames="toast">
+                  <Toast
+                    onMouseEnter={() => fns.onMouseEnter(toast.id)}
+                    onMouseLeave={() => fns.onMouseLeave(toast.id)}
+                    {...toast}
+                  />
+                </CSSTransition>
+              );
+            })}
+          </TransitionGroup>
+        </Container>,
         document.body,
       );
     }

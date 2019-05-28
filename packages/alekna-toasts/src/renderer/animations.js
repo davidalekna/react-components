@@ -59,3 +59,22 @@ export const StyledToast = styled.div`
 
   animation: ${slideWithBouce} 800ms ease-in-out;
 `;
+
+export const Container = styled.div`
+  /* .toast-enter {
+  opacity: 0;
+}
+.toast-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+} */
+  .toast-exit {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .toast-exit-active {
+    opacity: 0;
+    transform: translateX(380px);
+    transition: all 150ms ease-in;
+  }
+`;
