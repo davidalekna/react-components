@@ -47,7 +47,7 @@ const placements = {
 
 export const createPortals = (
   state: State,
-  components: { [key: string]: Node },
+  components,
   style: { [key: string]: unknown },
   fns: { [key: string]: Function },
 ) => {

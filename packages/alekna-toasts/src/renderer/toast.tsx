@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import styled from 'styled-components';
 import { Countdown, StyledToast } from './animations';
 
 export default function Toast({
@@ -10,9 +9,9 @@ export default function Toast({
   delay,
   ...props
 }) {
-  const mounted = React.useRef(false);
+  const mounted = useRef(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     mounted.current = true;
     return () => (mounted.current = false);
   }, [countdown]);
