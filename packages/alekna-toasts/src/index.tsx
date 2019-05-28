@@ -29,13 +29,11 @@ export const ToastContext = React.createContext<State>({
 // Newest on top*
 // Close on click 😋
 // Pause delay on hover 😋
-// Allow to drag and close the toast
 
 export function ToastsProvider({
   children,
   style = {
     padding: 10,
-    border: '1px dashed #ddd',
   },
   components = {
     topLeft: DefaultToast,
