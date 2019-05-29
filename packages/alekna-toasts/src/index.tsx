@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import useObservable from './useObservable';
 import DefaultToast from './renderer/toast';
 import { isClient } from './helpers';
-import { State, Options } from './types';
+import { State, Config } from './types';
 import { createPortals } from './renderer';
 import {
   createToast,
@@ -60,8 +60,9 @@ export function ToastsProvider({
   const dismiss = (id: string) => dispatch(dismissToast(id));
   const reset = () => dispatch(clearAll());
 
-  const create = (jsx: Node, overrides: Options) => {
+  const create = (jsx: JSX.Element, config: Config) => {
     const toastId = uuid();
+    const initialDelay = 5000;
     dispatch(
       createToast({
         id: toastId,
@@ -69,10 +70,12 @@ export function ToastsProvider({
         onMouseEnter: () => onMouseEnter(toastId),
         onMouseLeave: () => onMouseLeave(toastId),
         position: 'topRight',
-        delay: 5000,
+        countdown: initialDelay / 1000,
         autoClose: true,
+        paused: false,
+        delay: initialDelay,
         jsx,
-        ...overrides,
+        ...config,
       }),
     );
   };

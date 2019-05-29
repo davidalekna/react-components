@@ -1,15 +1,17 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { ToastsProvider } from '../index';
-import uuid from 'uuid';
 
 const Button = ({ create, position }) => {
   return (
     <button
       onClick={() =>
-        create(`toast id: ${uuid()}`, {
-          position,
-        })
+        create(
+          `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perspiciatis, consequatur?`,
+          {
+            position,
+          },
+        )
       }
       style={{ padding: 10, margin: 10 }}
     >

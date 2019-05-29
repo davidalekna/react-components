@@ -1,3 +1,4 @@
+import { IToast } from '../types';
 export const CREATE = '@@toasts/CREATE';
 export const DISMISS = '@@toasts/DISMISS';
 export const CLEAR_ALL = '@@toasts/CLEAR_ALL';
@@ -5,10 +6,10 @@ export const MOUSE_ENTER = '@@toasts/MOUSE_ENTER';
 export const MOUSE_LEAVE = '@@toasts/MOUSE_LEAVE';
 export const UPDATE = '@@toasts/UPDATE';
 
-export function createToast(toast) {
+export function createToast(config: IToast) {
   return {
     type: CREATE,
-    payload: toast,
+    payload: config,
   };
 }
 
@@ -39,21 +40,9 @@ export function mouseLeave(id: string) {
   };
 }
 
-export function updateToast({
-  id,
-  position,
-  countdown,
-}: {
-  id: string;
-  position: string;
-  countdown: number;
-}) {
+export function updateToast(toast: IToast) {
   return {
     type: UPDATE,
-    payload: {
-      id,
-      position,
-      countdown,
-    },
+    payload: toast,
   };
 }

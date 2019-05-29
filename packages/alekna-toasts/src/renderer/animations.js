@@ -28,33 +28,57 @@ const slideWithBouce = keyframes`
   100% {
     opacity: 1;
     transform: scale(1,1) translateX(0);
+    perspective: 1000;
   }
 `;
 
-export const Countdown = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
+const slideBar = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+`;
 
-  margin-right: 10px;
-  height: 100%;
-  width: 50px;
-  font-size: 20px;
+export const Loading = styled.div`
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.2);
+
+  &:after {
+    content: '${props => props.countdown}';
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 9px;
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #42f4a4;
+    animation: ${slideBar} ${props => props.delay}s ease-in;
+    animation-play-state: ${({ paused }) => (paused ? 'paused' : 'running')};
+  }
 `;
 
 export const StyledToast = styled.div`
   display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
+  overflow: hidden;
 
   width: 340px;
 
   position: relative;
-  background: #333;
-  color: white;
+  background: #2e3833;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'avenir next', avenir,
+    'helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial,
+    sans-serif;
+  color: #f7fffb;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   margin-bottom: 10px;
-  padding: 10px;
   border-radius: 5px;
 
   animation: ${slideWithBouce} 800ms ease-in-out;

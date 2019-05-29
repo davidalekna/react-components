@@ -1,19 +1,23 @@
-import React, { useRef, useEffect } from 'react';
-import { Countdown, StyledToast } from './animations';
+import React from 'react';
+import { StyledToast, Loading } from './animations';
 import { IToast } from '../types';
 
-export default function Toast({ id, jsx, countdown, delay, ...props }: IToast) {
-  const mounted = useRef(false);
-
-  useEffect(() => {
-    mounted.current = true;
-    return () => (mounted.current = false);
-  }, [countdown]);
+export default function Toast({
+  id,
+  jsx,
+  countdown,
+  delay,
+  paused,
+  ...props
+}: IToast) {
+  console.log(delay / 1000);
+  console.log(paused);
+  console.log(countdown);
 
   return (
     <StyledToast {...props}>
-      <Countdown>{countdown || delay / 1000}</Countdown>
-      <div>{jsx}</div>
+      <div style={{ padding: 10 }}>{jsx}</div>
+      <Loading delay={delay / 1000} paused={paused} countdown={countdown} />
     </StyledToast>
   );
 }

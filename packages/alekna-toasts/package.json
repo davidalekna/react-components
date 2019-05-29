@@ -64,12 +64,12 @@
   },
   "peerDependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "styled-components": "^4.2.0"
+    "react-dom": "^16.8.6"
   },
   "dependencies": {
     "lodash": "^4.17.11",
     "rxjs": "^6.5.1",
+    "styled-components": "^4.2.0",
     "uuid": "^3.3.2"
   },
   "directories": {

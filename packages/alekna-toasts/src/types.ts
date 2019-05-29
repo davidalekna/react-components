@@ -5,6 +5,7 @@ export interface IToast {
   onMouseLeave: Function;
   position: string;
   delay: number;
+  paused: boolean;
   autoClose: boolean;
   countdown: number;
   jsx: JSX.Element;
@@ -21,7 +22,7 @@ export type Placement =
 export type Positions = { [prop in Placement]: IToast };
 export type State = { [prop in Placement]: IToast[] };
 
-export type Options = {
+export type Config = {
   position: Placement;
   autoClose: boolean;
 };

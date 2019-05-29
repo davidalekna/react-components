@@ -1,4 +1,11 @@
-import { CREATE, DISMISS, CLEAR_ALL, UPDATE } from './actions';
+import {
+  CREATE,
+  DISMISS,
+  CLEAR_ALL,
+  UPDATE,
+  MOUSE_ENTER,
+  MOUSE_LEAVE,
+} from './actions';
 
 const findPosition = state => id => {
   return Object.keys(state).find(key => {
@@ -46,12 +53,26 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
-      const { item, index, position } = findItem(
+      const { index, position } = findItem(
         action.payload.position,
         action.payload.id,
       );
-      state[position][index] = { ...item, countdown: action.payload.countdown };
+      state[position][index] = action.payload;
       return { ...state };
+    }
+    case MOUSE_ENTER: {
+      const placement = findPlacement(action.payload);
+      const { item, index, position } = findItem(placement, action.payload);
+      const newState = { ...state };
+      newState[position][index] = { ...item, paused: true };
+      return newState;
+    }
+    case MOUSE_LEAVE: {
+      const placement = findPlacement(action.payload);
+      const { item, index, position } = findItem(placement, action.payload);
+      const newState = { ...state };
+      newState[position][index] = { ...item, paused: false };
+      return newState;
     }
     case CLEAR_ALL: {
       return Object.keys(state).reduce((acc, key) => {
