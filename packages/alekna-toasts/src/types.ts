@@ -1,15 +1,14 @@
 export interface IToast {
   id: string;
+  onClick: Function;
+  onMouseEnter: Function;
+  onMouseLeave: Function;
+  position: string;
+  delay: number;
+  autoClose: boolean;
+  countdown: number;
+  jsx: JSX.Element;
 }
-
-export type State = {
-  topLeft: IToast[];
-  topCenter: IToast[];
-  topRight: IToast[];
-  bottomLeft: IToast[];
-  bottomCenter: IToast[];
-  bottomRight: IToast[];
-};
 
 export type Placement =
   | 'bottomLeft'
@@ -19,9 +18,10 @@ export type Placement =
   | 'topCenter'
   | 'topRight';
 
+export type Positions = { [prop in Placement]: IToast };
+export type State = { [prop in Placement]: IToast[] };
+
 export type Options = {
-  appearance?: 'error' | 'info' | 'success';
-  autoDismiss?: boolean;
   position: Placement;
-  delay: number;
+  autoClose: boolean;
 };

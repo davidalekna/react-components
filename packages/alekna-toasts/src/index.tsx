@@ -30,18 +30,20 @@ export const ToastContext = React.createContext<State>({
 // Close on click 😋
 // Pause delay on hover 😋
 
+const toastComponents = {
+  topLeft: DefaultToast,
+  topCenter: DefaultToast,
+  topRight: DefaultToast,
+  bottomLeft: DefaultToast,
+  bottomCenter: DefaultToast,
+  bottomRight: DefaultToast,
+};
+
 export function ToastsProvider({
   children,
+  components = {},
   style = {
     padding: 10,
-  },
-  components = {
-    topLeft: DefaultToast,
-    topCenter: DefaultToast,
-    topRight: DefaultToast,
-    bottomLeft: DefaultToast,
-    bottomCenter: DefaultToast,
-    bottomRight: DefaultToast,
   },
 }) {
   const { state, dispatch } = useObservable<State>({
@@ -53,13 +55,19 @@ export function ToastsProvider({
     bottomRight: [],
   });
 
+  const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
+  const onMouseLeave = (id: string) => dispatch(mouseLeave(id));
   const dismiss = (id: string) => dispatch(dismissToast(id));
+  const reset = () => dispatch(clearAll());
 
   const create = (jsx: Node, overrides: Options) => {
+    const toastId = uuid();
     dispatch(
       createToast({
-        id: uuid(),
-        dismiss,
+        id: toastId,
+        onClick: () => dismiss(toastId),
+        onMouseEnter: () => onMouseEnter(toastId),
+        onMouseLeave: () => onMouseLeave(toastId),
         position: 'topRight',
         delay: 5000,
         autoClose: true,
@@ -69,13 +77,9 @@ export function ToastsProvider({
     );
   };
 
-  const reset = () => dispatch(clearAll());
-
-  const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
-  const onMouseLeave = (id: string) => dispatch(mouseLeave(id));
-
   // RENDERER BELLOW
 
+  const mergedComponents: any = Object.assign(toastComponents, components);
   const fns = { create, dismiss, reset };
 
   const ui =
@@ -84,11 +88,7 @@ export function ToastsProvider({
   return (
     <ToastContext.Provider value={{ ...state, ...fns }}>
       {ui}
-      {isClient &&
-        createPortals(state, components, style, {
-          onMouseEnter,
-          onMouseLeave,
-        })}
+      {isClient && createPortals(state, mergedComponents, style)}
     </ToastContext.Provider>
   );
 }

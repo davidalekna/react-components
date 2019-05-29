@@ -1,14 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { Countdown, StyledToast } from './animations';
+import { IToast } from '../types';
 
-export default function Toast({
-  id,
-  jsx,
-  dismiss,
-  countdown,
-  delay,
-  ...props
-}) {
+export default function Toast({ id, jsx, countdown, delay, ...props }: IToast) {
   const mounted = useRef(false);
 
   useEffect(() => {
@@ -17,7 +11,7 @@ export default function Toast({
   }, [countdown]);
 
   return (
-    <StyledToast onClick={() => dismiss(id)} {...props}>
+    <StyledToast {...props}>
       <Countdown>{countdown || delay / 1000}</Countdown>
       <div>{jsx}</div>
     </StyledToast>
