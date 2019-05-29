@@ -27,6 +27,8 @@ export function createEpic(action$) {
         return of(action);
       }
 
+      // ERROR should be counting milliseconds, not seconds
+
       const interval$ = interval(1000).pipe(mapTo(-1));
       const pause$ = action$
         .pipe(

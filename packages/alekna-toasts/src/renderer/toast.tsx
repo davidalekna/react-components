@@ -16,8 +16,11 @@ export default function Toast({
 
   return (
     <StyledToast {...props}>
-      <div style={{ padding: 10 }}>{jsx}</div>
-      <Loading delay={delay / 1000} paused={paused} countdown={countdown} />
+      <div style={{ padding: 10 }}>
+        {countdown}
+        {jsx}
+      </div>
+      <Loading delay={delay / 1000} paused={paused} />
     </StyledToast>
   );
 }

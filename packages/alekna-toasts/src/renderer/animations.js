@@ -48,7 +48,7 @@ export const Loading = styled.div`
   background: rgba(0, 0, 0, 0.2);
 
   &:after {
-    content: '${props => props.countdown}';
+    content: '';
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -57,7 +57,7 @@ export const Loading = styled.div`
     width: 100%;
     height: 10px;
     background: #42f4a4;
-    animation: ${slideBar} ${props => props.delay}s ease-in;
+    animation: ${slideBar} ${({ delay }) => delay}s ease-in;
     animation-play-state: ${({ paused }) => (paused ? 'paused' : 'running')};
   }
 `;
