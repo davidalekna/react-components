@@ -5,22 +5,25 @@ import { IToast } from '../types';
 export default function Toast({
   id,
   jsx,
-  countdown,
+  progress,
   delay,
   paused,
   ...props
 }: IToast) {
-  console.log(delay / 1000);
-  console.log(paused);
-  console.log(countdown);
-
   return (
     <StyledToast {...props}>
-      <div style={{ padding: 10 }}>
-        {countdown}
-        {jsx}
+      <div
+        style={{
+          display: 'flex',
+          flex: '1 1 auto',
+          flexDirection: 'row',
+          padding: 10,
+        }}
+      >
+        <div style={{ flex: '0 0 auto', width: 30 }}>{progress}</div>
+        <div>{jsx}</div>
       </div>
-      <Loading delay={delay / 1000} paused={paused} />
+      <Loading delay={delay} progress={progress} paused={paused} />
     </StyledToast>
   );
 }

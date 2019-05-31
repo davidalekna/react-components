@@ -27,7 +27,7 @@ export function createEpic(action$) {
         return of(action);
       }
 
-      // ERROR should be counting milliseconds, not seconds
+      // ERROR: if paused and unpaused stays longer than initial delay
 
       const interval$ = interval(1000).pipe(mapTo(-1));
       const pause$ = action$
@@ -43,6 +43,8 @@ export function createEpic(action$) {
         )
         .pipe(mapTo(true));
 
+      // NOTE: when timer paused should map to -1
+
       return merge(pause$, resume$).pipe(
         startWith(true),
         switchMap(val => (val ? interval$ : empty())),
@@ -53,7 +55,7 @@ export function createEpic(action$) {
         takeWhile(v => v >= 0),
         map(cd => {
           if (cd === 0) return dismissToast(action.payload.id);
-          return updateToast({ ...action.payload, countdown: cd });
+          return updateToast({ ...action.payload, progress: cd });
         }),
         takeUntil(
           merge(

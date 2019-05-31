@@ -7,7 +7,7 @@ export interface IToast {
   delay: number;
   paused: boolean;
   autoClose: boolean;
-  countdown: number;
+  progress: number;
   jsx: JSX.Element;
 }
 
@@ -25,4 +25,5 @@ export type State = { [prop in Placement]: IToast[] };
 export type Config = {
   position: Placement;
   autoClose: boolean;
+  delay?: number;
 };

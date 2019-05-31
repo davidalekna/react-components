@@ -12,6 +12,7 @@ import {
   mouseEnter,
   mouseLeave,
 } from './store/actions';
+import { generateId } from './store/helpers';
 
 export { DefaultToast as ToastContainer };
 
@@ -61,8 +62,8 @@ export function ToastsProvider({
   const reset = () => dispatch(clearAll());
 
   const create = (jsx: JSX.Element, config: Config) => {
-    const toastId = uuid();
-    const initialDelay = 5000;
+    const toastId = generateId();
+    const initialDelay = config.delay || 5000;
     dispatch(
       createToast({
         id: toastId,
@@ -70,7 +71,7 @@ export function ToastsProvider({
         onMouseEnter: () => onMouseEnter(toastId),
         onMouseLeave: () => onMouseLeave(toastId),
         position: 'topRight',
-        countdown: initialDelay / 1000,
+        progress: initialDelay / 1000,
         autoClose: true,
         paused: false,
         delay: initialDelay,

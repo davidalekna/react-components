@@ -53,11 +53,11 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
-      const { index, position } = findItem(
-        action.payload.position,
-        action.payload.id,
+      const index = state[action.payload.position].findIndex(
+        item => item.id === action.payload.id,
       );
-      state[position][index] = action.payload;
+      state[action.payload.position][index]['progress'] =
+        action.payload.progress;
       return { ...state };
     }
     case MOUSE_ENTER: {

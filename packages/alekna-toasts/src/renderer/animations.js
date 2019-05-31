@@ -49,15 +49,11 @@ export const Loading = styled.div`
 
   &:after {
     content: '';
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    font-size: 9px;
     position: absolute;
     width: 100%;
     height: 10px;
     background: #42f4a4;
-    animation: ${slideBar} ${({ delay }) => delay}s ease-in;
+    animation: ${slideBar} ${({ delay }) => delay}ms ease-in forwards;
     animation-play-state: ${({ paused }) => (paused ? 'paused' : 'running')};
   }
 `;
