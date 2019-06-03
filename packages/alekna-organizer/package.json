@@ -1,0 +1,92 @@
+{
+  "name": "@alekna/react-organizer",
+  "version": "1.0.0",
+  "description": "Organizer is a lightweight, fast and extendable render props component",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidalekna/alekna.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "homepage": "https://github.com/davidalekna/alekna#readme",
+  "license": "MIT",
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "react",
+    "react-component",
+    "component",
+    "calendar",
+    "date-picker",
+    "datepicker",
+    "date",
+    "picker",
+    "event",
+    "events manager",
+    "date-fns",
+    "calendar",
+    "render-props"
+  ],
+  "author": "David Alekna <alekna@live.co.uk>",
+  "scripts": {
+    "prepare": "npm run build",
+    "dev": "yarn storybook",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "build": "tsc -b .",
+    "postbuild": "npm run bundle",
+    "bundle": "../../node_modules/rollup/bin/rollup -c rollup.config.js",
+    "clean": "rimraf lib storybook-static esm",
+    "report-coverage": "codecov",
+    "storybook": "start-storybook -p 6008",
+    "storybook:build": "build-storybook",
+    "storybook:upload": "gh-pages -d storybook-static",
+    "storybook:clean": "rimraf storybook-static"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@storybook/react": "^5.0.11",
+    "@types/jest": "^24.0.12",
+    "@types/react": "^16.8.14",
+    "babel-jest": "^24.7.1",
+    "babel-loader": "^8.0.5",
+    "@storybook/addon-actions": "^5.0.11",
+    "@storybook/addon-links": "^5.0.11",
+    "@storybook/addons": "^5.0.11",
+    "@types/prop-types": "^15.5.8",
+    "@types/react-dom": "^16.8.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-runtime": "^6.26.0",
+    "codecov": "^3.0.4",
+    "eslint": "^5.6.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-watch": "^5.1.2",
+    "ghooks": "^2.0.4",
+    "jest": "^24.8.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-testing-library": "^7.0.1",
+    "styled-components": "^4.2.0",
+    "ts-jest": "^24.0.2",
+    "ts-loader": "^6.0.1",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "prop-types": "^15.6.0",
+    "react": "^15.3.0 || ^16.0.0-0"
+  },
+  "dependencies": {
+    "date-fns": "^2.0.0-alpha.27"
+  }
+}
