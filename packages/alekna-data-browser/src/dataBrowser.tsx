@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { getObjectPropertyByString, arrayHasArrays } from './utils';
 import { State, Props } from './types';
 
@@ -472,6 +472,21 @@ export class DataBrowser extends React.Component<Props, State> {
       </DataBrowserContext.Provider>
     );
   }
+}
+
+export function withDataBrowser(Component) {
+  const Wrapper = React.forwardRef((props, ref) => {
+    return (
+      <DataBrowser.Consumer>
+        {browserUtils => (
+          <Component {...props} dataBrowser={browserUtils} ref={ref} />
+        )}
+      </DataBrowser.Consumer>
+    );
+  });
+  Wrapper.displayName = `withDataBrowser(${Component.displayName ||
+    Component.name})`;
+  return Wrapper;
 }
 
 export function useDataBrowser() {
