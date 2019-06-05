@@ -13,13 +13,15 @@
     "esModuleInterop": true,
     "lib": ["es2018", "dom"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
     "node_modules",
     "lib",
+    "**/__components__/**/*",
     "**/__mocks__/**/*",
-    "**/__tests__/**/*",
     "**/__stories__/**/*",
+    "**/__temp/**/*",
+    "**/__tests__/**/*",
     "**/__utils__/**/*",
     "*.test.ts",
     "*.test.tsx"

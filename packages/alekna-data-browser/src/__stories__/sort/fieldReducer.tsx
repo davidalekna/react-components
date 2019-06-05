@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 
-// field reducer pattern will help to modify each row item the way you want.
-
-function fieldReducer(fieldValue: any = '🍔', fieldName: string) {
+export default function fieldReducer(
+  fieldValue: any = '🍔',
+  fieldName: string,
+) {
   switch (fieldName) {
     case 'name':
       return `🌄 ${fieldValue}`;
@@ -16,5 +17,3 @@ function fieldReducer(fieldValue: any = '🍔', fieldName: string) {
       return fieldValue;
   }
 }
-
-export default fieldReducer;
