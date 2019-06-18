@@ -14,7 +14,12 @@ function onwarn(message) {
   }
 }
 
-const defaultGlobals = {};
+const defaultGlobals = {
+  react: 'react',
+  'prop-types': 'propTypes',
+  lodash: 'lodash',
+  'styled-components': 'styled',
+};
 
 export function rollup({
   name,
@@ -78,10 +83,7 @@ export function rollup({
           // where the full error string can be found. See #4519.
           errorCodes: true,
         }),
-        commonjs({
-          include: /node_modules/,
-          ignore: ['conditional-runtime-dependency'],
-        }),
+        commonjs(),
       ],
       onwarn,
     },

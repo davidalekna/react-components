@@ -1,7 +1,7 @@
 {
-  "name": "@alekna/react-forms",
+  "name": "@alekna/react-store",
   "version": "1.0.5",
-  "description": "A simple forms manager for react.",
+  "description": "A redux like store managed by rxjs.",
   "author": "David Alekna <alekna@live.co.uk>",
   "license": "MIT",
   "main": "./lib/bundle.cjs.js",
@@ -9,7 +9,8 @@
   "typings": "./lib/index.d.ts",
   "sideEffects": false,
   "files": [
-    "lib/"
+    "lib/bundle*",
+    "lib/index.d.ts"
   ],
   "repository": {
     "type": "git",

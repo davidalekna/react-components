@@ -9,7 +9,8 @@
   "typings": "./lib/index.d.ts",
   "sideEffects": false,
   "files": [
-    "lib/"
+    "lib/bundle*",
+    "lib/index.d.ts"
   ],
   "repository": {
     "type": "git",
