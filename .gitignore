@@ -32,6 +32,7 @@ node_modules
 
 # don't commit compiled files
 lib
+esm
 benchmark_lib
 test-lib
 dist
