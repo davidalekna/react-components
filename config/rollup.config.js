@@ -16,6 +16,7 @@ function onwarn(message) {
 
 const defaultGlobals = {
   react: 'react',
+  'react-dom': 'react-dom',
   'prop-types': 'propTypes',
   lodash: 'lodash',
   'styled-components': 'styled',

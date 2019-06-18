@@ -2,7 +2,5 @@ import { rollup } from '../../config/rollup.config';
 
 export default rollup({
   name: 'alekna-toasts',
-  extraGlobals: {
-    'react-dom': 'createPortal',
-  },
+  extraGlobals: {},
 });
