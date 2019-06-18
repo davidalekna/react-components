@@ -71,8 +71,8 @@ export function rollup({
       },
       plugins: [
         nodeResolve({
+          mainFields: ['module', 'main'],
           extensions: ['.ts', '.tsx'],
-          module: true,
         }),
         typescriptPlugin({ typescript, tsconfig }),
         invariantPlugin({
@@ -84,7 +84,9 @@ export function rollup({
           // where the full error string can be found. See #4519.
           errorCodes: true,
         }),
-        commonjs(),
+        commonjs({
+          include: /node_modules/,
+        }),
       ],
       onwarn,
     },

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { getObjectPropertyByString, arrayHasArrays } from './utils';
 import { State, Props } from './types';
 
+export { getObjectPropertyByString };
+
 export const DataBrowserContext = React.createContext<State>({
   columnFlex: [],
   availableColumnFlex: null,
@@ -32,7 +34,7 @@ const LIST = 'LIST';
 const GRID = 'GRID';
 const LOADING = 'LOADING';
 
-export class DataBrowser extends React.Component<Props, State> {
+export default class DataBrowser extends React.Component<Props, State> {
   static propTypes = {
     children: PropTypes.func.isRequired,
     columnFlex: PropTypes.array,
