@@ -1,4 +1,4 @@
-import { merge, cloneDeep } from 'lodash';
+import { merge } from 'lodash';
 import { FormState, IField } from '../types';
 import { FormActions } from './types';
 import {
@@ -31,18 +31,18 @@ const formReducer = (initialState: FormState) => (
       const newItem: IField = Object.assign(item, action.payload);
       newItem.meta.errors = [];
       state.set(action.payload.name, newItem);
-      return cloneDeep(state);
+      return state;
     }
     case ERROR: {
       // TODO: should add error under meta?
       const { item } = action.payload;
       state.set(item.name, item);
-      return cloneDeep(state);
+      return state;
     }
     case FIELD_BLUR: {
       const { item } = action.payload;
       state.set(item.name, item);
-      return cloneDeep(state);
+      return state;
     }
     case FIELD_FOCUS: {
       const { name, loading } = action.payload;
@@ -53,21 +53,21 @@ const formReducer = (initialState: FormState) => (
           meta: { touched: true, loading },
         }),
       );
-      return cloneDeep(state);
+      return state;
     }
     case FIELD_ERROR_UPDATE: {
       const { item } = action.payload;
       state.set(item.name, item);
-      return cloneDeep(state);
+      return state;
     }
     case ERRORS: {
-      return cloneDeep(action.payload);
+      return action.payload;
     }
     case FORM_RESET: {
-      return cloneDeep(initialState);
+      return initialState;
     }
     case FORM_SUBMIT: {
-      return cloneDeep(action.payload);
+      return action.payload;
     }
     default: {
       return state;
