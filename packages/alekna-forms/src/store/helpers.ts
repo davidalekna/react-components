@@ -39,7 +39,7 @@ export function containsNoErrors(fields: IField[]) {
 }
 
 export function extractFinalValues(state: FormState): IFinalValues {
-  return state.reduce((acc, field) => {
+  return Array.from(state.values()).reduce((acc, field: IField) => {
     if ((field.value && !isBoolean(field.value)) || isBoolean(field.value)) {
       return merge(acc, createObject({ [field.name]: field.value }));
     }

@@ -21,7 +21,7 @@ export const getFromStateByName = (state: any) => (itemName: string) => {
 };
 
 const formReducer = (initialState: FormState) => (
-  state: any,
+  state: FormState = initialState,
   action: FormActions,
 ): FormState => {
   const findByName = getFromStateByName(state);

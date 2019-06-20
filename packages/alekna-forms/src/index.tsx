@@ -3,6 +3,7 @@ import { isEqual, cloneDeep } from 'lodash';
 import { useStore, dispatch, createStore } from '@alekna/react-store';
 import formReducer from './store/reducer';
 import { fieldsEpic } from './store/epics';
+import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
 import {
   fieldUpdate,
   fieldBlur,
@@ -10,7 +11,6 @@ import {
   formReset,
   formSubmit,
 } from './store/actions';
-import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
 
 export const FormContext = React.createContext<any>({
   fields: [],
@@ -48,15 +48,18 @@ function configureStore(initialFields) {
   const reducers = {
     fields: formReducer(initialState),
   };
-  return createStore(reducers, { fields: initialState }, [fieldsEpic]);
+  return createStore(reducers, undefined, [fieldsEpic]);
 }
 
-export function Form({
+export const Form = ({
   children,
   initialFields = [],
   onSubmit = () => {},
-}: IDefaultProps) {
-  const { reducers, initialState, epics } = configureStore(initialFields);
+}: IDefaultProps) => {
+  const { reducers, initialState, epics } = React.useMemo(
+    () => configureStore(initialFields),
+    [initialFields],
+  );
   const { selectState } = useStore(reducers, initialState, epics);
   const state = selectState(state => state.fields);
 
@@ -160,7 +163,7 @@ export function Form({
       {ui}
     </FormContext.Provider>
   );
-}
+};
 
 export function useFormContext() {
   const context = React.useContext(FormContext);
