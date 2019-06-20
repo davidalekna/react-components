@@ -76,6 +76,7 @@
     "react-dom": "^16.8.0-alpha.1"
   },
   "dependencies": {
+    "@alekna/react-store": "file:../alekna-store",
     "rxjs": "^6.5.1"
   },
   "directories": {

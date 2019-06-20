@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { isEqual, cloneDeep } from 'lodash';
-import useObservable from './useObservable';
+import { useStore, dispatch, createStore } from '@alekna/react-store';
+import formReducer from './store/reducer';
+import { fieldsEpic } from './store/epics';
 import {
   fieldUpdate,
   fieldBlur,
@@ -8,14 +10,7 @@ import {
   formReset,
   formSubmit,
 } from './store/actions';
-import {
-  IField,
-  FormState,
-  InputEvent,
-  ICustomInput,
-  IDefaultProps,
-  IFormContext,
-} from './types';
+import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
 
 export const FormContext = React.createContext<any>({
   fields: [],
@@ -48,16 +43,22 @@ function transformFields(initialFields: IField[]): any {
   return fields;
 }
 
+function configureStore(initialFields) {
+  const initialState = transformFields(initialFields);
+  const reducers = {
+    fields: formReducer(initialState),
+  };
+  return createStore(reducers, { fields: initialState }, [fieldsEpic]);
+}
+
 export function Form({
   children,
   initialFields = [],
   onSubmit = () => {},
-  epics = [],
 }: IDefaultProps) {
-  const { state, dispatch } = useObservable(
-    transformFields(initialFields),
-    epics,
-  );
+  const { reducers, initialState, epics } = configureStore(initialFields);
+  const { selectState } = useStore(reducers, initialState, epics);
+  const state = selectState(state => state.fields);
 
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');

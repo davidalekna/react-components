@@ -39,7 +39,7 @@ export function formReset() {
   };
 }
 
-export function formSubmit(state: FormState, onSubmit: Function) {
+export function formSubmit(state: any, onSubmit: Function) {
   return {
     type: FORM_SUBMIT,
     payload: state,

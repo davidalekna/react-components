@@ -1,5 +1,14 @@
 import { of, merge, from, Observable } from 'rxjs';
-import { FIELD_BLUR, UPDATE, FORM_SUBMIT, FORM_RESET } from './actions';
+import {
+  UPDATE,
+  FIELD_BLUR,
+  FIELD_ERROR_UPDATE,
+  ERROR,
+  FIELD_FOCUS,
+  ERRORS,
+  FORM_RESET,
+  FORM_SUBMIT,
+} from './actions';
 import { fieldErrorUpdate } from './actions';
 import {
   filter,
@@ -24,7 +33,6 @@ import {
 
 const fieldValidator = (action$: Observable<FormActions>) => {
   return switchMap(({ payload }) => {
-    console.log(payload);
     // add requests into an Observable from
     const requests = payload.item.requirements
       // only function allowed in requests
@@ -71,74 +79,72 @@ const fieldValidator = (action$: Observable<FormActions>) => {
   });
 };
 
-export function onBlurEpic(action$: Observable<FormActions>) {
-  return action$.pipe(
-    ofType(FIELD_BLUR),
-    mergeMap((action: any) => {
-      return of(action).pipe(
-        filter(
-          ({ payload }) =>
-            Array.isArray(payload.item.requirements) &&
-            payload.item.requirements.length,
+export const fieldsEpic = {
+  actions: [
+    UPDATE,
+    FIELD_BLUR,
+    FIELD_ERROR_UPDATE,
+    ERROR,
+    FIELD_FOCUS,
+    ERRORS,
+    FORM_RESET,
+    FORM_SUBMIT,
+  ],
+  streams: [
+    {
+      type: FIELD_BLUR,
+      stream: action$ =>
+        action$.pipe(
+          mergeMap((action: any) => {
+            return of(action).pipe(
+              filter(
+                ({ payload }) =>
+                  Array.isArray(payload.item.requirements) &&
+                  payload.item.requirements.length,
+              ),
+              fieldValidator(action$),
+            );
+          }),
         ),
-        fieldValidator(action$),
-      );
-    }),
-  );
-}
-
-export function onSubmitEpic(action$) {
-  return action$.pipe(
-    ofType(FORM_SUBMIT),
-    throttleTime(1500),
-    switchMap(({ payload, onSubmit }: { payload: any; onSubmit: Function }) => {
-      const errorsBuffer: IField[] = [];
-      const state$ = Array.from(payload.values()).map((item: IField) =>
-        of(item),
-      );
-
-      return from(state$).pipe(
-        mergeMap((field: any) => {
-          return field.pipe(
-            filter((item: any) => {
-              return (
-                Array.isArray(item.requirements) && item.requirements.length
+    },
+    {
+      type: FORM_SUBMIT,
+      stream: action$ =>
+        action$.pipe(
+          throttleTime(1500),
+          switchMap(
+            ({ payload, onSubmit }: { payload: any; onSubmit: Function }) => {
+              const errorsBuffer: IField[] = [];
+              const state$ = Array.from(payload.values()).map((item: IField) =>
+                of(item),
               );
-            }),
-            map(field => ({ payload: { item: field } })),
-            fieldValidator(action$),
-            tap((err: any) => {
-              // Side effect: process onSubmit
-              errorsBuffer.push(err.payload.item);
-              return (
-                allErrorsEmitted(payload, errorsBuffer.length) &&
-                containsNoErrors(errorsBuffer) &&
-                onSubmit(extractFinalValues(payload))
+
+              return from(state$).pipe(
+                mergeMap((field: any) => {
+                  return field.pipe(
+                    filter((item: any) => {
+                      return (
+                        Array.isArray(item.requirements) &&
+                        item.requirements.length
+                      );
+                    }),
+                    map(field => ({ payload: { item: field } })),
+                    fieldValidator(action$),
+                    tap((err: any) => {
+                      // Side effect: process onSubmit
+                      errorsBuffer.push(err.payload.item);
+                      return (
+                        allErrorsEmitted(payload, errorsBuffer.length) &&
+                        containsNoErrors(errorsBuffer) &&
+                        onSubmit(extractFinalValues(payload))
+                      );
+                    }),
+                  );
+                }),
               );
-            }),
-          );
-        }),
-      );
-    }),
-  );
-}
-
-// COMBINE EPICS
-
-export const combineEpics = (...epics) => {
-  return (...streams) => {
-    return merge(
-      streams[0],
-      ...epics.map(epic => {
-        const output$ = epic(...streams);
-        if (!output$) {
-          throw new TypeError(
-            `combineEpics: one of the provided Epics "${epic.name ||
-              '<anonymous>'}" does not return a stream. Double check you\'re not missing a return statement!`,
-          );
-        }
-        return output$;
-      }),
-    );
-  };
+            },
+          ),
+        ),
+    },
+  ],
 };
