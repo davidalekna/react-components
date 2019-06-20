@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-store",
-  "version": "1.0.5",
+  "version": "1.0.0",
   "description": "A redux like store managed by rxjs.",
   "author": "David Alekna <alekna@live.co.uk>",
   "license": "MIT",
