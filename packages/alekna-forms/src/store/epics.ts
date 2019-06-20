@@ -8,6 +8,7 @@ import {
   ERRORS,
   FORM_RESET,
   FORM_SUBMIT,
+  NOTHING,
 } from './actions';
 import { fieldErrorUpdate } from './actions';
 import {
@@ -73,7 +74,7 @@ const fieldValidator = (action$: Observable<FormActions>) => {
               return innerAction.payload.name === payload.item.name;
             }),
           ),
-        ).pipe(mapTo({ type: 'cancel-request' })),
+        ).pipe(mapTo({ type: NOTHING })),
       ),
     );
   });
@@ -89,6 +90,7 @@ export const fieldsEpic = {
     ERRORS,
     FORM_RESET,
     FORM_SUBMIT,
+    NOTHING,
   ],
   streams: [
     {

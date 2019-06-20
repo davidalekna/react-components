@@ -6,6 +6,7 @@ export const FIELD_FOCUS = '@@frm/FIELD_FOCUS';
 export const ERRORS = '@@frm/ERRORS';
 export const FORM_RESET = '@@frm/FORM_RESET';
 export const FORM_SUBMIT = '@@frm/FORM_SUBMIT';
+export const NOTHING = '@@frm/NOTHING';
 
 import { IField, FormState } from '../types';
 

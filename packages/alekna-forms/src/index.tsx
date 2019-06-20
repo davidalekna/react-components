@@ -22,7 +22,7 @@ export const FormContext = React.createContext<any>({
 function transformFields(initialFields: IField[]): any {
   const meta = { touched: false, loading: false, errors: [] };
   const fields = new Map();
-  cloneDeep(initialFields).map(({ requirements, ...field }: IField) => {
+  initialFields.map(({ requirements, ...field }: IField) => {
     if (
       Array.isArray(requirements) &&
       requirements.filter(fn => typeof fn === 'function').filter(Boolean)
@@ -43,10 +43,10 @@ function transformFields(initialFields: IField[]): any {
   return fields;
 }
 
-function configureStore(initialFields) {
-  const initialState = transformFields(initialFields);
+function configureStore(initialFields: IField[]) {
+  const initialState = transformFields(cloneDeep(initialFields));
   const reducers = {
-    fields: formReducer(initialState),
+    fields: formReducer(cloneDeep(initialState)),
   };
   return createStore(reducers, undefined, [fieldsEpic]);
 }
