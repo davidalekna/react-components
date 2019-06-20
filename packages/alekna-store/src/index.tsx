@@ -4,6 +4,7 @@ import { scan, filter } from 'rxjs/operators';
 import { merge as lodashMerge } from 'lodash';
 import { Reducers, State, Store, Epics, Action } from './types';
 import combineEpics from './combineEpics';
+import { cloneDeep } from '@babel/types';
 
 const action$ = new Subject();
 
@@ -28,12 +29,12 @@ export const useStore = (
           for (const key of stateKeys) {
             // extract reducer for per state key
             const reducer = reducers[key];
-            Object.assign(newState, {
+            lodashMerge(newState, {
               [key]: reducer(prevState[key], action),
             });
           }
           // merge prevState with current state
-          return { ...prevState, ...newState };
+          return lodashMerge(prevState, newState);
         }, initialState),
       )
       .subscribe(update);

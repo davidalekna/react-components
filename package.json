@@ -28,12 +28,18 @@
       "name": "alekna-toasts",
       "path": "./packages/alekna-toasts/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
+    },
+    {
+      "name": "alekna-store",
+      "path": "./packages/alekna-store/lib/bundle.cjs.min.js",
+      "maxSize": "10.6 kB"
     }
   ],
   "dependencies": {
-    "alekna-data-browser": "file:packages/alekna-data-browser",
-    "alekna-forms": "file:packages/alekna-forms",
-    "alekna-toasts": "file:packages/alekna-toasts"
+    "react-data-browser": "file:packages/alekna-data-browser",
+    "react-forms": "file:packages/alekna-forms",
+    "react-toasts": "file:packages/alekna-toasts",
+    "react-store": "file:packages/alekna-store"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",
