@@ -47,11 +47,11 @@ export function extractFinalValues(state: FormState): IFinalValues {
   }, {});
 }
 
-export function allErrorsEmitted(state: FormState, totalErrors: number) {
+export function allErrorsEmitted(state: any[], totalErrors: number) {
   return (
-    state
-      .filter(item => item.requirements)
-      .reduce((acc: unknown[], val) => {
+    Array.from(state.values())
+      .filter((item: any) => item.requirements)
+      .reduce((acc: unknown[], val: any) => {
         return acc.concat(val.requirements);
       }, []).length === totalErrors
   );

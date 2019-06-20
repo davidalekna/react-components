@@ -13,7 +13,7 @@ export interface IField {
   [key: string]: any;
 }
 
-export type FormState = { readonly [K in keyof IField]: IField[K] }[];
+export type FormState = { readonly [K in keyof IField]: IField[K] };
 
 export type InputEvent = React.ChangeEvent<HTMLInputElement>;
 
@@ -34,7 +34,7 @@ export interface IDefaultProps {
 }
 
 export interface IFormContext {
-  fields: FormState;
+  fields: any;
   handleSubmit: Function;
   reset: Function;
   touched: Boolean;

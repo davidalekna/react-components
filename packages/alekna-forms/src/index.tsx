@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { isEqual, cloneDeep } from 'lodash';
-import { getFromStateByName } from './store/reducer';
 import useObservable from './useObservable';
 import {
   fieldUpdate,
@@ -18,35 +17,35 @@ import {
   IFormContext,
 } from './types';
 
-export const FormContext = React.createContext<IFormContext>({
+export const FormContext = React.createContext<any>({
   fields: [],
   handleSubmit: () => {},
   reset: () => {},
   touched: false,
 });
 
-function transformFields(initialFields: FormState) {
+function transformFields(initialFields: IField[]): any {
   const meta = { touched: false, loading: false, errors: [] };
-  return cloneDeep(
-    initialFields.map(({ requirements, ...field }: IField) => {
-      if (
-        Array.isArray(requirements) &&
-        requirements.filter(fn => typeof fn === 'function').filter(Boolean)
-          .length > 0
-      ) {
-        return {
-          ...field,
-          requirements,
-          meta,
-        };
-      }
-
-      return {
+  const fields = new Map();
+  cloneDeep(initialFields).map(({ requirements, ...field }: IField) => {
+    if (
+      Array.isArray(requirements) &&
+      requirements.filter(fn => typeof fn === 'function').filter(Boolean)
+        .length > 0
+    ) {
+      return fields.set(field.name, {
         ...field,
+        requirements,
         meta,
-      };
-    }),
-  );
+      });
+    }
+
+    return fields.set(field.name, {
+      ...field,
+      meta,
+    });
+  });
+  return fields;
 }
 
 export function Form({
@@ -88,25 +87,19 @@ export function Form({
     }
   };
 
-  const onBlurAction = (name: string, findByName: Function) => {
+  const onBlurAction = (name: string) => {
     if (!name) throw Error('no input name');
-    const { index, item } = findByName(name);
-    dispatch(
-      fieldBlur({
-        index,
-        item,
-      }),
-    );
+    const item = state.get(name);
+    dispatch(fieldBlur({ item }));
   };
 
   const onBlur = (input: InputEvent | ICustomInput) => {
-    const findByName = getFromStateByName(state);
     if ('target' in input) {
       const { target } = input;
-      onBlurAction(target.name, findByName);
+      onBlurAction(target.name);
     } else {
       const { name } = input;
-      onBlurAction(name, findByName);
+      onBlurAction(name);
     }
   };
 
@@ -133,7 +126,7 @@ export function Form({
   };
 
   const findTouched = () => {
-    const touched = state.find(
+    const touched = Array.from(state.values()).find(
       (field: any) => field.meta && field.meta.touched,
     );
     return touched ? true : false;
@@ -147,12 +140,14 @@ export function Form({
     touched: findTouched(),
   };
 
-  const fieldsWithHandlers = state.map(({ requirements, ...field }) => ({
-    ...field,
-    onBlur,
-    onFocus,
-    onChange,
-  }));
+  const fieldsWithHandlers = Array.from(state.values()).map(
+    ({ requirements, ...field }) => ({
+      ...field,
+      onBlur,
+      onFocus,
+      onChange,
+    }),
+  );
 
   const ui =
     typeof children === 'function'
@@ -219,9 +214,7 @@ export const Field = ({
     const hasMatch = fields.find(f => f.name.includes(name));
     if (hasMatch) {
       throw Error(
-        `Field with name ${name} doesn\`t exist, did you mean ${
-          hasMatch.name
-        }?`,
+        `Field with name ${name} doesn\`t exist, did you mean ${hasMatch.name}?`,
       );
     } else {
       throw Error(`Field with name ${name} doesn\`t exist.`);

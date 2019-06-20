@@ -12,56 +12,52 @@ import {
   FORM_SUBMIT,
 } from './actions';
 
-export const getFromStateByName = (state: FormState) => (itemName: string) => {
-  let itemIndex: number = 0;
-  const item = state.find(({ name }, index) => {
-    itemIndex = index;
-    return name === itemName;
-  });
+export const getFromStateByName = (state: any) => (itemName: string) => {
+  const item = state.get(itemName);
   if (!item) {
     throw Error(`input name ${itemName} doesnt exist on provided fields`);
   }
-  return {
-    item,
-    index: itemIndex,
-  };
+  return item;
 };
 
 const formReducer = (initialState: FormState) => (
-  state: FormState,
+  state: any,
   action: FormActions,
 ): FormState => {
   const findByName = getFromStateByName(state);
   switch (action.type) {
     case UPDATE: {
-      const { item, index } = findByName(action.payload.name);
+      const item = findByName(action.payload.name);
       const newItem: IField = Object.assign(item, action.payload);
       newItem.meta.errors = [];
-      state[index] = newItem;
+      state.set(action.payload.name, newItem);
       return cloneDeep(state);
     }
     case ERROR: {
       // TODO: should add error under meta?
-      const { index, item } = action.payload;
-      state[index] = item;
+      const { item } = action.payload;
+      state.set(item.name, item);
       return cloneDeep(state);
     }
     case FIELD_BLUR: {
-      const { index, item } = action.payload;
-      state[index] = item;
+      const { item } = action.payload;
+      state.set(item.name, item);
       return cloneDeep(state);
     }
     case FIELD_FOCUS: {
       const { name, loading } = action.payload;
-      const { item, index } = findByName(name);
-      state[index] = merge(item, {
-        meta: { touched: true, loading },
-      });
+      const item = findByName(name);
+      state.set(
+        name,
+        merge(item, {
+          meta: { touched: true, loading },
+        }),
+      );
       return cloneDeep(state);
     }
     case FIELD_ERROR_UPDATE: {
-      const { index, item } = action.payload;
-      state[index] = item;
+      const { item } = action.payload;
+      state.set(item.name, item);
       return cloneDeep(state);
     }
     case ERRORS: {

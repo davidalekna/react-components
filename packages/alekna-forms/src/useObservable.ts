@@ -10,7 +10,7 @@ const action$ = new Subject();
 const useObservable = (
   initialState: FormState,
   outsideEpics: Function[] = [],
-): { state: FormState; dispatch: Function } => {
+): { state: any; dispatch: Function } => {
   const [state, update] = useState<FormState>(initialState);
 
   const combinedEpics = combineEpics(onBlurEpic, onSubmitEpic, ...outsideEpics);

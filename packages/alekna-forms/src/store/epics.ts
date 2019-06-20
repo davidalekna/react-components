@@ -24,6 +24,7 @@ import {
 
 const fieldValidator = (action$: Observable<FormActions>) => {
   return switchMap(({ payload }) => {
+    console.log(payload);
     // add requests into an Observable from
     const requests = payload.item.requirements
       // only function allowed in requests
@@ -90,37 +91,35 @@ export function onSubmitEpic(action$) {
   return action$.pipe(
     ofType(FORM_SUBMIT),
     throttleTime(1500),
-    switchMap(
-      ({ payload, onSubmit }: { payload: FormState; onSubmit: Function }) => {
-        const errorsBuffer: IField[] = [];
-        const state$ = payload.map((item: IField, index: number) =>
-          of({ index, item }),
-        );
+    switchMap(({ payload, onSubmit }: { payload: any; onSubmit: Function }) => {
+      const errorsBuffer: IField[] = [];
+      const state$ = Array.from(payload.values()).map((item: IField) =>
+        of(item),
+      );
 
-        return from(state$).pipe(
-          mergeMap(field => {
-            return field.pipe(
-              filter(({ item }: any) => {
-                return (
-                  Array.isArray(item.requirements) && item.requirements.length
-                );
-              }),
-              map(field => ({ payload: field })),
-              fieldValidator(action$),
-              tap(err => {
-                // Side effect: process onSubmit
-                errorsBuffer.push(err.payload.item);
-                return (
-                  allErrorsEmitted(payload, errorsBuffer.length) &&
-                  containsNoErrors(errorsBuffer) &&
-                  onSubmit(extractFinalValues(payload))
-                );
-              }),
-            );
-          }),
-        );
-      },
-    ),
+      return from(state$).pipe(
+        mergeMap((field: any) => {
+          return field.pipe(
+            filter((item: any) => {
+              return (
+                Array.isArray(item.requirements) && item.requirements.length
+              );
+            }),
+            map(field => ({ payload: { item: field } })),
+            fieldValidator(action$),
+            tap((err: any) => {
+              // Side effect: process onSubmit
+              errorsBuffer.push(err.payload.item);
+              return (
+                allErrorsEmitted(payload, errorsBuffer.length) &&
+                containsNoErrors(errorsBuffer) &&
+                onSubmit(extractFinalValues(payload))
+              );
+            }),
+          );
+        }),
+      );
+    }),
   );
 }
 

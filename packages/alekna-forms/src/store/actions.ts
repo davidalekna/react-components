@@ -19,10 +19,10 @@ export function fieldUpdate({ name, value }: { name: string; value: any }) {
   };
 }
 
-export function fieldBlur({ index, item }: { index: number; item: IField }) {
+export function fieldBlur({ item }: { item: IField }) {
   return {
     type: FIELD_BLUR,
-    payload: { index, item },
+    payload: { item },
   };
 }
 
