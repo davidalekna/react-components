@@ -45,10 +45,11 @@ function transformFields(initialFields: IField[]): any {
 
 function configureStore(initialFields: IField[]) {
   const initialState = transformFields(cloneDeep(initialFields));
-  const reducers = {
-    fields: formReducer(cloneDeep(initialState)),
-  };
-  return createStore(reducers, undefined, [fieldsEpic]);
+  return createStore(
+    formReducer(cloneDeep(initialState)),
+    [fieldsEpic],
+    cloneDeep(initialState),
+  );
 }
 
 export const Form = ({
@@ -56,13 +57,12 @@ export const Form = ({
   initialFields = [],
   onSubmit = () => {},
 }: IDefaultProps) => {
-  const { reducers, initialState, epics } = React.useMemo(
+  const { reducers, epics, initialState } = React.useMemo(
     () => configureStore(initialFields),
     [initialFields],
   );
-  const { selectState } = useStore(reducers, initialState, epics);
-  const state = selectState(state => state.fields);
-
+  const { state } = useStore(reducers, epics, initialState);
+  console.log(state);
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');
     dispatch(
