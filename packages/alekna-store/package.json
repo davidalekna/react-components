@@ -73,8 +73,8 @@
   },
   "peerDependencies": {
     "lodash": "^4.17.11",
-    "react": "^16.8.0-alpha.1",
-    "react-dom": "^16.8.0-alpha.1"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   },
   "dependencies": {
     "rxjs": "6.5.2"

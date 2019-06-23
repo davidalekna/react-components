@@ -1,11 +1,19 @@
-type Event = {
+export type Event = {
   starts: Date;
 };
 
-export interface IWeek {
+export type Month = {
+  month: number;
+  year: number;
+  events: Event[];
+  totalOffsetDays?: number;
+  totalDays?: number;
+};
+
+export type Week = {
   start: number;
   end: number;
-}
+};
 
 export type Props = {
   initialDays: string[];
