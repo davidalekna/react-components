@@ -41,7 +41,7 @@ export const OrganizerContext = React.createContext<State>({
   changeLanguage: () => {},
 });
 
-export class Organizer extends React.Component<Props, State> {
+export default class Organizer extends React.Component<Props, State> {
   static propTypes = {
     children: PropTypes.func,
     initialDays: PropTypes.array,
@@ -144,9 +144,7 @@ export class Organizer extends React.Component<Props, State> {
       );
     } else {
       throw new Error(
-        `changeLanguage: Not enough days ${days.length} or months ${
-          months.length
-        }`,
+        `changeLanguage: Not enough days ${days.length} or months ${months.length}`,
       );
     }
   };

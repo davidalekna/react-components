@@ -33,13 +33,19 @@
       "name": "alekna-store",
       "path": "./packages/alekna-store/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
+    },
+    {
+      "name": "alekna-organizer",
+      "path": "./packages/alekna-organizer/lib/bundle.cjs.min.js",
+      "maxSize": "10.6 kB"
     }
   ],
   "dependencies": {
     "react-data-browser": "file:packages/alekna-data-browser",
     "react-forms": "file:packages/alekna-forms",
     "react-toasts": "file:packages/alekna-toasts",
-    "react-store": "file:packages/alekna-store"
+    "react-store": "file:packages/alekna-store",
+    "react-organizer": "file:packages/alekna-organizer"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",

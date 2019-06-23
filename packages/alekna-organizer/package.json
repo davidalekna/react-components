@@ -2,6 +2,16 @@
   "name": "@alekna/react-organizer",
   "version": "1.0.0",
   "description": "Organizer is a lightweight, fast and extendable render props component",
+  "author": "David Alekna <alekna@live.co.uk>",
+  "license": "MIT",
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "lib/bundle*",
+    "lib/index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidalekna/alekna.git"
@@ -10,14 +20,6 @@
     "url": "https://github.com/davidalekna/alekna/issues"
   },
   "homepage": "https://github.com/davidalekna/alekna#readme",
-  "license": "MIT",
-  "main": "./lib/bundle.cjs.js",
-  "module": "./lib/bundle.esm.js",
-  "typings": "./lib/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "lib/"
-  ],
   "keywords": [
     "react",
     "react-component",
@@ -33,7 +35,6 @@
     "calendar",
     "render-props"
   ],
-  "author": "David Alekna <alekna@live.co.uk>",
   "scripts": {
     "prepare": "npm run build",
     "dev": "yarn storybook",

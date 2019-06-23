@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "prepare": "npm run build",
-    "start": "yarn storybook",
+    "dev": "yarn storybook",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "build": "tsc -b .",
