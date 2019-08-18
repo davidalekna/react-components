@@ -15,7 +15,7 @@ import {
   isBefore,
 } from 'date-fns';
 import { days, months } from './utils';
-import { Props, State, IWeek } from './types';
+import { Props, State, Week, Event } from './types';
 
 export const OrganizerContext = React.createContext<State>({
   days: [],
@@ -42,10 +42,11 @@ export const OrganizerContext = React.createContext<State>({
 });
 
 export default class Organizer extends React.Component<Props, State> {
+  static Consumer = OrganizerContext.Consumer;
   static propTypes = {
     children: PropTypes.func,
-    initialDays: PropTypes.array,
-    initialMonths: PropTypes.array,
+    daysNames: PropTypes.array,
+    monthsNames: PropTypes.array,
     events: PropTypes.arrayOf(
       PropTypes.shape({
         starts: PropTypes.instanceOf(Date).isRequired,
@@ -71,8 +72,8 @@ export default class Organizer extends React.Component<Props, State> {
     onSelectMonth: () => {},
     onSelectYear: () => {},
     onChangeLanguage: () => {},
-    initialDays: days,
-    initialMonths: months,
+    daysNames: days,
+    monthsNames: months,
     events: [],
     initialGridBlocks: 42,
     initialDate: new Date(),
@@ -90,20 +91,19 @@ export default class Organizer extends React.Component<Props, State> {
     selectYear: '__select_year__',
     changeLanguage: '__change_language__',
   };
-  static Consumer = OrganizerContext.Consumer;
   //
-  private _eventsForMonth = month => {
-    return this.props.events.filter(
-      ({ starts }) => getMonth(starts) + 1 === month,
-    );
-  };
-  private _initializeEvents = (events, date) => {
+  private _initEventsForDate = (events: Event[], date: Date) => {
     return events.filter(({ starts }) => {
       return isSameDay(starts, date);
     });
   };
-  private _getWeeksInAMonth = (month, year): IWeek[] => {
-    const weeks: IWeek[] = [];
+  private _getEventsForMonth = (month: number) => {
+    return this.props.events.filter(
+      ({ starts }) => getMonth(starts) + 1 === month,
+    );
+  };
+  private _getNumberOfWeeksInAMonth = (month: number, year: number): Week[] => {
+    const weeks: Week[] = [];
     const firstDate = new Date(year, month, 1);
     const lastDate = new Date(year, month + 1, 0);
     const numDays = lastDate.getDate();
@@ -117,10 +117,10 @@ export default class Organizer extends React.Component<Props, State> {
     }
     return weeks;
   };
-  private _getNumberOfDaysInAMonth(month, year) {
+  private _getNumberOfDaysInAMonth(month: number, year: number) {
     return new Date(year, month + 1, 0).getDate();
   }
-  private _isDaySelected = calendarDay => {
+  private _isDaySelected = (calendarDay: Date) => {
     const selected = this.getState().selected;
     if (selected && selected instanceof Date) {
       return isSameDay(this.getState().selected, calendarDay);
@@ -134,6 +134,10 @@ export default class Organizer extends React.Component<Props, State> {
     type = Organizer.stateChangeTypes.changeLanguage,
     days,
     months,
+  }: {
+    type: string;
+    days: string[];
+    months: string[];
   }) => {
     if (days.length === 7 && months.length === 12) {
       this.internalSetState({ type, days, months }, () =>
@@ -148,7 +152,15 @@ export default class Organizer extends React.Component<Props, State> {
       );
     }
   };
-  getPrevMonthOffset = ({ month, year, events }) => {
+  getPrevMonthOffset = ({
+    month,
+    year,
+    events,
+  }: {
+    month: number;
+    year: number;
+    events: Event[];
+  }) => {
     const assignDays: any = [];
     let prevMonthNumber = month - 2;
     let currentYear = year;
@@ -157,7 +169,7 @@ export default class Organizer extends React.Component<Props, State> {
       prevMonthNumber = 11;
       currentYear = currentYear - 1;
     }
-    const { end, start }: any = this._getWeeksInAMonth(
+    const { end, start } = this._getNumberOfWeeksInAMonth(
       prevMonthNumber,
       currentYear,
     ).pop();
@@ -186,7 +198,15 @@ export default class Organizer extends React.Component<Props, State> {
       days: assignDays.reverse(),
     };
   };
-  getCurrentMonth = ({ month, year, events }) => {
+  getCurrentMonth = ({
+    month,
+    year,
+    events,
+  }: {
+    month: number;
+    year: number;
+    events: Event[];
+  }) => {
     const generatedDays: any = [];
     const currentMonth = month - 1;
     const totalDays = this._getNumberOfDaysInAMonth(currentMonth, year);
@@ -215,7 +235,7 @@ export default class Organizer extends React.Component<Props, State> {
       month,
       year,
       totalDays,
-      totalWeeks: this._getWeeksInAMonth(currentMonth, year).length,
+      totalWeeks: this._getNumberOfWeeksInAMonth(currentMonth, year).length,
       days: generatedDays,
     };
   };
@@ -225,6 +245,12 @@ export default class Organizer extends React.Component<Props, State> {
     totalOffsetDays,
     totalDays,
     events,
+  }: {
+    month: number;
+    year: number;
+    totalOffsetDays: number;
+    totalDays: number;
+    events: Event[];
   }) => {
     const assignDays: any = [];
     let currentMonth = month;
@@ -259,12 +285,12 @@ export default class Organizer extends React.Component<Props, State> {
       days: assignDays,
     };
   };
-  getFullMonth = (initMonth, events) => {
+  getFullMonth = (initMonth: number, events: Event[]) => {
     const month = initMonth ? initMonth : getMonth(this.getState().date) + 1;
     const year = getYear(this.getState().date);
     const firstOffset = this.getPrevMonthOffset({ month, year, events });
     const current = this.getCurrentMonth({ month, year, events });
-    const eventsForMonth = this._eventsForMonth(month);
+    const eventsForMonth = this._getEventsForMonth(month);
     const nextOffset = this.getNextMonthOffset({
       month,
       year,
@@ -278,7 +304,7 @@ export default class Organizer extends React.Component<Props, State> {
       // convert into for of
       result = result.map(day => {
         return Object.assign(day, {
-          events: this._initializeEvents(eventsForMonth, day.date),
+          events: this._initEventsForDate(eventsForMonth, day.date),
         });
       });
     }
@@ -288,7 +314,7 @@ export default class Organizer extends React.Component<Props, State> {
       days: result,
     };
   };
-  getFullYear = events => {
+  getFullYear = (events: Event[]) => {
     const months: any = [];
     for (let i = 0; i < 13; i += 1) {
       months.push(this.getFullMonth(i, events));
@@ -401,8 +427,8 @@ export default class Organizer extends React.Component<Props, State> {
   };
   //
   initialState = {
-    days: this.props.initialDays,
-    months: this.props.initialMonths,
+    days: this.props.daysNames,
+    months: this.props.monthsNames,
     gridBlocks: this.props.initialGridBlocks,
     date: this.props.initialDate,
     selected: this.props.initialSelected,
@@ -435,8 +461,8 @@ export default class Organizer extends React.Component<Props, State> {
       return state;
     }, {});
   }
-  internalSetState = (changes, callback = () => {}) => {
-    let allChanges;
+  internalSetState = (changes: unknown, callback = () => {}) => {
+    let allChanges: unknown;
     this.setState(
       currentState => {
         const combinedState = this.getState(currentState);
@@ -480,8 +506,8 @@ export function withOrganizer(Component) {
   const Wrapper = React.forwardRef((props, ref) => {
     return (
       <Organizer.Consumer>
-        {browserUtils => (
-          <Component {...props} organizer={browserUtils} ref={ref} />
+        {organizerUtils => (
+          <Component {...props} organizer={organizerUtils} ref={ref} />
         )}
       </Organizer.Consumer>
     );

@@ -1,15 +1,17 @@
-type Event = {
+export type Event = {
   starts: Date;
+  ends?: Date;
+  [key: string]: any;
 };
 
-export interface IWeek {
+export type Week = {
   start: number;
   end: number;
-}
+};
 
 export type Props = {
-  initialDays: string[];
-  initialMonths: string[];
+  daysNames: string[];
+  monthsNames: string[];
   events: Event[];
   initialGridBlocks: number;
   initialDate: Date;
