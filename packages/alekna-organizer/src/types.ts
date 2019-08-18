@@ -13,7 +13,7 @@ export type Props = {
   daysNames: string[];
   monthsNames: string[];
   events: Event[];
-  initialGridBlocks: number;
+  initialGridOf: number;
   initialDate: Date;
   initialSelected: Date | null;
   //
@@ -36,7 +36,7 @@ export type State = {
   months: string[];
   date: Date;
   selected: Date | null;
-  gridBlocks: number;
+  gridOf: number;
   //
   getPrevMonthOffset: Function;
   getNextMonthOffset: Function;

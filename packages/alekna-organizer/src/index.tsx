@@ -22,7 +22,7 @@ export const OrganizerContext = React.createContext<State>({
   months: [],
   date: new Date(),
   selected: null,
-  gridBlocks: 0,
+  gridOf: 0,
   // functions
   getPrevMonthOffset: () => {},
   getNextMonthOffset: () => {},
@@ -52,7 +52,7 @@ export default class Organizer extends React.Component<Props, State> {
         starts: PropTypes.instanceOf(Date).isRequired,
       }),
     ),
-    initialGridBlocks: PropTypes.number,
+    initialGridOf: PropTypes.number,
     initialDate: PropTypes.instanceOf(Date),
     initialSelected: PropTypes.oneOfType([
       PropTypes.instanceOf(Date),
@@ -75,7 +75,7 @@ export default class Organizer extends React.Component<Props, State> {
     daysNames: days,
     monthsNames: months,
     events: [],
-    initialGridBlocks: 42,
+    initialGridOf: 42,
     initialDate: new Date(),
     initialSelected: null,
   };
@@ -261,7 +261,7 @@ export default class Organizer extends React.Component<Props, State> {
       currentYear = currentYear + 1;
     }
     const nextMonthOffset =
-      this.getState().gridBlocks - totalOffsetDays - totalDays;
+      this.getState().gridOf - totalOffsetDays - totalDays;
 
     for (let i = 0; i < nextMonthOffset; i += 1) {
       const currentDay = i + 1;
@@ -285,9 +285,13 @@ export default class Organizer extends React.Component<Props, State> {
       days: assignDays,
     };
   };
-  getFullMonth = (initMonth: number, events: Event[]) => {
-    const month = initMonth ? initMonth : getMonth(this.getState().date) + 1;
+  getFullMonth = ({
+    month: m,
+    events,
+  }: { month?: number; events?: Event[] } = {}) => {
+    const month = m ? m : getMonth(this.getState().date) + 1;
     const year = getYear(this.getState().date);
+    // TODO START: move off to the SW
     const firstOffset = this.getPrevMonthOffset({ month, year, events });
     const current = this.getCurrentMonth({ month, year, events });
     const eventsForMonth = this._getEventsForMonth(month);
@@ -308,6 +312,7 @@ export default class Organizer extends React.Component<Props, State> {
         });
       });
     }
+    // TODO END: move off to the SW
 
     return {
       ...current,
@@ -317,7 +322,7 @@ export default class Organizer extends React.Component<Props, State> {
   getFullYear = (events: Event[]) => {
     const months: any = [];
     for (let i = 0; i < 13; i += 1) {
-      months.push(this.getFullMonth(i, events));
+      months.push(this.getFullMonth({ month: i, events }));
     }
     months.shift();
     return months;
@@ -429,7 +434,7 @@ export default class Organizer extends React.Component<Props, State> {
   initialState = {
     days: this.props.daysNames,
     months: this.props.monthsNames,
-    gridBlocks: this.props.initialGridBlocks,
+    gridOf: this.props.initialGridOf,
     date: this.props.initialDate,
     selected: this.props.initialSelected,
     // fns

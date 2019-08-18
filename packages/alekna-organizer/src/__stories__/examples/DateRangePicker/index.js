@@ -95,23 +95,25 @@ export const DateRangePicker = () => (
                   {day.slice(0, 1)}
                 </GridItem>
               ))}
-              {getFullMonth(getMonth(date) + 2).days.map((day, index) => (
-                <GridItem key={index} darker={day.offset}>
-                  <Day
-                    current={day.today}
-                    hoverable={!day.offset}
-                    selected={day.selected}
-                    past={day.past}
-                    onClick={() =>
-                      !day.offset &&
-                      !day.past &&
-                      selectRange({ date: day.date })
-                    }
-                  >
-                    {day.day}
-                  </Day>
-                </GridItem>
-              ))}
+              {getFullMonth({ month: getMonth(date) + 2 }).days.map(
+                (day, index) => (
+                  <GridItem key={index} darker={day.offset}>
+                    <Day
+                      current={day.today}
+                      hoverable={!day.offset}
+                      selected={day.selected}
+                      past={day.past}
+                      onClick={() =>
+                        !day.offset &&
+                        !day.past &&
+                        selectRange({ date: day.date })
+                      }
+                    >
+                      {day.day}
+                    </Day>
+                  </GridItem>
+                ),
+              )}
             </Grid>
           </CalendarWrapper>
         </DoubleCalendar>
