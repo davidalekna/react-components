@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import React, { createContext, Component, useContext, forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import { days, months } from './utils';
 import { Props, State, Week, Event } from './types';
 import {
@@ -17,7 +17,7 @@ import {
   isBefore,
 } from 'date-fns';
 
-export const OrganizerContext = React.createContext<State>({
+export const OrganizerContext = createContext<State>({
   days: [],
   months: [],
   now: new Date(),
@@ -41,7 +41,7 @@ export const OrganizerContext = React.createContext<State>({
   changeLanguage: () => {},
 });
 
-export default class Organizer extends React.Component<Props, State> {
+export default class Organizer extends Component<Props, State> {
   static Consumer = OrganizerContext.Consumer;
   static propTypes = {
     children: PropTypes.func,
@@ -508,7 +508,7 @@ export default class Organizer extends React.Component<Props, State> {
 }
 
 export function withOrganizer(Component) {
-  const Wrapper = React.forwardRef((props, ref) => {
+  const Wrapper = forwardRef((props, ref) => {
     return (
       <Organizer.Consumer>
         {organizerUtils => (
@@ -523,6 +523,6 @@ export function withOrganizer(Component) {
 }
 
 export function useOrganizer() {
-  const organizerUtils = React.useContext(OrganizerContext);
+  const organizerUtils = useContext(OrganizerContext);
   return organizerUtils;
 }
