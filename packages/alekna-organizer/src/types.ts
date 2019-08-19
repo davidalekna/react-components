@@ -34,7 +34,7 @@ export type Props = {
 export type State = {
   days: string[];
   months: string[];
-  date: Date;
+  now: Date;
   selected: Date | null;
   gridOf: number;
   //

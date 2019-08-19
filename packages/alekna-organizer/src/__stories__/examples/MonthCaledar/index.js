@@ -7,7 +7,7 @@ import { Button } from '../globals';
 export const MonthCalendar = () => (
   <Organizer>
     {({
-      date,
+      now,
       days,
       months,
       getFullMonth,
@@ -18,7 +18,7 @@ export const MonthCalendar = () => (
       <Wrapper>
         <Toolbar>
           <div>
-            {months[date.getMonth()]} {date.getFullYear()}
+            {months[now.getMonth()]} {now.getFullYear()}
           </div>
           <div>
             <Button onClick={subCalendarMonth}>Sub</Button>
