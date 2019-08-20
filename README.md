@@ -37,5 +37,7 @@ npm install @alekna/react-forms
 [react-data-browser npm link]: https://www.npmjs.com/package/@alekna/react-data-browser
 [react-toasts npm version]: https://img.shields.io/npm/v/@alekna/react-toasts.svg?style=flat-square
 [react-toasts npm link]: https://www.npmjs.com/package/@alekna/react-toasts
+[react-organizer npm version]: https://img.shields.io/npm/v/@alekna/react-organizer.svg?style=flat-square
+[react-organizer npm link]: https://www.npmjs.com/package/@alekna/react-organizer
 
 <!-- Packages -->
