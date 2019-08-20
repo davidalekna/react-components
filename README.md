@@ -24,6 +24,7 @@ to install.
 | [`@alekna/react-forms`](packages/alekna-forms)               | [![npm version][react-forms npm version]][react-forms npm link]               |
 | [`@alekna/react-data-browser`](packages/alekna-data-browser) | [![npm version][react-data-browser npm version]][react-data-browser npm link] |
 | [`@alekna/react-toasts`](packages/alekna-toasts)             | [![npm version][react-toasts npm version]][react-toasts npm link]             |
+| [`@alekna/react-organizer`](packages/alekna-organizer)       | [![npm version][react-organizer npm version]][react-organizer npm link]       |
 
 ```sh
 # Install alekna package
