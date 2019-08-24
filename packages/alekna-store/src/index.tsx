@@ -21,8 +21,8 @@ export const useStore = (
     const s = combinedEpics(action$)
       .pipe(
         scan<Action, State>((prevState, action) => {
+          // will accept single reducer function as well
           if (typeof reducers === 'function') {
-            // will accept single reducer function as well
             const newState = reducers(prevState, action);
             return { ...prevState, ...newState };
           }

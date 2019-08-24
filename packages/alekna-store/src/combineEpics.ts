@@ -3,6 +3,8 @@ import { Epics, Epic, Stream, Action } from './types';
 import { ofType } from './index';
 import { filter } from 'rxjs/operators';
 
+// ERROR: combine epics does not work at the moment.
+
 export default function combineEpics(epics: Epics): any {
   // extract available actions and actions that have streams
   const allActions = epics.reduce(
