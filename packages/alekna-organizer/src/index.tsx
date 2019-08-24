@@ -1,5 +1,7 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import React, { createContext, Component, useContext, forwardRef } from 'react';
+import PropTypes from 'prop-types';
+import { days, months } from './utils';
+import { Props, State, Week, Event } from './types';
 import {
   getYear,
   getMonth,
@@ -14,13 +16,11 @@ import {
   setYear,
   isBefore,
 } from 'date-fns';
-import { days, months } from './utils';
-import { Props, State, Week, Event } from './types';
 
-export const OrganizerContext = React.createContext<State>({
+export const OrganizerContext = createContext<State>({
   days: [],
   months: [],
-  date: new Date(),
+  now: new Date(),
   selected: null,
   gridOf: 0,
   // functions
@@ -41,7 +41,7 @@ export const OrganizerContext = React.createContext<State>({
   changeLanguage: () => {},
 });
 
-export default class Organizer extends React.Component<Props, State> {
+export default class Organizer extends Component<Props, State> {
   static Consumer = OrganizerContext.Consumer;
   static propTypes = {
     children: PropTypes.func,
@@ -182,7 +182,7 @@ export default class Organizer extends React.Component<Props, State> {
       assignDays.push({
         name: this.getState().days[date.getDay()],
         day: currentDay,
-        date: date,
+        date,
         offset: true,
         past: isBefore(date, new Date()),
         events: [],
@@ -221,7 +221,7 @@ export default class Organizer extends React.Component<Props, State> {
       generatedDays.push({
         name: this.getState().days[date.getDay()],
         day: currentDay,
-        date: date,
+        date,
         today,
         past: today ? false : isBefore(date, new Date()),
         events: [],
@@ -269,7 +269,7 @@ export default class Organizer extends React.Component<Props, State> {
       assignDays.push({
         name: this.getState().days[date.getDay()],
         day: currentDay,
-        date: date,
+        date,
         offset: true,
         past: isBefore(date, new Date()),
         events: [],
@@ -289,8 +289,8 @@ export default class Organizer extends React.Component<Props, State> {
     month: m,
     events,
   }: { month?: number; events?: Event[] } = {}) => {
-    const month = m ? m : getMonth(this.getState().date) + 1;
-    const year = getYear(this.getState().date);
+    const month = m ? m : getMonth(this.getState().now) + 1;
+    const year = getYear(this.getState().now);
     // TODO START: move off to the SW
     const firstOffset = this.getPrevMonthOffset({ month, year, events });
     const current = this.getCurrentMonth({ month, year, events });
@@ -333,18 +333,18 @@ export default class Organizer extends React.Component<Props, State> {
     this.internalSetState(
       state => ({
         type,
-        date: addMonths(state.date, 1),
+        now: addMonths(state.now, 1),
       }),
-      () => this.props.onAddCalendarMonth(this.getState().date),
+      () => this.props.onAddCalendarMonth(this.getState().now),
     );
   };
   selectMonth = ({ type = Organizer.stateChangeTypes.selectMonth, month }) => {
     this.internalSetState(
       state => ({
         type,
-        date: setMonth(state.date, month),
+        now: setMonth(state.now, month),
       }),
-      () => this.props.onSelectMonth(this.getState().date),
+      () => this.props.onSelectMonth(this.getState().now),
     );
   };
   subCalendarMonth = ({
@@ -353,9 +353,9 @@ export default class Organizer extends React.Component<Props, State> {
     this.internalSetState(
       state => ({
         type,
-        date: subMonths(state.date, 1),
+        now: subMonths(state.now, 1),
       }),
-      () => this.props.onSubCalendarMonth(this.getState().date),
+      () => this.props.onSubCalendarMonth(this.getState().now),
     );
   };
   addCalendarYear = ({
@@ -364,18 +364,18 @@ export default class Organizer extends React.Component<Props, State> {
     this.internalSetState(
       state => ({
         type,
-        date: addYears(state.date, 1),
+        now: addYears(state.now, 1),
       }),
-      () => this.props.onAddCalendarYear(this.getState().date),
+      () => this.props.onAddCalendarYear(this.getState().now),
     );
   };
   selectYear = ({ type = Organizer.stateChangeTypes.selectYear, year }) => {
     this.internalSetState(
       state => ({
         type,
-        date: setYear(state.date, year),
+        now: setYear(state.now, year),
       }),
-      () => this.props.onSelectYear(this.getState().date),
+      () => this.props.onSelectYear(this.getState().now),
     );
   };
   subCalendarYear = ({
@@ -384,13 +384,13 @@ export default class Organizer extends React.Component<Props, State> {
     this.internalSetState(
       state => ({
         type,
-        date: subYears(state.date, 1),
+        now: subYears(state.now, 1),
       }),
-      () => this.props.onSubCalendarYear(this.getState().date),
+      () => this.props.onSubCalendarYear(this.getState().now),
     );
   };
   selectDate = ({ type = Organizer.stateChangeTypes.selectDate, date }) => {
-    this.internalSetState({ type, date, selected: date }, () => {
+    this.internalSetState({ type, now: date, selected: date }, () => {
       return this.props.onSelectDate(this.getState().selected);
     });
   };
@@ -427,7 +427,7 @@ export default class Organizer extends React.Component<Props, State> {
   reset = () => {
     this.internalSetState(
       { ...this.initialState, type: Organizer.stateChangeTypes.reset },
-      () => this.props.onReset(this.getState().date),
+      () => this.props.onReset(this.getState().now),
     );
   };
   //
@@ -435,7 +435,7 @@ export default class Organizer extends React.Component<Props, State> {
     days: this.props.daysNames,
     months: this.props.monthsNames,
     gridOf: this.props.initialGridOf,
-    date: this.props.initialDate,
+    now: this.props.initialDate,
     selected: this.props.initialSelected,
     // fns
     getPrevMonthOffset: this.getPrevMonthOffset,
@@ -508,7 +508,7 @@ export default class Organizer extends React.Component<Props, State> {
 }
 
 export function withOrganizer(Component) {
-  const Wrapper = React.forwardRef((props, ref) => {
+  const Wrapper = forwardRef((props, ref) => {
     return (
       <Organizer.Consumer>
         {organizerUtils => (
@@ -523,6 +523,6 @@ export function withOrganizer(Component) {
 }
 
 export function useOrganizer() {
-  const organizerUtils = React.useContext(OrganizerContext);
+  const organizerUtils = useContext(OrganizerContext);
   return organizerUtils;
 }

@@ -30,7 +30,7 @@ export const DateRangePicker = () => (
     {({
       days,
       months,
-      date,
+      now,
       getFullMonth,
       selectRange,
       selected,
@@ -52,7 +52,7 @@ export const DateRangePicker = () => (
               <Button left={0} onClick={subCalendarMonth}>
                 PREV
               </Button>
-              {`${months[date.getMonth()]} ${date.getFullYear()}`}
+              {`${months[now.getMonth()]} ${now.getFullYear()}`}
             </Toolbar>
             <Grid>
               {days.map((day, index) => (
@@ -81,8 +81,8 @@ export const DateRangePicker = () => (
           </CalendarWrapper>
           <CalendarWrapper>
             <Toolbar>
-              {`${months[addMonths(date, 1).getMonth()]} ${addMonths(
-                date,
+              {`${months[addMonths(now, 1).getMonth()]} ${addMonths(
+                now,
                 1,
               ).getFullYear()}`}
               <Button right={0} onClick={addCalendarMonth}>
@@ -95,7 +95,7 @@ export const DateRangePicker = () => (
                   {day.slice(0, 1)}
                 </GridItem>
               ))}
-              {getFullMonth({ month: getMonth(date) + 2 }).days.map(
+              {getFullMonth({ month: getMonth(now) + 2 }).days.map(
                 (day, index) => (
                   <GridItem key={index} darker={day.offset}>
                     <Day

@@ -7,7 +7,7 @@ import CalendarBase from '../base';
 export const YearCalendar = () => (
   <Organizer>
     {({
-      date,
+      now,
       getFullYear,
       selectDate,
       days,
@@ -17,7 +17,7 @@ export const YearCalendar = () => (
     }) => (
       <Wrapper>
         <Toolbar>
-          <div>{date.getFullYear()}</div>
+          <div>{now.getFullYear()}</div>
           <div>
             <Button onClick={subCalendarYear}>Sub</Button>
             <Button onClick={reset} style={{ margin: '0 10px' }}>

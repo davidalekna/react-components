@@ -13,7 +13,7 @@ export const DatePicker = ({ onSelectDate, onReset }) => (
       subCalendarYear,
       days,
       months,
-      date,
+      now,
       getFullMonth,
       selectDate,
       selectMonth,
@@ -27,7 +27,7 @@ export const DatePicker = ({ onSelectDate, onReset }) => (
             months,
             selectMonth,
             selectYear,
-            date,
+            date: now,
             month: getFullMonth(),
             onDayClick: date => selectDate({ date }),
             renderToolbar: () => (
@@ -38,8 +38,8 @@ export const DatePicker = ({ onSelectDate, onReset }) => (
                   <button onClick={subCalendarMonth}>{`<`}</button>
                 </div>
                 <FlexRow onClick={reset}>{`${
-                  months[date.getMonth()]
-                } ${date.getFullYear()}`}</FlexRow>
+                  months[now.getMonth()]
+                } ${now.getFullYear()}`}</FlexRow>
                 <div>
                   <button onClick={addCalendarMonth}>{`>`}</button>
                   &nbsp;
