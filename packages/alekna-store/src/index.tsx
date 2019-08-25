@@ -1,6 +1,6 @@
-import React, { useEffect, useState, ReactNode, useMemo, useRef } from 'react';
+import React, { useEffect, useState, ReactNode, useMemo } from 'react';
 import { Subject } from 'rxjs';
-import { scan, filter } from 'rxjs/operators';
+import { scan, filter, merge, tap } from 'rxjs/operators';
 import { merge as lodashMerge, cloneDeep } from 'lodash';
 import { Reducers, State, Store, Action } from './types';
 import combineEpics from './combineEpics';
@@ -12,7 +12,7 @@ import combineEpics from './combineEpics';
 // const state$ = state.pipe(
 //   startWith({initial: 'state'})
 // )
-// action$.pipe(
+// actions$.pipe(
 //   withLatestFrom(state$, reducer)
 // ).subscribe(state)
 // state$.subscribe(renderer);
@@ -25,9 +25,9 @@ type StoreProps = {
   initialState?: State;
 };
 
-const action$ = new Subject();
+const actions$ = new Subject();
 
-export const dispatch = (next: Action) => action$.next(next);
+export const dispatch = (next: Action) => actions$.next(next);
 
 const mergeReducerState = reducers => (prevState, action) => {
   // 1. will accept single reducer function as well
@@ -59,9 +59,13 @@ export const useStore = ({
   const [state, update] = useState(initialState);
 
   useEffect(() => {
-    const combinedEpics = combineEpics(epics);
-    const s = combinedEpics(action$)
-      .pipe(scan<Action, State>(mergeReducerState(reducers), initialState))
+    // const combinedEpics = combineEpics(epics);
+    const s = actions$
+      .pipe(
+        merge(...epics.map(epic => epic(actions$))),
+        tap(action => console.log(action)),
+        scan<Action, State>(mergeReducerState(reducers), initialState),
+      )
       .subscribe(update);
 
     return () => {

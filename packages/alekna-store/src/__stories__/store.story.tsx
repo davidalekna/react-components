@@ -2,6 +2,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import StoreProvider, { dispatch, createStore, ofType } from '../index';
 import { Action } from '../types';
+import { debounceTime, filter, mergeMap, tap } from 'rxjs/operators';
 
 const ADD_TODO = 'ADD_TODO';
 const REMOVE_TODO = 'REMOVE_TODO';
@@ -32,7 +33,7 @@ const initialTodosState = [
 
 const store = createStore(
   {
-    todo: (state, action) => {
+    todo: (_, action) => {
       switch (action.type) {
         case 'ON_CHANGE':
           return action.payload;
@@ -53,7 +54,19 @@ const store = createStore(
       }
     },
   },
-  [actions => actions.pipe(ofType('ON_CHANGE'))],
+  [
+    actions$ =>
+      actions$.pipe(
+        filter((action: Action) => action.type === ADD_TODO),
+        debounceTime(2000),
+      ),
+    actions$ => {
+      return actions$.pipe(
+        filter((action: Action) => action.type === REMOVE_TODO),
+        debounceTime(2000),
+      );
+    },
+  ],
 );
 
 const Demo = () => {
