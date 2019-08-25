@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode, useMemo } from 'react';
 import { Subject } from 'rxjs';
-import { scan, filter, merge, tap } from 'rxjs/operators';
+import { scan, filter, merge, tap, share, shareReplay } from 'rxjs/operators';
 import { merge as lodashMerge, cloneDeep } from 'lodash';
 import { Reducers, State, Store, Action } from './types';
 import combineEpics from './combineEpics';

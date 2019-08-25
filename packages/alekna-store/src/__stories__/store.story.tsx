@@ -55,11 +55,12 @@ const store = createStore(
     },
   },
   [
-    actions$ =>
-      actions$.pipe(
+    actions$ => {
+      return actions$.pipe(
         filter((action: Action) => action.type === ADD_TODO),
         debounceTime(2000),
-      ),
+      );
+    },
     actions$ => {
       return actions$.pipe(
         filter((action: Action) => action.type === REMOVE_TODO),
