@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode, useMemo } from 'react';
-import { Subject } from 'rxjs';
-import { scan, filter, merge, tap, share, shareReplay } from 'rxjs/operators';
+import { Subject, merge } from 'rxjs';
+import { scan, filter, tap, share, shareReplay } from 'rxjs/operators';
 import { merge as lodashMerge, cloneDeep } from 'lodash';
 import { Reducers, State, Store, Action } from './types';
 import combineEpics from './combineEpics';
@@ -60,9 +60,8 @@ export const useStore = ({
 
   useEffect(() => {
     // const combinedEpics = combineEpics(epics);
-    const s = actions$
+    const s = merge(actions$, ...epics.map(epic => epic(actions$)))
       .pipe(
-        merge(...epics.map(epic => epic(actions$))),
         tap(action => console.log(action)),
         scan<Action, State>(mergeReducerState(reducers), initialState),
       )
