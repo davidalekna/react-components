@@ -24,7 +24,7 @@ export type Epic = {
 export type Epics = Epic[];
 
 export type Store = {
-  reducers: Reducers;
-  initialState: State;
-  epics?: Epics;
+  reducers: any;
+  initialState: any;
+  epics: any;
 };

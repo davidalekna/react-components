@@ -1,47 +1,67 @@
-import React, { useEffect, useState, ReactNode, useMemo } from 'react';
+import React, { useEffect, useState, ReactNode, useMemo, useRef } from 'react';
 import { Subject } from 'rxjs';
 import { scan, filter } from 'rxjs/operators';
-import { merge as lodashMerge } from 'lodash';
-import { Reducers, State, Store, Epics, Action } from './types';
+import { merge as lodashMerge, cloneDeep } from 'lodash';
+import { Reducers, State, Store, Action } from './types';
 import combineEpics from './combineEpics';
+
+/////////////////
+// http://rudiyardley.com/redux-single-line-of-code-rxjs/
+// NEW APPROACH TO TRY
+// const state = new Subject()
+// const state$ = state.pipe(
+//   startWith({initial: 'state'})
+// )
+// action$.pipe(
+//   withLatestFrom(state$, reducer)
+// ).subscribe(state)
+// state$.subscribe(renderer);
+
+/////////////////
+
+type StoreProps = {
+  reducers: Reducers | Function;
+  epics?: any[];
+  initialState?: State;
+};
 
 const action$ = new Subject();
 
 export const dispatch = (next: Action) => action$.next(next);
 
-export const useStore = (
-  reducers: Reducers | Function,
-  epics: Epics = [],
-  initialState: State = {},
-) => {
+const mergeReducerState = reducers => (prevState, action) => {
+  // 1. will accept single reducer function as well
+  if (typeof reducers === 'function') {
+    const newState = reducers(prevState, action);
+    return { ...prevState, ...newState };
+  }
+  // 2. otherwise if its an object with reducers
+  // get all keys of state
+  const stateKeys = Object.keys(reducers);
+  const newState = {};
+  // loop over all state keys
+  for (const key of stateKeys) {
+    // extract reducer for per state key
+    const reducer = reducers[key];
+    lodashMerge(newState, {
+      [key]: reducer(prevState[key], action),
+    });
+  }
+  // merge prevState with current state
+  return { ...prevState, ...newState };
+};
+
+export const useStore = ({
+  reducers,
+  epics = [],
+  initialState = {},
+}: StoreProps) => {
   const [state, update] = useState(initialState);
 
   useEffect(() => {
     const combinedEpics = combineEpics(epics);
     const s = combinedEpics(action$)
-      .pipe(
-        scan<Action, State>((prevState, action) => {
-          // will accept single reducer function as well
-          if (typeof reducers === 'function') {
-            const newState = reducers(prevState, action);
-            return { ...prevState, ...newState };
-          }
-
-          // get all keys of state
-          const stateKeys = Object.keys(reducers);
-          const newState = {};
-          // loop over all state keys
-          for (const key of stateKeys) {
-            // extract reducer for per state key
-            const reducer = reducers[key];
-            lodashMerge(newState, {
-              [key]: reducer(prevState[key], action),
-            });
-          }
-          // merge prevState with current state
-          return lodashMerge(prevState, newState);
-        }, initialState),
-      )
+      .pipe(scan<Action, State>(mergeReducerState(reducers), initialState))
       .subscribe(update);
 
     return () => {
@@ -53,7 +73,7 @@ export const useStore = (
     return callback(state);
   }
 
-  return { state, selectState };
+  return useMemo(() => ({ state, selectState }), [state, selectState]);
 };
 
 export const StoreContext = React.createContext<State>({});
@@ -66,11 +86,7 @@ const StoreProvider = ({
   children: ReactNode;
 }) => {
   const memoStore = useMemo(() => store, [store]);
-  const stateProps = useStore(
-    memoStore.reducers,
-    memoStore.epics,
-    memoStore.initialState,
-  );
+  const stateProps = useStore(memoStore);
   const ui = typeof children === 'function' ? children(stateProps) : children;
   return <StoreContext.Provider value={stateProps}>{ui}</StoreContext.Provider>;
 };
@@ -81,7 +97,7 @@ export const useSelector = (callback: Function) => {
   return useMemo(() => state, [state]);
 };
 
-const getInitialState = (
+const generateInitialState = (
   reducers: Reducers | Function,
   initialState: State,
 ) => {
@@ -91,31 +107,31 @@ const getInitialState = (
     return { ...initialState, ...reducerInitialState };
   }
 
-  const stateFromReducers = Object.keys(reducers).reduce((acc, key) => {
-    const reducer = reducers[key];
+  const stateFromReducers = Object.keys(reducers).reduce((acc, stateName) => {
+    const stateReducer = reducers[stateName];
     return {
       ...acc,
-      [key]: reducer(undefined, {}),
+      [stateName]: stateReducer(undefined, {}),
     };
   }, {});
 
-  return lodashMerge(stateFromReducers, initialState);
+  return { ...stateFromReducers, ...initialState };
 };
 
 export const createStore = (
   reducers: Reducers | Function,
-  epics: Epics = [],
+  epics: Function[] = [],
   initialState: State = {},
 ) => {
   return {
     reducers,
     epics,
-    initialState: getInitialState(reducers, initialState),
+    initialState: generateInitialState(reducers, cloneDeep(initialState)),
   };
 };
 
 export const ofType = (actionType: string) => {
-  return filter(({ type }: any) => type === actionType);
+  return filter(({ type }: Action) => type === actionType);
 };
 
 export default StoreProvider;
