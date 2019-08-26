@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode, useMemo } from 'react';
 import { Subject, of, empty } from 'rxjs';
-import { scan, tap, mergeMap, filter, partition } from 'rxjs/operators';
+import { scan, mergeMap, filter } from 'rxjs/operators';
 import { merge as lodashMerge, cloneDeep } from 'lodash';
 import {
   Reducers,
@@ -43,7 +43,7 @@ export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
   useEffect(() => {
     const s = actions$
       .pipe(
-        mergeMap(action => {
+        mergeMap((action: Action) => {
           switch (typeof action) {
             // async actions
             case 'function':

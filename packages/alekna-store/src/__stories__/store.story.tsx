@@ -1,68 +1,9 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import StoreProvider, { dispatch, createStore, ofType } from '../index';
-import { SyncAction } from '../types';
-import { delay, finalize, mapTo, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
-
-const ADD_TODO = 'ADD_TODO';
-const REMOVE_TODO = 'REMOVE_TODO';
-
-const addTodo = newItem => {
-  return {
-    type: ADD_TODO,
-    payload: newItem,
-  };
-};
-
-const removeTodo = (title: string) => actions$ => {
-  return of({
-    type: REMOVE_TODO,
-    payload: title,
-  }).pipe(
-    delay(2500),
-    switchMap(payload => {
-      return actions$.pipe(
-        ofType(ADD_TODO),
-        mapTo(payload),
-        finalize(() => console.log('Sequence complete')),
-      );
-    }),
-  );
-};
-
-const initialTodosState = [
-  { title: 'Learn RxJS' },
-  { title: 'Learn Serverles' },
-  { title: 'Learn Aws' },
-  { title: 'Learn Docker' },
-  { title: 'Learn Lambdas' },
-  { title: 'Learn Animations' },
-  { title: 'Learn React Native' },
-];
-
-const store = createStore({
-  todo: (_, action) => {
-    switch (action.type) {
-      case 'ON_CHANGE':
-        return action.payload;
-      default:
-        return '';
-    }
-  },
-  todos: (state = initialTodosState, action: SyncAction) => {
-    switch (action.type) {
-      case ADD_TODO:
-        return [...state, action.payload];
-      case REMOVE_TODO:
-        return state.filter(todo => {
-          return todo.title !== action.payload;
-        });
-      default:
-        return state;
-    }
-  },
-});
+import StoreProvider, { dispatch } from '../index';
+import { addTodo } from './todo/actions';
+import { removeTodo } from './todos/actions';
+import { store } from './store';
 
 const Demo = () => {
   console.log('demo initialized');
