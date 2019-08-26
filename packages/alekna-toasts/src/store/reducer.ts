@@ -29,7 +29,16 @@ const getFromStateByName = state => (position, id) => {
   };
 };
 
-export default function reducer(state, action) {
+export const initialState = {
+  topLeft: [],
+  topCenter: [],
+  topRight: [],
+  bottomLeft: [],
+  bottomCenter: [],
+  bottomRight: [],
+};
+
+export default function reducer(state = initialState, action) {
   const findPlacement = findPosition(state);
   const findItem = getFromStateByName(state);
   switch (action.type) {
@@ -53,6 +62,7 @@ export default function reducer(state, action) {
       };
     }
     case UPDATE: {
+      // NOTE: all state on `toasts` now
       const index = state[action.payload.position].findIndex(
         item => item.id === action.payload.id,
       );
