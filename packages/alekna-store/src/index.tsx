@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactNode, useMemo } from 'react';
 import { Subject, of, empty } from 'rxjs';
 import { scan, mergeMap, filter } from 'rxjs/operators';
-import { merge as lodashMerge, cloneDeep } from 'lodash';
+import { merge, cloneDeep } from 'lodash';
 import {
   Reducers,
   State,
@@ -29,7 +29,7 @@ const mergeReducerState = reducers => (prevState, action) => {
   for (const key of stateKeys) {
     // extract reducer for per state key
     const reducer = reducers[key];
-    lodashMerge(newState, {
+    merge(newState, {
       [key]: reducer(prevState[key], action),
     });
   }
@@ -38,7 +38,8 @@ const mergeReducerState = reducers => (prevState, action) => {
 };
 
 export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
-  const [state, update] = useState(initialState);
+  const memoState = useMemo(() => initialState, [initialState]);
+  const [state, update] = useState(memoState);
 
   useEffect(() => {
     const s = actions$
@@ -54,19 +55,19 @@ export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
             // wrong type
             default:
               console.error(
-                `Action must return function or an object, your has returned ${typeof action}`,
+                `Action must return a function or an object, your one has returned ${typeof action}`,
               );
               return empty();
           }
         }),
-        scan<Action, State>(mergeReducerState(reducers), initialState),
+        scan<Action, State>(mergeReducerState(reducers), memoState),
       )
       .subscribe(update);
 
     return () => {
       s.unsubscribe();
     };
-  }, [reducers, initialState]);
+  }, [reducers, memoState]);
 
   function selectState(callback: Function) {
     return callback(state);
