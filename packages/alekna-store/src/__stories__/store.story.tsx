@@ -1,25 +1,25 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import StoreProvider, { dispatch, createStore, ofType } from '../index';
-import { Action } from '../types';
-import { debounceTime, filter, mergeMap, tap } from 'rxjs/operators';
+import StoreProvider, { dispatch, createStore } from '../index';
+import { SyncAction } from '../types';
+import { delay } from 'rxjs/operators';
 
 const ADD_TODO = 'ADD_TODO';
 const REMOVE_TODO = 'REMOVE_TODO';
 
-function addTodo(newItem) {
+const addTodo = newItem => {
   return {
     type: ADD_TODO,
     payload: newItem,
   };
-}
+};
 
-function removeTodo(title: string) {
-  return {
+const removeTodo: any = (title: string) => (dispatchObservable, actions$) => {
+  return dispatchObservable({
     type: REMOVE_TODO,
     payload: title,
-  };
-}
+  }).pipe(delay(4500));
+};
 
 const initialTodosState = [
   { title: 'Learn RxJS' },
@@ -31,42 +31,28 @@ const initialTodosState = [
   { title: 'Learn React Native' },
 ];
 
-const store = createStore(
-  {
-    todo: (_, action) => {
-      switch (action.type) {
-        case 'ON_CHANGE':
-          return action.payload;
-        default:
-          return '';
-      }
-    },
-    todos: (state = initialTodosState, action: Action) => {
-      switch (action.type) {
-        case ADD_TODO:
-          return [...state, action.payload];
-        case REMOVE_TODO:
-          return state.filter(todo => {
-            return todo.title !== action.payload;
-          });
-        default:
-          return state;
-      }
-    },
+const store = createStore({
+  todo: (_, action) => {
+    switch (action.type) {
+      case 'ON_CHANGE':
+        return action.payload;
+      default:
+        return '';
+    }
   },
-  [
-    actions$ =>
-      actions$.pipe(
-        filter((action: Action) => action.type === ADD_TODO),
-        debounceTime(2000),
-      ),
-    actions$ =>
-      actions$.pipe(
-        filter((action: Action) => action.type === REMOVE_TODO),
-        debounceTime(2000),
-      ),
-  ],
-);
+  todos: (state = initialTodosState, action: SyncAction) => {
+    switch (action.type) {
+      case ADD_TODO:
+        return [...state, action.payload];
+      case REMOVE_TODO:
+        return state.filter(todo => {
+          return todo.title !== action.payload;
+        });
+      default:
+        return state;
+    }
+  },
+});
 
 const Demo = () => {
   console.log('demo initialized');

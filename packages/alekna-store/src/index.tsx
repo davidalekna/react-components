@@ -1,29 +1,15 @@
 import React, { useEffect, useState, ReactNode, useMemo } from 'react';
-import { Subject, merge } from 'rxjs';
-import { scan, filter, tap, share, shareReplay } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { scan, tap, mergeMap, filter } from 'rxjs/operators';
 import { merge as lodashMerge, cloneDeep } from 'lodash';
-import { Reducers, State, Store, Action } from './types';
-import combineEpics from './combineEpics';
-
-/////////////////
-// http://rudiyardley.com/redux-single-line-of-code-rxjs/
-// NEW APPROACH TO TRY
-// const state = new Subject()
-// const state$ = state.pipe(
-//   startWith({initial: 'state'})
-// )
-// actions$.pipe(
-//   withLatestFrom(state$, reducer)
-// ).subscribe(state)
-// state$.subscribe(renderer);
-
-/////////////////
-
-type StoreProps = {
-  reducers: Reducers | Function;
-  epics?: any[];
-  initialState?: State;
-};
+import {
+  Reducers,
+  State,
+  Store,
+  Action,
+  StoreProps,
+  SyncAction,
+} from './types';
 
 const actions$ = new Subject();
 
@@ -51,18 +37,22 @@ const mergeReducerState = reducers => (prevState, action) => {
   return { ...prevState, ...newState };
 };
 
-export const useStore = ({
-  reducers,
-  epics = [],
-  initialState = {},
-}: StoreProps) => {
+export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
   const [state, update] = useState(initialState);
 
   useEffect(() => {
-    // const combinedEpics = combineEpics(epics);
-    const s = merge(actions$, ...epics.map(epic => epic(actions$)))
+    const s = actions$
       .pipe(
-        tap(action => console.log(action)),
+        mergeMap(action => {
+          switch (typeof action) {
+            case 'function':
+              return action(of, actions$);
+            case 'object':
+              return of(action);
+            default:
+              return of();
+          }
+        }),
         scan<Action, State>(mergeReducerState(reducers), initialState),
       )
       .subscribe(update);
@@ -70,7 +60,7 @@ export const useStore = ({
     return () => {
       s.unsubscribe();
     };
-  }, [reducers, initialState, epics]);
+  }, [reducers, initialState]);
 
   function selectState(callback: Function) {
     return callback(state);
@@ -123,18 +113,16 @@ const generateInitialState = (
 
 export const createStore = (
   reducers: Reducers | Function,
-  epics: Function[] = [],
   initialState: State = {},
 ) => {
   return {
     reducers,
-    epics,
     initialState: generateInitialState(reducers, cloneDeep(initialState)),
   };
 };
 
 export const ofType = (actionType: string) => {
-  return filter(({ type }: Action) => type === actionType);
+  return filter(({ type }: SyncAction) => type === actionType);
 };
 
 export default StoreProvider;
