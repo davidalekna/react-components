@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode, useMemo } from 'react';
-import { Subject, of } from 'rxjs';
-import { scan, tap, mergeMap, filter } from 'rxjs/operators';
+import { Subject, of, empty } from 'rxjs';
+import { scan, tap, mergeMap, filter, partition } from 'rxjs/operators';
 import { merge as lodashMerge, cloneDeep } from 'lodash';
 import {
   Reducers,
@@ -45,12 +45,18 @@ export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
       .pipe(
         mergeMap(action => {
           switch (typeof action) {
+            // async actions
             case 'function':
-              return action(of, actions$);
+              return action(actions$);
+            // sync actions
             case 'object':
               return of(action);
+            // wrong type
             default:
-              return of();
+              console.error(
+                `Action must return function or an object, your has returned ${typeof action}`,
+              );
+              return empty();
           }
         }),
         scan<Action, State>(mergeReducerState(reducers), initialState),

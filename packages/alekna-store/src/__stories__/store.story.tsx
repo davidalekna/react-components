@@ -1,8 +1,9 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import StoreProvider, { dispatch, createStore } from '../index';
+import StoreProvider, { dispatch, createStore, ofType } from '../index';
 import { SyncAction } from '../types';
-import { delay } from 'rxjs/operators';
+import { delay, finalize, mapTo, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 const ADD_TODO = 'ADD_TODO';
 const REMOVE_TODO = 'REMOVE_TODO';
@@ -14,11 +15,20 @@ const addTodo = newItem => {
   };
 };
 
-const removeTodo: any = (title: string) => (dispatchObservable, actions$) => {
-  return dispatchObservable({
+const removeTodo = (title: string) => actions$ => {
+  return of({
     type: REMOVE_TODO,
     payload: title,
-  }).pipe(delay(4500));
+  }).pipe(
+    delay(2500),
+    switchMap(payload => {
+      return actions$.pipe(
+        ofType(ADD_TODO),
+        mapTo(payload),
+        finalize(() => console.log('Sequence complete')),
+      );
+    }),
+  );
 };
 
 const initialTodosState = [
