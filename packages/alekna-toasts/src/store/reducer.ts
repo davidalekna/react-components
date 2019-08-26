@@ -54,6 +54,7 @@ export default function reducer(state = initialState, action) {
     case DISMISS: {
       const placement = findPlacement(action.payload);
       if (!placement) return state;
+      console.log(state[placement]);
       return {
         ...state,
         [placement]: state[placement].filter(
