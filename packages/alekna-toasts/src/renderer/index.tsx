@@ -5,7 +5,9 @@ import { Container } from './animations';
 import { State, Positions } from '../types';
 import placements from './placements';
 
-export const createPortals = (
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20942
+// @types/react does not allow returning ReactPortal from render
+export const createPortals: any = (
   state: State,
   components: Positions,
   style: { [key: string]: unknown },
