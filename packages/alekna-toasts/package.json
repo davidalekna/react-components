@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-toasts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple toasts for react.",
   "author": "David Alekna <alekna@live.co.uk>",
   "license": "MIT",
