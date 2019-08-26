@@ -46,8 +46,7 @@ function transformFields(initialFields: IField[]): any {
 function configureStore(initialFields: IField[]) {
   const initialState = transformFields(cloneDeep(initialFields));
   return createStore(
-    formReducer(cloneDeep(initialState)),
-    [fieldsEpic],
+    { form: formReducer(cloneDeep(initialState)) },
     cloneDeep(initialState),
   );
 }
@@ -57,12 +56,11 @@ export const Form = ({
   initialFields = [],
   onSubmit = () => {},
 }: IDefaultProps) => {
-  const { reducers, epics, initialState } = React.useMemo(
-    () => configureStore(initialFields),
-    [initialFields],
-  );
-  const { state } = useStore(reducers, epics, initialState);
-  console.log(state);
+  const storeConfig = React.useMemo(() => configureStore(initialFields), [
+    initialFields,
+  ]);
+  const { state } = useStore(storeConfig);
+
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');
     dispatch(
@@ -93,7 +91,7 @@ export const Form = ({
 
   const onBlurAction = (name: string) => {
     if (!name) throw Error('no input name');
-    const item = state.get(name);
+    const item = state.form.get(name);
     dispatch(fieldBlur({ item }));
   };
 
@@ -122,7 +120,7 @@ export const Form = ({
 
   const handleSubmit = (evt: InputEvent) => {
     evt.preventDefault();
-    dispatch(formSubmit(state, onSubmit));
+    dispatch(formSubmit(state.form, onSubmit));
   };
 
   const clearValues = () => {
@@ -130,7 +128,7 @@ export const Form = ({
   };
 
   const findTouched = () => {
-    const touched = Array.from(state.values()).find(
+    const touched = Array.from(state.form.values()).find(
       (field: any) => field.meta && field.meta.touched,
     );
     return touched ? true : false;
@@ -144,7 +142,7 @@ export const Form = ({
     touched: findTouched(),
   };
 
-  const fieldsWithHandlers = Array.from(state.values()).map(
+  const fieldsWithHandlers = Array.from(state.form.values()).map(
     ({ requirements, ...field }) => ({
       ...field,
       onBlur,

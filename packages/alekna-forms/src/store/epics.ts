@@ -32,7 +32,7 @@ import {
   allErrorsEmitted,
 } from './helpers';
 
-const fieldValidator = (action$: Observable<FormActions>) => {
+export const fieldValidator = (actions$: Observable<FormActions>) => {
   return switchMap(({ payload }) => {
     // add requests into an Observable from
     const requests = payload.item.requirements
@@ -67,8 +67,8 @@ const fieldValidator = (action$: Observable<FormActions>) => {
       }),
       takeUntil(
         merge(
-          action$.pipe(ofType(FORM_RESET)),
-          action$.pipe(
+          actions$.pipe(ofType(FORM_RESET)),
+          actions$.pipe(
             ofType(UPDATE),
             filter((innerAction: any) => {
               return innerAction.payload.name === payload.item.name;
