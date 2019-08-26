@@ -24,21 +24,27 @@ export const mustContainLetter = (letter: string) => (value: string) => {
 };
 
 const randomAxios = async value => {
+  await sleep(2500);
   const { data } = await axios.get(`https://randomuser.me/api`);
-  if (data.results[0].name.first) {
-    return data.results[0].name.first;
+  console.log(data.results[0].name.first);
+  if (data.results[0].name.first === value) {
+    return 'username taken';
   }
-  return 'username taken';
+  return undefined;
 };
 
 const randomRxJS = async value => {
   return ajax(`https://randomuser.me/api`)
     .toPromise()
     .then(({ response }) => {
-      return response.results[0].name.first;
+      console.log(response.results[0].name.first);
+      if (response.results[0].name.first === value) {
+        return 'username taken';
+      }
+      return undefined;
     })
     .catch(err => {
-      return 'username taken';
+      return undefined;
     });
 };
 

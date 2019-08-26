@@ -2,7 +2,6 @@ import * as React from 'react';
 import { isEqual, cloneDeep } from 'lodash';
 import { useStore, dispatch, createStore } from '@alekna/react-store';
 import formReducer from './store/reducer';
-import { fieldsEpic } from './store/epics';
 import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
 import {
   fieldUpdate,

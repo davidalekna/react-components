@@ -8,7 +8,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import { of, Observable, from } from 'rxjs';
-import { fieldValidator } from './epics';
+import fieldValidator from './fieldValidator';
 import {
   containsNoErrors,
   extractFinalValues,
