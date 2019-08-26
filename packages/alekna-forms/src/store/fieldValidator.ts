@@ -1,5 +1,5 @@
-import { of, merge, from, Observable } from 'rxjs';
-import { UPDATE, FORM_RESET, NOTHING } from './actions';
+import { of, merge, from, Observable, empty } from 'rxjs';
+import { UPDATE, FORM_RESET } from './actions';
 import { FormActions } from './types';
 import { ofType } from './helpers';
 import { fieldErrorUpdate } from './actions';
@@ -20,6 +20,7 @@ const fieldValidator = (actions$: Observable<FormActions>) => {
       // only function allowed in requests
       .filter(fn => typeof fn === 'function')
       // make each one an observable
+      // ERROR: requests not being canceled on form reset
       .map(fn => from(Promise.resolve(fn(payload.item.value))))
       // filter falsy values
       .filter(Boolean);
@@ -55,7 +56,7 @@ const fieldValidator = (actions$: Observable<FormActions>) => {
               return innerAction.payload.name === payload.item.name;
             }),
           ),
-        ).pipe(mapTo({ type: NOTHING })),
+        ).pipe(mapTo(empty())),
       ),
     );
   });
