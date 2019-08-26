@@ -1,6 +1,5 @@
-import React from 'react';
-import uuid from 'uuid';
-import useObservable from './useObservable';
+import React, { createContext, useContext } from 'react';
+import { useStore, dispatch, createStore } from '@alekna/react-store';
 import DefaultToast from './renderer/toast';
 import { isClient } from './helpers';
 import { State, Config } from './types';
@@ -13,17 +12,11 @@ import {
   mouseLeave,
 } from './store/actions';
 import { generateId } from './store/helpers';
+import reducer, { initialState } from './store/reducer';
 
 export { DefaultToast as ToastContainer };
 
-export const ToastContext = React.createContext<State>({
-  topLeft: [],
-  topCenter: [],
-  topRight: [],
-  bottomLeft: [],
-  bottomCenter: [],
-  bottomRight: [],
-});
+export const ToastContext = createContext<State>(initialState);
 
 // Disable auto-close 😋
 // Hide progress bar(less fanciness!)
@@ -40,6 +33,10 @@ const toastComponents = {
   bottomRight: DefaultToast,
 };
 
+const storeConfig = createStore({
+  toasts: reducer,
+});
+
 export function ToastsProvider({
   children,
   components = {},
@@ -47,14 +44,7 @@ export function ToastsProvider({
     padding: 10,
   },
 }) {
-  const { state, dispatch } = useObservable<State>({
-    topLeft: [],
-    topCenter: [],
-    topRight: [],
-    bottomLeft: [],
-    bottomCenter: [],
-    bottomRight: [],
-  });
+  const { state } = useStore(storeConfig);
 
   const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
   const onMouseLeave = (id: string) => dispatch(mouseLeave(id));
@@ -87,18 +77,20 @@ export function ToastsProvider({
   const fns = { create, dismiss, reset };
 
   const ui =
-    typeof children === 'function' ? children({ ...state, ...fns }) : children;
+    typeof children === 'function'
+      ? children({ ...state.toasts, ...fns })
+      : children;
 
   return (
-    <ToastContext.Provider value={{ ...state, ...fns }}>
+    <ToastContext.Provider value={{ ...state.toasts, ...fns }}>
       {ui}
-      {isClient && createPortals(state, mergedComponents, style)}
+      {isClient && createPortals(state.toasts, mergedComponents, style)}
     </ToastContext.Provider>
   );
 }
 
 export function useToastContext() {
-  const context = React.useContext(ToastContext);
+  const context = useContext(ToastContext);
   if (!context) {
     throw new Error(
       `Toast compound components cannot be rendered outside the Toast component`,

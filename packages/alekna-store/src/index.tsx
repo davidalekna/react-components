@@ -61,6 +61,7 @@ export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
           }
         }),
         scan<Action, State>(mergeReducerState(reducers), memoState),
+        // TODO: make this available to be extended by the user
       )
       .subscribe(update);
 
