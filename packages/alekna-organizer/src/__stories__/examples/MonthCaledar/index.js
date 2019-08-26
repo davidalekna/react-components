@@ -7,7 +7,7 @@ import { Button } from '../globals';
 export const MonthCalendar = () => (
   <Organizer>
     {({
-      date,
+      now,
       days,
       months,
       getFullMonth,
@@ -18,7 +18,7 @@ export const MonthCalendar = () => (
       <Wrapper>
         <Toolbar>
           <div>
-            {months[date.getMonth()]} {date.getFullYear()}
+            {months[now.getMonth()]} {now.getFullYear()}
           </div>
           <div>
             <Button onClick={subCalendarMonth}>Sub</Button>
@@ -29,19 +29,21 @@ export const MonthCalendar = () => (
           </div>
         </Toolbar>
         <Grid>
-          {getFullMonth(null, false).days.map((day, index) => (
-            <Day
-              key={index}
-              isOffset={day.offset}
-              isToday={day.today}
-              isSelected={day.selected}
-            >
-              <Title>{days[index] && days[index].slice(0, 3)}</Title>
-              <Number isToday={day.today}>
-                {day.day} {day.today && `🌞`}
-              </Number>
-            </Day>
-          ))}
+          {getFullMonth({ month: null, events: false }).days.map(
+            (day, index) => (
+              <Day
+                key={index}
+                isOffset={day.offset}
+                isToday={day.today}
+                isSelected={day.selected}
+              >
+                <Title>{days[index] && days[index].slice(0, 3)}</Title>
+                <Number isToday={day.today}>
+                  {day.day} {day.today && `🌞`}
+                </Number>
+              </Day>
+            ),
+          )}
         </Grid>
       </Wrapper>
     )}

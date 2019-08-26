@@ -1,10 +1,13 @@
+import axios from 'axios';
+import { ajax } from 'rxjs/ajax';
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const usernameAvailable = async value => {
   if (!value) {
     return 'Required';
   }
-  await sleep(2000);
+  await sleep(5000);
   const notAvailable = ['john', 'paul', 'george', 'ringo'];
   if (notAvailable.includes(value.toLowerCase())) {
     return 'Username taken!';
@@ -18,6 +21,31 @@ export const notEmpty = value => {
 
 export const mustContainLetter = (letter: string) => (value: string) => {
   return !value.includes(letter) ? `Must contain letter ${letter}` : undefined;
+};
+
+const randomAxios = async value => {
+  await sleep(2500);
+  const { data } = await axios.get(`https://randomuser.me/api`);
+  console.log(data.results[0].name.first);
+  if (data.results[0].name.first === value) {
+    return 'username taken';
+  }
+  return undefined;
+};
+
+const randomRxJS = async value => {
+  return ajax(`https://randomuser.me/api`)
+    .toPromise()
+    .then(({ response }) => {
+      console.log(response.results[0].name.first);
+      if (response.results[0].name.first === value) {
+        return 'username taken';
+      }
+      return undefined;
+    })
+    .catch(err => {
+      return undefined;
+    });
 };
 
 export default [
@@ -67,12 +95,14 @@ export default [
     value: '',
     name: 'address.city',
     type: 'text',
+    requirements: [randomRxJS],
   },
   {
     label: 'Postcode',
     value: '',
     name: 'address.postcode',
     type: 'text',
+    requirements: [randomAxios],
   },
   {
     label: 'Favourite Fruit',

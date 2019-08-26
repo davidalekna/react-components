@@ -1,13 +1,7 @@
 export type Event = {
   starts: Date;
-};
-
-export type Month = {
-  month: number;
-  year: number;
-  events: Event[];
-  totalOffsetDays?: number;
-  totalDays?: number;
+  ends?: Date;
+  [key: string]: any;
 };
 
 export type Week = {
@@ -16,10 +10,10 @@ export type Week = {
 };
 
 export type Props = {
-  initialDays: string[];
-  initialMonths: string[];
+  daysNames: string[];
+  monthsNames: string[];
   events: Event[];
-  initialGridBlocks: number;
+  initialGridOf: number;
   initialDate: Date;
   initialSelected: Date | null;
   //
@@ -40,9 +34,9 @@ export type Props = {
 export type State = {
   days: string[];
   months: string[];
-  date: Date;
+  now: Date;
   selected: Date | null;
-  gridBlocks: number;
+  gridOf: number;
   //
   getPrevMonthOffset: Function;
   getNextMonthOffset: Function;

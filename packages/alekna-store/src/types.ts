@@ -6,10 +6,14 @@ export type State = {
   [key: string]: any;
 };
 
-export type Action = {
+export type SyncAction = {
   type: string;
   payload?: any;
 };
+
+type AsyncAction = Function;
+
+export type Action = SyncAction | AsyncAction;
 
 export type Stream = {
   type: string;
@@ -24,7 +28,11 @@ export type Epic = {
 export type Epics = Epic[];
 
 export type Store = {
-  reducers: Reducers;
-  initialState: State;
-  epics?: Epics;
+  reducers: any;
+  initialState: any;
+};
+
+export type StoreProps = {
+  reducers: Reducers | Function;
+  initialState?: State;
 };
