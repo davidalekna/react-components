@@ -17,7 +17,7 @@ export const dispatch = (next: Action) => actions$.next(next);
 
 function rootReducerAsFunction(
   reducer: Function,
-  state: any,
+  state: {} | [],
   action: Action | {},
 ) {
   const newState = reducer(state, action);
