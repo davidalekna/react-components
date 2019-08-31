@@ -1,7 +1,7 @@
 <div align="center">
 <h1>@alekna/react-store</h1>
 
-<p>Redux store for react with rxjs touch.</p>
+<p>async redux type store for react with rxjs touch.</p>
 
 </div>
 
