@@ -19,6 +19,8 @@
 
 ## Usage
 
+> [Try it out in the browser](https://codesandbox.io/s/aleknareact-store-hooks-8fgiw)
+
 ### Usage with hooks api
 
 > [Try it out in the browser](https://codesandbox.io/s/aleknareact-store-hooks-754lm)
