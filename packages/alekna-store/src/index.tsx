@@ -15,11 +15,27 @@ const actions$ = new Subject();
 
 export const dispatch = (next: Action) => actions$.next(next);
 
+function rootReducerAsFunction(
+  reducer: Function,
+  state: {} | [],
+  action: Action | {},
+) {
+  const newState = reducer(state, action);
+  // if initial state is an object
+  if (typeof state === 'object') {
+    return { ...state, ...newState };
+  }
+  // if initial state is an array
+  if (Array.isArray(state)) {
+    return [...state, ...newState];
+  }
+  throw new Error('Initial reducer must be an array or an object');
+}
+
 const mergeReducerState = reducers => (prevState, action) => {
   // 1. will accept single reducer function as well
   if (typeof reducers === 'function') {
-    const newState = reducers(prevState, action);
-    return { ...prevState, ...newState };
+    return rootReducerAsFunction(reducers, prevState, action);
   }
   // 2. otherwise if its an object with reducers
   // get all keys of state
@@ -103,9 +119,7 @@ const generateInitialState = (
   initialState: State,
 ) => {
   if (typeof reducers === 'function') {
-    // will accept single reducer function as well
-    const reducerInitialState = reducers(undefined, {});
-    return { ...initialState, ...reducerInitialState };
+    return rootReducerAsFunction(reducers, undefined, {});
   }
 
   const stateFromReducers = Object.keys(reducers).reduce((acc, stateName) => {
