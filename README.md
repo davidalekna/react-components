@@ -21,6 +21,7 @@ to install.
 
 | Package                                                      | Version                                                                       |
 | ------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| [`@alekna/react-store`](packages/alekna-store)               | [![npm version][react-store npm version]][react-store npm link]               |
 | [`@alekna/react-forms`](packages/alekna-forms)               | [![npm version][react-forms npm version]][react-forms npm link]               |
 | [`@alekna/react-data-browser`](packages/alekna-data-browser) | [![npm version][react-data-browser npm version]][react-data-browser npm link] |
 | [`@alekna/react-toasts`](packages/alekna-toasts)             | [![npm version][react-toasts npm version]][react-toasts npm link]             |
@@ -31,6 +32,8 @@ to install.
 npm install @alekna/react-forms
 ```
 
+[react-store npm version]: https://img.shields.io/npm/v/@alekna/react-store.svg?style=flat-square
+[react-store npm link]: https://www.npmjs.com/package/@alekna/react-store
 [react-forms npm version]: https://img.shields.io/npm/v/@alekna/react-forms.svg?style=flat-square
 [react-forms npm link]: https://www.npmjs.com/package/@alekna/react-forms
 [react-data-browser npm version]: https://img.shields.io/npm/v/@alekna/react-data-browser.svg?style=flat-square
