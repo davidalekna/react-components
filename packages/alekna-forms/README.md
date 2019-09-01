@@ -1,16 +1,16 @@
-<br />
-<h1 align="center">@alekna/react-forms</h1>
+<div align="center">
+<h1 >@alekna/react-forms</h1>
+<p style="font-size: 1.2rem;">Build forms from array of field objects and stream errors from generator</p>
+
+<p style="text-align: center;">
 
 [![size][size-badge]][unpkg-lib]
 [![gzip size][gzip-badge]][unpkg-lib]
 
-<br />
-<br />
-<p align="center" style="font-size: 1.2rem;">Build forms from array of field objects and stream errors as they come in.</p>
-
+</p>
+</div>
 <hr />
-<p align="center" style="font-size: 1.2rem;">A combination of react, rxjs and es6 generator pattern brings fast, async forms from streams. Easily declare your form in shape of array objects and render it out the way you need.</p>
-<br />
+<!-- <p align="center" style="font-size: 1.2rem;">A combination of react, rxjs and es6 generator pattern brings fast, async forms from streams. Declare your form in shape of an array with objects and render it out the way you like.</p> -->
 <pre>npm i <a href="https://www.npmjs.com/package/@alekna/react-forms">@alekna/react-forms</a></pre>
 
 ## Usage
@@ -26,7 +26,7 @@ const mustContainLetter = letter => value => {
   return !value.includes(letter) ? `Must contain letter ${letter}` : undefined;
 };
 
-const fields = [
+const initialFields = [
   {
     value: '',
     label: 'First Name',
@@ -48,7 +48,7 @@ const fields = [
 ];
 
 render(
-  <Form initialFields={fields} onSubmit={values => console.log(values)}>
+  <Form initialFields={initialFields} onSubmit={values => console.log(values)}>
     {({ fields, handleSubmit, reset }) => {
       return (
         <div className="App">
