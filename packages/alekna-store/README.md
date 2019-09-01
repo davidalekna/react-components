@@ -3,21 +3,20 @@
 
 <p>Redux store for react with rxjs touch.</p>
 
-</div>
+<p style="text-align: center;">
 
+[![size][size-badge]][unpkg-lib]
+[![gzip size][gzip-badge]][unpkg-lib]
+
+</p>
+</div>
 <hr />
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Usage](#usage)
-  - [Usage with hooks api](#usage-with-hooks-api)
-  - [Usage with render props and context api](#usage-with-render-props-and-context-api)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<pre>npm i <a href="https://www.npmjs.com/package/@alekna/react-store">@alekna/react-store</a></pre>
 
 ## Usage
+
+> [Example](https://codesandbox.io/s/aleknareact-store-hooks-8fgiw)
 
 ### Usage with hooks api
 
@@ -127,3 +126,7 @@ function Input() {
 
 render(<App />, document.getElementById('root'));
 ```
+
+[gzip-badge]: http://img.badgesize.io/https://unpkg.com/downshift/dist/downshift.umd.min.js?compression=gzip&label=gzip%20size&style=flat-square
+[size-badge]: http://img.badgesize.io/https://unpkg.com/downshift/dist/downshift.umd.min.js?label=size&style=flat-square
+[unpkg-lib]: https://unpkg.com/@alekna/react-store@1.0.5/lib
