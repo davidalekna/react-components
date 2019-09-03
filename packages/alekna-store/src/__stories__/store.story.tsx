@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import StoreProvider, { dispatch } from '../index';
+import StoreProvider from '../index';
 import { addTodo } from './todo/actions';
 import { removeTodo } from './todos/actions';
 import { store } from './store';
@@ -9,7 +9,7 @@ const Demo = () => {
   console.log('demo initialized');
   return (
     <StoreProvider store={store}>
-      {({ state: { todos, todo } }) => {
+      {({ state: { todos, todo }, dispatch }) => {
         return (
           <div style={{ padding: '20px 50px' }}>
             <form

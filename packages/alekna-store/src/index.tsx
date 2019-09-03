@@ -11,9 +11,8 @@ import {
   SyncAction,
 } from './types';
 
-const actions$ = new Subject();
-
-export const dispatch = (next: Action) => actions$.next(next);
+// const actions$ = new Subject();
+// export const dispatch = (next: Action) => actions$.next(next);
 
 function rootReducerAsFunction(
   reducer: Function,
@@ -53,18 +52,24 @@ const mergeReducerState = reducers => (prevState, action) => {
   return { ...prevState, ...newState };
 };
 
-export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
+export const useStore = ({
+  store$,
+  reducers,
+  initialState = {},
+}: StoreProps) => {
   const memoState = useMemo(() => initialState, [initialState]);
   const [state, update] = useState(memoState);
 
+  const dispatch = (next: Action) => store$.next(next);
+
   useEffect(() => {
-    const s = actions$
+    const s = store$
       .pipe(
         mergeMap((action: Action) => {
           switch (typeof action) {
             // async actions
             case 'function':
-              return action(actions$);
+              return action(store$);
             // sync actions
             case 'object':
               return of(action);
@@ -90,7 +95,11 @@ export const useStore = ({ reducers, initialState = {} }: StoreProps) => {
     return callback(state);
   }
 
-  return useMemo(() => ({ state, selectState }), [state, selectState]);
+  return useMemo(() => ({ state, selectState, dispatch }), [
+    state,
+    selectState,
+    dispatch,
+  ]);
 };
 
 export const StoreContext = React.createContext<State>({});
@@ -136,8 +145,10 @@ const generateInitialState = (
 export const createStore = (
   reducers: Reducers | Function,
   initialState: State = {},
+  store$ = new Subject(),
 ) => {
   return {
+    store$,
     reducers,
     initialState: generateInitialState(reducers, cloneDeep(initialState)),
   };
@@ -146,5 +157,13 @@ export const createStore = (
 export const ofType = (actionType: string) => {
   return filter(({ type }: SyncAction) => type === actionType);
 };
+
+export function useAsyncReducer(
+  reducer: Function = () => {},
+  initialState = {},
+) {
+  const { state, dispatch } = useStore(createStore(reducer, initialState));
+  return [state, dispatch];
+}
 
 export default StoreProvider;
