@@ -60,8 +60,6 @@ export const useStore = ({
   const memoState = useMemo(() => initialState, [initialState]);
   const [state, update] = useState(memoState);
 
-  const dispatch = (next: Action) => store$.next(next);
-
   useEffect(() => {
     const s = store$
       .pipe(
@@ -95,11 +93,9 @@ export const useStore = ({
     return callback(state);
   }
 
-  return useMemo(() => ({ state, selectState, dispatch }), [
-    state,
-    selectState,
-    dispatch,
-  ]);
+  const dispatch = (next: Action) => store$.next(next);
+
+  return { state, selectState, dispatch };
 };
 
 export const StoreContext = React.createContext<State>({});
@@ -111,8 +107,7 @@ const StoreProvider = ({
   store: Store;
   children: ReactNode;
 }) => {
-  const memoStore = useMemo(() => store, [store]);
-  const stateProps = useStore(memoStore);
+  const stateProps = useStore(store);
   const ui = typeof children === 'function' ? children(stateProps) : children;
   return <StoreContext.Provider value={stateProps}>{ui}</StoreContext.Provider>;
 };
@@ -145,8 +140,8 @@ const generateInitialState = (
 export const createStore = (
   reducers: Reducers | Function,
   initialState: State = {},
-  store$ = new Subject(),
 ) => {
+  const store$ = new Subject();
   return {
     store$,
     reducers,

@@ -9,16 +9,16 @@ const Demo = () => {
   console.log('demo initialized');
   return (
     <StoreProvider store={store}>
-      {({ state: { todos, todo }, dispatch }) => {
+      {({ state, dispatch }) => {
         return (
           <div style={{ padding: '20px 50px' }}>
             <form
               onSubmit={evt => {
                 evt.preventDefault();
-                if (todo) {
+                if (state.todo) {
                   dispatch(
                     addTodo({
-                      title: todo,
+                      title: state.todo,
                     }),
                   );
                   dispatch({
@@ -29,7 +29,7 @@ const Demo = () => {
             >
               <input
                 type="text"
-                value={todo}
+                value={state.todo}
                 onChange={evt =>
                   dispatch({
                     type: 'ON_CHANGE',
@@ -46,7 +46,7 @@ const Demo = () => {
                 flexDirection: 'column',
               }}
             >
-              {todos.map(todo => (
+              {state.todos.map(todo => (
                 <button
                   type="button"
                   key={todo.title}
