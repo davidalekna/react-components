@@ -30,13 +30,13 @@ export type Epic = {
 export type Epics = Epic[];
 
 export type Store = {
-  store$: any;
+  actions$: any;
   reducers: any;
   initialState: any;
 };
 
 export type StoreProps = {
-  store$: any;
+  actions$: any;
   reducers: Reducers | Function;
   initialState?: State;
 };

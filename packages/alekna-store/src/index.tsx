@@ -53,7 +53,7 @@ const mergeReducerState = reducers => (prevState, action) => {
 };
 
 export const useStore = ({
-  store$,
+  actions$,
   reducers,
   initialState = {},
 }: StoreProps) => {
@@ -61,13 +61,13 @@ export const useStore = ({
   const [state, update] = useState(memoState);
 
   useEffect(() => {
-    const s = store$
+    const s = actions$
       .pipe(
         mergeMap((action: Action) => {
           switch (typeof action) {
             // async actions
             case 'function':
-              return action(store$);
+              return action(actions$);
             // sync actions
             case 'object':
               return of(action);
@@ -93,7 +93,7 @@ export const useStore = ({
     return callback(state);
   }
 
-  const dispatch = (next: Action) => store$.next(next);
+  const dispatch = (next: Action) => actions$.next(next);
 
   return { state, selectState, dispatch };
 };
@@ -141,9 +141,9 @@ export const createStore = (
   reducers: Reducers | Function,
   initialState: State = {},
 ) => {
-  const store$ = new Subject();
+  const actions$ = new Subject();
   return {
-    store$,
+    actions$,
     reducers,
     initialState: generateInitialState(reducers, cloneDeep(initialState)),
   };
