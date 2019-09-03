@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { isEqual, cloneDeep } from 'lodash';
-import { useStore, dispatch, createStore } from '@alekna/react-store';
+import { useStore, createStore } from '@alekna/react-store';
 import formReducer from './store/reducer';
 import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
 import {
@@ -58,7 +58,7 @@ export const Form = ({
   const storeConfig = React.useMemo(() => configureStore(initialFields), [
     initialFields,
   ]);
-  const { state } = useStore(storeConfig);
+  const { state, dispatch } = useStore(storeConfig);
 
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');
