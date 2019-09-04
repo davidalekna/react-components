@@ -20,6 +20,8 @@
 
 ### useAsyncReducer
 
+Works just like react useReducer, but dispatcher can also handle promises and observables
+
 ```jsx
 import React from 'react';
 import { render } from 'react-dom';
