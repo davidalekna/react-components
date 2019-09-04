@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useStore, dispatch, createStore } from '@alekna/react-store';
+import { useStore, createStore } from '@alekna/react-store';
 import DefaultToast from './renderer/toast';
 import { isClient } from './helpers';
 import { State, Config } from './types';
@@ -44,7 +44,7 @@ export function ToastsProvider({
     padding: 10,
   },
 }) {
-  const { state } = useStore(storeConfig);
+  const { state, dispatch } = useStore(storeConfig);
 
   const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
   const onMouseLeave = (id: string) => dispatch(mouseLeave(id));

@@ -154,8 +154,8 @@ export function useAsyncReducer<T extends object | []>(
   reducer: Function,
   initialState = {},
 ) {
-  const memoConfig = useRef(createStore(reducer, initialState));
-  const { state, dispatch } = useStore<T>(memoConfig.current);
+  const storeConfig = useRef(createStore(reducer, initialState));
+  const { state, dispatch } = useStore<T>(storeConfig.current);
   return [state, dispatch];
 }
 
