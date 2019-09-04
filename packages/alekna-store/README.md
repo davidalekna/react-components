@@ -20,6 +20,8 @@
 
 ### useAsyncReducer
 
+> [Try it out in the browser](https://codesandbox.io/s/determined-borg-l7egr)
+
 Works just like react useReducer, but dispatcher can also handle promises and observables
 
 ```jsx
