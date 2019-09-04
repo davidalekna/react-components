@@ -1,34 +1,17 @@
-import React, { useEffect, useState, ReactNode, useMemo } from 'react';
-import { Subject, of, empty } from 'rxjs';
+import React, { useEffect, useState, ReactNode, useMemo, useRef } from 'react';
+import { Subject, of, empty, isObservable, from } from 'rxjs';
 import { scan, mergeMap, filter } from 'rxjs/operators';
 import { merge, cloneDeep } from 'lodash';
-import {
-  Reducers,
-  State,
-  Store,
-  Action,
-  StoreProps,
-  SyncAction,
-} from './types';
-
-// const actions$ = new Subject();
-// export const dispatch = (next: Action) => actions$.next(next);
+import { Reducers, State, Store, Action, SyncAction } from './types';
 
 function rootReducerAsFunction(
   reducer: Function,
-  state: {} | [],
+  state: {} = {},
   action: Action | {},
 ) {
   const newState = reducer(state, action);
-  // if initial state is an object
-  if (typeof state === 'object') {
-    return { ...state, ...newState };
-  }
-  // if initial state is an array
-  if (Array.isArray(state)) {
-    return [...state, ...newState];
-  }
-  throw new Error('Initial reducer must be an array or an object');
+  return { ...state, ...newState };
+  // throw new Error('Initial reducer must be an object');
 }
 
 const mergeReducerState = reducers => (prevState, action) => {
@@ -52,13 +35,17 @@ const mergeReducerState = reducers => (prevState, action) => {
   return { ...prevState, ...newState };
 };
 
-export const useStore = ({
+export const useStore = <T extends object | []>({
   actions$,
   reducers,
-  initialState = {},
-}: StoreProps) => {
+  initialState,
+}: {
+  actions$: any;
+  reducers: Reducers | Function;
+  initialState?: T;
+}) => {
   const memoState = useMemo(() => initialState, [initialState]);
-  const [state, update] = useState(memoState);
+  const [state, update] = useState<T>(memoState);
 
   useEffect(() => {
     const s = actions$
@@ -66,8 +53,14 @@ export const useStore = ({
         mergeMap((action: Action) => {
           switch (typeof action) {
             // async actions
-            case 'function':
-              return action(actions$);
+            case 'function': {
+              const actionResult = action(actions$);
+              if (isObservable(actionResult)) {
+                return actionResult;
+              } else {
+                return from(Promise.resolve(actionResult));
+              }
+            }
             // sync actions
             case 'object':
               return of(action);
@@ -120,14 +113,18 @@ export const useSelector = (callback: Function) => {
 
 const generateInitialState = (
   reducers: Reducers | Function,
-  initialState: State,
+  initialState: State = {},
 ) => {
   if (typeof reducers === 'function') {
-    return rootReducerAsFunction(reducers, undefined, {});
+    if (Object.keys(initialState).length) {
+      return reducers(initialState, {});
+    }
+    return reducers(undefined, {});
   }
 
   const stateFromReducers = Object.keys(reducers).reduce((acc, stateName) => {
     const stateReducer = reducers[stateName];
+    // should be able to merge initialState - initialState[stateName]
     return {
       ...acc,
       [stateName]: stateReducer(undefined, {}),
@@ -153,11 +150,12 @@ export const ofType = (actionType: string) => {
   return filter(({ type }: SyncAction) => type === actionType);
 };
 
-export function useAsyncReducer(
-  reducer: Function = () => {},
+export function useAsyncReducer<T extends object | []>(
+  reducer: Function,
   initialState = {},
 ) {
-  const { state, dispatch } = useStore(createStore(reducer, initialState));
+  const memoConfig = useRef(createStore(reducer, initialState));
+  const { state, dispatch } = useStore<T>(memoConfig.current);
   return [state, dispatch];
 }
 

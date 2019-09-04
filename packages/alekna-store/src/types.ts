@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-
 export type Reducers = {
   [key: string]: Function;
 };
@@ -38,5 +36,5 @@ export type Store = {
 export type StoreProps = {
   actions$: any;
   reducers: Reducers | Function;
-  initialState?: State;
+  initialState?: State | [];
 };

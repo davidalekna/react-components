@@ -63,4 +63,4 @@ const Demo = () => {
   );
 };
 
-storiesOf('async validation', module).add('Demo', () => <Demo />);
+storiesOf('StoreProvider', module).add('Demo', () => <Demo />);
