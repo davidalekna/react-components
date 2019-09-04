@@ -18,6 +18,75 @@
 
 > [Example](https://codesandbox.io/s/aleknareact-store-hooks-8fgiw)
 
+### useAsyncReducer
+
+```jsx
+import React from 'react';
+import { render } from 'react-dom';
+import { interval } from 'rxjs';
+import { map, take, startWith } from 'rxjs/operators';
+import { useAsyncReducer } from '@alekna/react-store';
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+function reducer(state = { count: 0 }, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+const App = () => {
+  const [state, dispatch] = useAsyncReducer(reducer);
+  return (
+    <>
+      <div>Count: {state.count}</div>
+      <div>
+        <button
+          style={{ padding: '10px 20px', fontSize: 24 }}
+          onClick={() =>
+            dispatch(async () => {
+              await sleep(500);
+              return { type: 'increment' };
+            })
+          }
+        >
+          +
+        </button>
+        <button
+          style={{ padding: '10px 20px', fontSize: 24 }}
+          onClick={() => dispatch({ type: 'decrement' })}
+        >
+          -
+        </button>
+        <button
+          style={{ padding: '10px 20px', fontSize: 24 }}
+          onClick={() =>
+            dispatch(() => {
+              return interval(1000).pipe(
+                startWith(0),
+                take(5),
+                map(() => ({
+                  type: 'increment',
+                })),
+              );
+            })
+          }
+        >
+          auto click
+        </button>
+      </div>
+    </>
+  );
+};
+
+render(<App />, document.getElementById('root'));
+```
+
 ### Usage with hooks api
 
 > [Try it out in the browser](https://codesandbox.io/s/aleknareact-store-hooks-754lm)
