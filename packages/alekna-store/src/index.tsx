@@ -82,16 +82,15 @@ export const useStore = <T extends object | []>({
     };
   }, [reducers, memoState]);
 
-  function selectState(callback: Function) {
-    return callback(state);
-  }
-
   const dispatch = (next: Action) => actions$.next(next);
 
-  return { state, selectState, dispatch };
+  return { state, dispatch };
 };
 
-export const StoreContext = React.createContext<State>({});
+export const StoreContext = React.createContext<State>({
+  state: {},
+  dispatch: () => {},
+});
 
 const StoreProvider = ({
   store,
@@ -106,9 +105,14 @@ const StoreProvider = ({
 };
 
 export const useSelector = (callback: Function) => {
-  const { selectState } = React.useContext(StoreContext);
-  const state = selectState(callback);
-  return useMemo(() => state, [state]);
+  const { state } = React.useContext(StoreContext);
+  const stateFromCallback = callback(state);
+  return useMemo(() => stateFromCallback, [stateFromCallback]);
+};
+
+export const useDispatch = () => {
+  const { dispatch } = React.useContext(StoreContext);
+  return useMemo(() => dispatch, [dispatch]);
 };
 
 const generateInitialState = (
