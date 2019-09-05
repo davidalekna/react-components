@@ -100,7 +100,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { useStore, createStore, dispatch } from '@alekna/react-store';
+import { useStore, createStore } from '@alekna/react-store';
 
 const onChange = text => () => {
   return of({
@@ -123,7 +123,7 @@ function reducer(state = { text: '' }, action) {
 const storeConfig = createStore(reducer);
 
 function App() {
-  const { state } = useStore(storeConfig);
+  const { state, dispatch } = useStore(storeConfig);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -149,11 +149,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import StoreProvider, {
-  createStore,
-  useSelector,
-  dispatch,
-} from '@alekna/react-store';
+import StoreProvider, { createStore, useSelector } from '@alekna/react-store';
 
 const onChange = text => () => {
   return of({
@@ -178,15 +174,17 @@ const storeConfig = createStore(reducer);
 function App() {
   return (
     <StoreProvider store={storeConfig}>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <h1>Start typing bellow</h1>
-        <Input />
-      </div>
+      {({ dispatch }) => (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <h1>Start typing bellow</h1>
+          <Input dispatch={dispatch} />
+        </div>
+      )}
     </StoreProvider>
   );
 }
 
-function Input() {
+function Input({ dispatch }) {
   const text = useSelector(state => state.text);
   return (
     <input
