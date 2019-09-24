@@ -51,22 +51,22 @@
     "storybook:clean": "rimraf storybook-static"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@storybook/addon-actions": "^5.1.11",
-    "@storybook/addon-links": "^5.1.11",
-    "@storybook/addons": "^5.1.11",
-    "@storybook/react": "^5.1.11",
-    "@types/jest": "^24.0.17",
-    "@types/prop-types": "^15.5.8",
+    "@babel/core": "^7.6.2",
+    "@storybook/addon-actions": "^5.2.1",
+    "@storybook/addon-links": "^5.2.1",
+    "@storybook/addons": "^5.2.1",
+    "@storybook/react": "^5.2.1",
+    "@types/jest": "^24.0.18",
+    "@types/prop-types": "^15.7.2",
     "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.8.5",
+    "@types/react-dom": "^16.9.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.2",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.5",
     "babel-runtime": "^6.26.0",
-    "codecov": "^3.0.4",
-    "eslint": "^6.1.0",
+    "codecov": "^3.6.1",
+    "eslint": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
@@ -77,11 +77,11 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-testing-library": "^8.0.1",
-    "styled-components": "^4.3.2",
-    "ts-jest": "^24.0.2",
-    "ts-loader": "^6.0.4",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.3"
+    "styled-components": "^4.4.0",
+    "ts-jest": "^24.1.0",
+    "ts-loader": "^6.1.2",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
   },
   "peerDependencies": {
     "prop-types": "^15.6.0",
@@ -89,6 +89,6 @@
     "react-dom": "^16.8.6"
   },
   "dependencies": {
-    "date-fns": "^2.0.0-beta.5"
+    "date-fns": "^2.3.0"
   }
 }
