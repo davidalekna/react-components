@@ -1,7 +1,8 @@
 import React, { createContext, Component, useContext, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { days, months } from './utils';
-import { Props, State, Week, Event } from './types';
+import { Props, State, Week, Event, Days, MonthFnProps } from './types';
+import { uk } from 'date-fns/locale';
 import {
   getYear,
   getMonth,
@@ -15,7 +16,10 @@ import {
   setMonth,
   setYear,
   isBefore,
-} from 'date-fns';
+  isAfter,
+  toDate,
+  format,
+} from 'date-fns/esm';
 
 export const OrganizerContext = createContext<State>({
   days: [],
@@ -45,6 +49,8 @@ export default class Organizer extends Component<Props, State> {
   static Consumer = OrganizerContext.Consumer;
   static propTypes = {
     children: PropTypes.func,
+    locale: PropTypes.object,
+    format: PropTypes.string,
     daysNames: PropTypes.array,
     monthsNames: PropTypes.array,
     events: PropTypes.arrayOf(
@@ -72,11 +78,13 @@ export default class Organizer extends Component<Props, State> {
     onSelectMonth: () => {},
     onSelectYear: () => {},
     onChangeLanguage: () => {},
+    locale: uk,
+    format: 'dd/MM/yyyy',
     daysNames: days,
     monthsNames: months,
     events: [],
     initialGridOf: 42,
-    initialDate: new Date(),
+    initialDate: toDate(new Date()),
     initialSelected: null,
   };
   static stateChangeTypes = {
@@ -152,16 +160,8 @@ export default class Organizer extends Component<Props, State> {
       );
     }
   };
-  getPrevMonthOffset = ({
-    month,
-    year,
-    events,
-  }: {
-    month: number;
-    year: number;
-    events: Event[];
-  }) => {
-    const assignDays: any = [];
+  getPrevMonthOffset = ({ month, year, events }: MonthFnProps) => {
+    const assignDays: Days = [];
     let prevMonthNumber = month - 2;
     let currentYear = year;
     if (prevMonthNumber < 0) {
@@ -179,14 +179,21 @@ export default class Organizer extends Component<Props, State> {
     for (let i = 0; i < end - start; i += 1) {
       const currentDay = (totalDays -= 1);
       const date = new Date(currentYear, prevMonthNumber, currentDay);
+      const todaysDate = new Date();
       assignDays.push({
+        date: toDate(date),
+        formatted: format(date, this.props.format, {
+          locale: this.props.locale,
+        }),
         name: this.getState().days[date.getDay()],
         day: currentDay,
-        date,
-        offset: true,
-        past: isBefore(date, new Date()),
         events: [],
-        weekend: isWeekend(date),
+        status: {
+          past: isBefore(date, todaysDate),
+          future: isAfter(date, todaysDate),
+          offset: true,
+          weekend: isWeekend(date),
+        },
       });
     }
 
@@ -198,35 +205,34 @@ export default class Organizer extends Component<Props, State> {
       days: assignDays.reverse(),
     };
   };
-  getCurrentMonth = ({
-    month,
-    year,
-    events,
-  }: {
-    month: number;
-    year: number;
-    events: Event[];
-  }) => {
-    const generatedDays: any = [];
+  getCurrentMonth = ({ month, year, events }: MonthFnProps) => {
+    const generatedDays: Days = [];
     const currentMonth = month - 1;
     const totalDays = this._getNumberOfDaysInAMonth(currentMonth, year);
     const today = new Date().getDate() - 1;
-    const isToday =
+    const now =
       isSameMonth(new Date(year, currentMonth, today), new Date()) && today;
 
     for (let i = 0; i < totalDays; i += 1) {
       const currentDay = i + 1;
       const date = new Date(year, currentMonth, currentDay);
-      const today = isToday === i;
+      const thisIsToday = now === i;
+      const todaysDate = new Date();
       generatedDays.push({
+        date: toDate(date),
+        formatted: format(date, this.props.format, {
+          locale: this.props.locale,
+        }),
         name: this.getState().days[date.getDay()],
         day: currentDay,
-        date,
-        today,
-        past: today ? false : isBefore(date, new Date()),
         events: [],
-        weekend: isWeekend(date),
-        selected: this._isDaySelected(date),
+        status: {
+          past: thisIsToday ? false : isBefore(date, todaysDate),
+          future: thisIsToday ? false : isAfter(date, todaysDate),
+          weekend: isWeekend(date),
+          selected: this._isDaySelected(date),
+          today: thisIsToday,
+        },
       });
     }
 
@@ -252,7 +258,7 @@ export default class Organizer extends Component<Props, State> {
     totalDays: number;
     events: Event[];
   }) => {
-    const assignDays: any = [];
+    const assignDays: Days = [];
     let currentMonth = month;
     let currentYear = year;
     if (currentMonth > 11) {
@@ -266,14 +272,21 @@ export default class Organizer extends Component<Props, State> {
     for (let i = 0; i < nextMonthOffset; i += 1) {
       const currentDay = i + 1;
       const date = new Date(currentYear, currentMonth, currentDay);
+      const todaysDate = new Date();
       assignDays.push({
+        date: toDate(date),
+        formatted: format(date, this.props.format, {
+          locale: this.props.locale,
+        }),
         name: this.getState().days[date.getDay()],
         day: currentDay,
-        date,
-        offset: true,
-        past: isBefore(date, new Date()),
         events: [],
-        weekend: isWeekend(date),
+        status: {
+          past: isBefore(date, todaysDate),
+          future: isAfter(date, todaysDate),
+          weekend: isWeekend(date),
+          offset: true,
+        },
       });
     }
 
@@ -285,10 +298,7 @@ export default class Organizer extends Component<Props, State> {
       days: assignDays,
     };
   };
-  getFullMonth = ({
-    month: m,
-    events,
-  }: { month?: number; events?: Event[] } = {}) => {
+  getFullMonth = (m?: number, events?: Event[]) => {
     const month = m ? m : getMonth(this.getState().now) + 1;
     const year = getYear(this.getState().now);
     // TODO START: move off to the SW
@@ -323,7 +333,7 @@ export default class Organizer extends Component<Props, State> {
   getFullYear = (events: Event[]) => {
     const months: any = [];
     for (let i = 0; i < 13; i += 1) {
-      months.push(this.getFullMonth({ month: i, events }));
+      months.push(this.getFullMonth(i, events));
     }
     months.shift();
     return months;

@@ -61,17 +61,17 @@ export const InputRangePicker = () => (
                 </GridItem>
               ))}
               {getFullMonth().days.map((day, index) => (
-                <GridItem key={index} darker={day.offset}>
+                <GridItem key={index} darker={day.status.offset}>
                   <Day
-                    current={day.today}
-                    hoverable={!day.offset}
-                    selected={day.selected}
-                    past={day.past}
-                    onClick={() =>
-                      !day.offset &&
-                      !day.past &&
-                      selectRange({ date: day.date })
-                    }
+                    current={day.status.today}
+                    hoverable={!day.status.offset}
+                    selected={day.status.selected}
+                    past={day.status.past}
+                    onClick={() => {
+                      if (!day.status.offset && !day.status.past) {
+                        selectRange({ date: day.date });
+                      }
+                    }}
                   >
                     {day.day}
                   </Day>
@@ -95,25 +95,23 @@ export const InputRangePicker = () => (
                   {day.slice(0, 1)}
                 </GridItem>
               ))}
-              {getFullMonth({ month: getMonth(now) + 2 }).days.map(
-                (day, index) => (
-                  <GridItem key={index} darker={day.offset}>
-                    <Day
-                      current={day.today}
-                      hoverable={!day.offset}
-                      selected={day.selected}
-                      past={day.past}
-                      onClick={() =>
-                        !day.offset &&
-                        !day.past &&
-                        selectRange({ date: day.date })
+              {getFullMonth(getMonth(now) + 2).days.map((day, index) => (
+                <GridItem key={index} darker={day.status.offset}>
+                  <Day
+                    current={day.status.today}
+                    hoverable={!day.status.offset}
+                    selected={day.status.selected}
+                    past={day.status.past}
+                    onClick={() => {
+                      if (!day.status.offset && !day.status.past) {
+                        selectRange({ date: day.date });
                       }
-                    >
-                      {day.day}
-                    </Day>
-                  </GridItem>
-                ),
-              )}
+                    }}
+                  >
+                    {day.day}
+                  </Day>
+                </GridItem>
+              ))}
             </Grid>
           </CalendarWrapper>
         </DoubleCalendar>
