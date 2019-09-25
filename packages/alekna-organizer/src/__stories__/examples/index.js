@@ -3,3 +3,4 @@ export * from './MonthCaledar';
 export * from './YearCalendar';
 export * from './DatePicker';
 export * from './DateRangePicker';
+export * from './InputRangePicker';

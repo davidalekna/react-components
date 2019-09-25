@@ -1,3 +1,5 @@
+import { Locale } from 'date-fns';
+
 export type Event = {
   starts: Date;
   ends?: Date;
@@ -9,7 +11,33 @@ export type Week = {
   end: number;
 };
 
+export type Day = {
+  date: Date;
+  formatted: string;
+  name: string;
+  day: number;
+  events: Event[];
+  status: {
+    past: boolean;
+    future: boolean;
+    weekend: boolean;
+    selected?: boolean;
+    offset?: boolean;
+    today?: boolean;
+  };
+};
+
+export type Days = Day[];
+
+export type MonthFnProps = {
+  month: number;
+  year: number;
+  events: Event[];
+};
+
 export type Props = {
+  locale: Locale;
+  format: string;
   daysNames: string[];
   monthsNames: string[];
   events: Event[];

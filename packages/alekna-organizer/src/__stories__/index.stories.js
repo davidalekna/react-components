@@ -10,6 +10,7 @@ import {
   YearCalendar,
   DatePicker,
   DateRangePicker,
+  InputRangePicker,
 } from './examples';
 
 storiesOf('Calendar', module)
@@ -27,4 +28,8 @@ storiesOf('Date Picker', module).add('by month', () => (
 
 storiesOf('Range Picker', module).add('Date Range Picker', () => (
   <DateRangePicker />
+));
+
+storiesOf('Input Range Picker', module).add('Date Range Picker', () => (
+  <InputRangePicker />
 ));

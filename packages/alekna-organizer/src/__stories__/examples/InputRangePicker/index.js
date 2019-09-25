@@ -25,7 +25,7 @@ function getSelectedDate(dates, num) {
   );
 }
 
-export const DateRangePicker = () => (
+export const InputRangePicker = () => (
   <Organizer>
     {({
       days,
@@ -61,17 +61,17 @@ export const DateRangePicker = () => (
                 </GridItem>
               ))}
               {getFullMonth().days.map((day, index) => (
-                <GridItem key={index} darker={day.offset}>
+                <GridItem key={index} darker={day.status.offset}>
                   <Day
-                    current={day.today}
-                    hoverable={!day.offset}
-                    selected={day.selected}
-                    past={day.past}
-                    onClick={() =>
-                      !day.offset &&
-                      !day.past &&
-                      selectRange({ date: day.date })
-                    }
+                    current={day.status.today}
+                    hoverable={!day.status.offset}
+                    selected={day.status.selected}
+                    past={day.status.past}
+                    onClick={() => {
+                      if (!day.status.offset && !day.status.past) {
+                        selectRange({ date: day.date });
+                      }
+                    }}
                   >
                     {day.day}
                   </Day>
@@ -96,17 +96,17 @@ export const DateRangePicker = () => (
                 </GridItem>
               ))}
               {getFullMonth(getMonth(now) + 2).days.map((day, index) => (
-                <GridItem key={index} darker={day.offset}>
+                <GridItem key={index} darker={day.status.offset}>
                   <Day
-                    current={day.today}
-                    hoverable={!day.offset}
-                    selected={day.selected}
-                    past={day.past}
-                    onClick={() =>
-                      !day.offset &&
-                      !day.past &&
-                      selectRange({ date: day.date })
-                    }
+                    current={day.status.today}
+                    hoverable={!day.status.offset}
+                    selected={day.status.selected}
+                    past={day.status.past}
+                    onClick={() => {
+                      if (!day.status.offset && !day.status.past) {
+                        selectRange({ date: day.date });
+                      }
+                    }}
                   >
                     {day.day}
                   </Day>
