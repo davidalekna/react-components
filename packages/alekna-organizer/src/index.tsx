@@ -19,12 +19,12 @@ import {
   isAfter,
   toDate,
   format,
-} from 'date-fns/esm';
+} from 'date-fns';
 
 export const OrganizerContext = createContext<State>({
   days: [],
   months: [],
-  now: new Date(),
+  now: toDate(new Date()),
   selected: null,
   gridOf: 0,
   // functions
@@ -66,7 +66,7 @@ export default class Organizer extends Component<Props, State> {
     ]),
   };
   static defaultProps = {
-    stateReducer: (state: State, changes: unknown) => changes,
+    stateReducer: (state, changes) => changes,
     onStateChange: () => {},
     onReset: () => {},
     onSelectDate: () => {},
@@ -148,11 +148,13 @@ export default class Organizer extends Component<Props, State> {
     months: string[];
   }) => {
     if (days.length === 7 && months.length === 12) {
-      this.internalSetState({ type, days, months }, () =>
-        this.props.onChangeLanguage({
-          days: this.getState().days,
-          months: this.getState().months,
-        }),
+      this.internalSetState(
+        () => ({ type, days, months }),
+        () =>
+          this.props.onChangeLanguage({
+            days: this.getState().days,
+            months: this.getState().months,
+          }),
       );
     } else {
       throw new Error(
@@ -401,9 +403,12 @@ export default class Organizer extends Component<Props, State> {
     );
   };
   selectDate = ({ type = Organizer.stateChangeTypes.selectDate, date }) => {
-    this.internalSetState({ type, now: date, selected: date }, () => {
-      return this.props.onSelectDate(this.getState().selected);
-    });
+    this.internalSetState(
+      () => ({ type, now: date, selected: date }),
+      () => {
+        return this.props.onSelectDate(this.getState().selected);
+      },
+    );
   };
   selectRange = ({ type = Organizer.stateChangeTypes.selectRange, date }) => {
     this.internalSetState(
@@ -437,7 +442,7 @@ export default class Organizer extends Component<Props, State> {
   };
   reset = () => {
     this.internalSetState(
-      { ...this.initialState, type: Organizer.stateChangeTypes.reset },
+      () => ({ ...this.initialState, type: Organizer.stateChangeTypes.reset }),
       () => this.props.onReset(this.getState().now),
     );
   };
@@ -477,11 +482,14 @@ export default class Organizer extends Component<Props, State> {
       return state;
     }, {});
   }
-  internalSetState = (changes: unknown, callback = () => {}) => {
+  internalSetState = (
+    changes: (state: State) => void | object, // return of an object doesn't work 🤔
+    callback = () => {},
+  ): void => {
     let allChanges: unknown;
     this.setState(
       currentState => {
-        const combinedState = this.getState(currentState);
+        const combinedState: Readonly<State> = this.getState(currentState);
         return [changes]
           .map(c => (typeof c === 'function' ? c(currentState) : c))
           .map(c => {

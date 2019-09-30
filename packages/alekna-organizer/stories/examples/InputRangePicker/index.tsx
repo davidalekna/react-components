@@ -26,7 +26,11 @@ function getSelectedDate(dates, num) {
 }
 
 export const InputRangePicker = () => (
-  <Organizer>
+  <Organizer
+    onSelectRange={state => {
+      return state;
+    }}
+  >
     {({
       days,
       months,
