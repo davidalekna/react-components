@@ -45,18 +45,18 @@ export type Props = {
   initialDate: Date;
   initialSelected: Date | null;
   //
-  stateReducer: Function;
-  onStateChange: Function;
-  onReset: Function;
-  onSelectDate: Function;
-  onSelectRange: Function;
-  onAddCalendarYear: Function;
-  onSubCalendarYear: Function;
-  onSubCalendarMonth: Function;
-  onAddCalendarMonth: Function;
-  onSelectMonth: Function;
-  onSelectYear: Function;
-  onChangeLanguage: Function;
+  stateReducer: (state: State, changes: unknown) => any;
+  onStateChange: (changes: unknown, state: State) => void;
+  onReset: (args: Date) => void;
+  onSelectDate: (args: Date | Date[]) => void;
+  onSelectRange: (args: Date[]) => void;
+  onAddCalendarYear: (args: Date) => void;
+  onSubCalendarYear: (args: Date) => void;
+  onSubCalendarMonth: (args: Date) => void;
+  onAddCalendarMonth: (args: Date) => void;
+  onSelectMonth: (args: Date) => void;
+  onSelectYear: (args: Date) => void;
+  onChangeLanguage: (args: { days: string[]; months: string[] }) => void;
 };
 
 export type State = {
@@ -65,6 +65,7 @@ export type State = {
   now: Date;
   selected: Date | null;
   gridOf: number;
+  type?: any; // this is for passing a ref on an updated item
   //
   getPrevMonthOffset: Function;
   getNextMonthOffset: Function;
