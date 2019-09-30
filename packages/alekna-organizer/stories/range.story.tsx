@@ -29,7 +29,6 @@ function getSelectedDate(dates, num) {
 function Demo() {
   return (
     <Organizer
-      now={new Date()}
       onSelectRange={([startDate, endDate]) => {
         console.log([startDate, endDate]);
       }}
