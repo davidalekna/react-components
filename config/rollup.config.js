@@ -67,6 +67,7 @@ export function rollup({
       output: {
         file: outputFile('esm'),
         format: 'esm',
+        exports: 'named',
         sourcemap: true,
       },
       plugins: [
