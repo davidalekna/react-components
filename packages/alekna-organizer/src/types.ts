@@ -36,6 +36,8 @@ export type MonthFnProps = {
 };
 
 export type Props = {
+  now?: any;
+  selected?: any;
   locale: Locale;
   format: string;
   daysNames: string[];

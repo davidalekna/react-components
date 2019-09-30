@@ -60,6 +60,7 @@ export default class Organizer extends Component<Props, State> {
     ),
     initialGridOf: PropTypes.number,
     initialDate: PropTypes.instanceOf(Date),
+    selected: PropTypes.any,
     now: PropTypes.instanceOf(Date),
     initialSelected: PropTypes.oneOfType([
       PropTypes.instanceOf(Date),
@@ -86,7 +87,6 @@ export default class Organizer extends Component<Props, State> {
     events: [],
     initialGridOf: 42,
     initialDate: toDate(new Date()),
-    now: undefined,
     initialSelected: null,
   };
   static stateChangeTypes = {
