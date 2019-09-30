@@ -29,8 +29,8 @@ function getSelectedDate(dates, num) {
 function Demo() {
   return (
     <Organizer
-      onSelectRange={state => {
-        console.log(state);
+      onSelectRange={([startDate, endDate]) => {
+        console.log([startDate, endDate]);
       }}
     >
       {({
