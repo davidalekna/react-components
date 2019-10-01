@@ -412,12 +412,22 @@ export default class Organizer extends Component<Props, State> {
       },
     );
   };
-  selectRange = ({ type = Organizer.stateChangeTypes.selectRange, date }) => {
+  selectRange = ({
+    type = Organizer.stateChangeTypes.selectRange,
+    date,
+    range,
+  }) => {
     this.internalSetState(
       state => {
         let selectionState = {};
         const selected = state.selected;
-
+        // ability to initially select dates
+        if (range && Array.isArray(range) && range.length === 2) {
+          return {
+            selected: range,
+          };
+        }
+        // ability to select dates one by one
         if (Array.isArray(selected) && selected.length < 2) {
           // if second date selected is before the first it will become first.
           if (isBefore(date, selected[0])) {
