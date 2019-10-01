@@ -74,15 +74,15 @@ export const Day = styled(Flex)<{ [key: string]: any }>`
   justify-content: center;
   border: none;
   outline: none;
-  cursor: ${({ hoverable, past }) => !past && hoverable && 'pointer'};
+  cursor: ${({ hoverable, future }) => !future && hoverable && 'pointer'};
   width: 40px;
   height: 40px;
   background: ${({ current, selected }) =>
     (current && '#4286f4') || (selected && '#777')};
-  color: ${({ current, past }) => (current && 'white') || (past && '#ccc')};
+  color: ${({ current, future }) => (current && 'white') || (future && '#ccc')};
   color: ${({ selected }) => selected && 'white'};
   &:hover {
-    background: ${({ current, past, hoverable }) =>
-      !past && hoverable && !current && '#eee'};
+    background: ${({ current, future, hoverable }) =>
+      !future && hoverable && !current && '#eee'};
   }
 `;

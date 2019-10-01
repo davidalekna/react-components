@@ -73,9 +73,9 @@ function Demo() {
                         current={day.status.today}
                         hoverable={!day.status.offset}
                         selected={day.status.selected}
-                        past={day.status.past}
+                        future={day.status.future}
                         onClick={() => {
-                          if (!day.status.offset && !day.status.past) {
+                          if (!day.status.offset && !day.status.future) {
                             selectRange({ date: day.date });
                           }
                         }}
@@ -108,9 +108,9 @@ function Demo() {
                         current={day.status.today}
                         hoverable={!day.status.offset}
                         selected={day.status.selected}
-                        past={day.status.past}
+                        future={day.status.future}
                         onClick={() => {
-                          if (!day.status.offset && !day.status.past) {
+                          if (!day.status.offset && !day.status.future) {
                             selectRange({ date: day.date });
                           }
                         }}

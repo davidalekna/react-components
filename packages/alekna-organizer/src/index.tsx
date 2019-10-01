@@ -211,11 +211,10 @@ export default class Organizer extends Component<Props, State> {
   };
   getCurrentMonth = ({ month, year, events }: MonthFnProps) => {
     const generatedDays: Days = [];
-    const currentMonth = month - 1;
+    const currentMonth = month - 1; // back to 0 index
     const totalDays = this._getNumberOfDaysInAMonth(currentMonth, year);
     const today = new Date().getDate() - 1;
-    const now =
-      isSameMonth(new Date(year, currentMonth, today), new Date()) && today;
+    const now = isSameMonth(new Date(year, month, today), new Date()) && today;
 
     for (let i = 0; i < totalDays; i += 1) {
       const currentDay = i + 1;
@@ -303,6 +302,7 @@ export default class Organizer extends Component<Props, State> {
     };
   };
   getFullMonth = (m?: number, events?: Event[]) => {
+    // month index starts from 1
     const month = m ? m : getMonth(this.getState().now) + 1;
     const year = getYear(this.getState().now);
     // TODO START: move off to the SW
