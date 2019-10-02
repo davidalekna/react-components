@@ -1,5 +1,5 @@
 import { IField, FormState } from '../types';
-import { mergeMap, filter, map, tap } from 'rxjs/operators';
+import { mergeMap, filter, map, tap, switchMap } from 'rxjs/operators';
 import { of, Observable, from } from 'rxjs';
 import fieldValidator from './fieldValidator';
 import {
@@ -35,7 +35,7 @@ export const fieldBlur: any = ({ item }: { item: IField }) => (
     type: FIELD_BLUR,
     payload: { item },
   }).pipe(
-    mergeMap((action: any) => {
+    switchMap((action: any) => {
       return of(action).pipe(
         filter(
           ({ payload }) =>
