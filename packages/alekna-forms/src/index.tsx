@@ -2,7 +2,13 @@ import * as React from 'react';
 import { isEqual, cloneDeep } from 'lodash';
 import { useStore, createStore } from '@alekna/react-store';
 import formReducer from './store/reducer';
-import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
+import {
+  IField,
+  InputEvent,
+  ICustomInput,
+  IDefaultProps,
+  FormState,
+} from './types';
 import {
   fieldUpdate,
   fieldBlur,
@@ -11,40 +17,85 @@ import {
   formSubmit,
 } from './store/actions';
 
-export const FormContext = React.createContext<any>({
-  fields: [],
+type ContextType = {
+  fields: { [key: string]: FormState };
+  handleSubmit: Function;
+  reset: Function;
+  touched: boolean;
+  dispatch: Function;
+};
+
+export const FormContext = React.createContext<ContextType>({
+  fields: {},
   handleSubmit: () => {},
   reset: () => {},
   touched: false,
+  dispatch: () => {},
 });
 
-function transformFields(initialFields: IField[]): any {
+function transformFields(
+  initialFields: IField[] | { [key: string]: IField },
+): any {
+  let fields;
   const meta = { touched: false, loading: false, errors: [] };
-  const fields = initialFields.reduce((acc, { requirements, ...field }) => {
-    if (
-      Array.isArray(requirements) &&
-      requirements.filter(fn => typeof fn === 'function').filter(Boolean)
-        .length > 0
-    ) {
+
+  if (Array.isArray(initialFields)) {
+    fields = initialFields.reduce((acc, { requirements, ...field }) => {
+      if (
+        Array.isArray(requirements) &&
+        requirements.filter(fn => typeof fn === 'function').filter(Boolean)
+          .length > 0
+      ) {
+        return {
+          ...acc,
+          [field.name]: {
+            ...field,
+            requirements,
+            meta,
+          },
+        };
+      }
+
       return {
         ...acc,
         [field.name]: {
           ...field,
-          requirements,
           meta,
         },
       };
-    }
+    }, {});
+    return Object.freeze(fields);
+  }
+  if (typeof initialFields === 'object') {
+    fields = Object.keys(initialFields).reduce((acc, key) => {
+      const { requirements, ...field } = initialFields[key];
+      if (
+        Array.isArray(requirements) &&
+        requirements.filter(fn => typeof fn === 'function').filter(Boolean)
+          .length > 0
+      ) {
+        return {
+          ...acc,
+          [key]: {
+            ...field,
+            name: key,
+            requirements,
+            meta,
+          },
+        };
+      }
 
-    return {
-      ...acc,
-      [field.name]: {
-        ...field,
-        meta,
-      },
-    };
-  }, {});
-  return Object.freeze(fields);
+      return {
+        ...acc,
+        [key]: {
+          ...field,
+          name: key,
+          meta,
+        },
+      };
+    }, {});
+    return Object.freeze(fields);
+  }
 }
 
 function configureStore(initialFields: IField[]) {
@@ -147,6 +198,7 @@ export const Form = ({
     handleSubmit,
     reset: clearValues,
     touched: findTouched(),
+    dispatch,
   };
 
   const withHandlers = Object.keys(state).reduce((acc, key: any) => {
@@ -223,7 +275,7 @@ export const Field = ({
     throw Error('children and render cannot be used together!');
   }
   if (!field) {
-    const hasMatch = fields.find(f => f.name.includes(name));
+    const hasMatch = Object.values(fields).find(f => f.name.includes(name));
     if (hasMatch) {
       throw Error(
         `Field with name ${name} doesn\`t exist, did you mean ${hasMatch.name}?`,
