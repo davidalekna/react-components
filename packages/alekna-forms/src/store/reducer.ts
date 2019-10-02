@@ -9,7 +9,6 @@ import {
   FIELD_FOCUS,
   ERRORS,
   FORM_RESET,
-  FORM_SUBMIT,
   FORM_INITIALIZE,
 } from './actions';
 
@@ -63,9 +62,6 @@ const formReducer = (initialState: any) => (
     }
     case FORM_RESET: {
       return cloneDeep(initialState);
-    }
-    case FORM_SUBMIT: {
-      return cloneDeep(action.payload);
     }
     case FORM_INITIALIZE: {
       return action.payload;
