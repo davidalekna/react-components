@@ -18,7 +18,7 @@ import {
 } from './store/actions';
 
 type ContextType = {
-  fields: { [key: string]: FormState };
+  fields: { [key: string]: IField };
   handleSubmit: Function;
   reset: Function;
   touched: boolean;
