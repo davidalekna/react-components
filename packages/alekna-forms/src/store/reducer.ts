@@ -10,6 +10,7 @@ import {
   ERRORS,
   FORM_RESET,
   FORM_SUBMIT,
+  FORM_INITIALIZE,
 } from './actions';
 
 export const getFromStateByName = (state: any) => (itemName: string) => {
@@ -65,6 +66,9 @@ const formReducer = (initialState: any) => (
     }
     case FORM_SUBMIT: {
       return cloneDeep(action.payload);
+    }
+    case FORM_INITIALIZE: {
+      return action.payload;
     }
     default: {
       return state;

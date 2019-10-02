@@ -20,7 +20,7 @@ const Demo = () => {
   };
 
   return (
-    <Form initialFields={initialFields} onSubmit={onSubmit}>
+    <Form initialState={initialFields} onSubmit={onSubmit}>
       {({ handleSubmit, reset, touched }) => {
         return (
           <form onSubmit={handleSubmit}>

@@ -28,7 +28,7 @@ export interface IFinalValues {
 
 export interface IDefaultProps {
   children: Function | unknown;
-  initialFields: any[];
+  initialState: any[];
   epics?: Function[];
   onSubmit: (values: any) => void;
   onStateChange?: (params: FormState) => void;
@@ -40,3 +40,12 @@ export interface IFormContext {
   reset: Function;
   touched: Boolean;
 }
+
+export type FormContextType = {
+  fields: { [key: string]: IField };
+  handleSubmit: Function;
+  reset: Function;
+  touched: boolean;
+  dispatch: Function;
+  initialize: Function;
+};

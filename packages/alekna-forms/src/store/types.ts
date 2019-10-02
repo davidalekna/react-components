@@ -8,6 +8,7 @@ import {
   ERRORS,
   FORM_RESET,
   FORM_SUBMIT,
+  FORM_INITIALIZE,
 } from './actions';
 
 interface IAction {
@@ -49,6 +50,11 @@ class FormSubmit implements IAction {
   constructor(public payload: FormState) {}
 }
 
+class FormInitialize implements IAction {
+  readonly type = FORM_INITIALIZE;
+  constructor(public payload: any) {}
+}
+
 class Reset implements IAction {
   readonly type = FORM_RESET;
 }
@@ -61,4 +67,5 @@ export type FormActions =
   | FieldTouched
   | Errors
   | FormSubmit
-  | Reset;
+  | Reset
+  | FormInitialize;

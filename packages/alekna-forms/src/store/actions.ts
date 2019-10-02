@@ -15,14 +15,15 @@ import {
   allErrorsEmitted,
 } from './helpers';
 
-export const UPDATE = '@@frm/UPDATE';
-export const FIELD_BLUR = '@@frm/FIELD_BLUR';
-export const FIELD_ERROR_UPDATE = '@@frm/FIELD_ERROR_UPDATE';
-export const ERROR = '@@frm/ERROR';
-export const FIELD_FOCUS = '@@frm/FIELD_FOCUS';
-export const ERRORS = '@@frm/ERRORS';
-export const FORM_RESET = '@@frm/FORM_RESET';
-export const FORM_SUBMIT = '@@frm/FORM_SUBMIT';
+export const UPDATE = '@form/UPDATE';
+export const FIELD_BLUR = '@form/FIELD_BLUR';
+export const FIELD_ERROR_UPDATE = '@form/FIELD_ERROR_UPDATE';
+export const ERROR = '@form/ERROR';
+export const FIELD_FOCUS = '@form/FIELD_FOCUS';
+export const ERRORS = '@form/ERRORS';
+export const FORM_RESET = '@form/FORM_RESET';
+export const FORM_SUBMIT = '@form/FORM_SUBMIT';
+export const FORM_INITIALIZE = '@form/FORM_INITIALIZE';
 
 export function fieldUpdate({ name, value }: { name: string; value: any }) {
   return {
@@ -64,6 +65,13 @@ export function fieldFocus(name: string) {
 export function formReset() {
   return {
     type: FORM_RESET,
+  };
+}
+
+export function formInitialize(initialValues) {
+  return {
+    type: FORM_INITIALIZE,
+    payload: initialValues,
   };
 }
 

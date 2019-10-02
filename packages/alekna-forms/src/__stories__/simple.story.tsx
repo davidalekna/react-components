@@ -12,7 +12,7 @@ const Demo = () => {
 
   return (
     <div style={{ padding: '20px 50px' }}>
-      <Form initialFields={initialFields} onSubmit={onSubmit}>
+      <Form initialState={initialFields} onSubmit={onSubmit}>
         {({ fields, handleSubmit, reset, touched }) => {
           return (
             <form onSubmit={evt => handleSubmit(evt)}>
