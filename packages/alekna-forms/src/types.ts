@@ -29,8 +29,9 @@ export interface IFinalValues {
 export interface IDefaultProps {
   children: Function | unknown;
   initialFields: any[];
-  onSubmit: Function;
   epics?: Function[];
+  onSubmit: (values: any) => void;
+  onStateChange?: (params: FormState) => void;
 }
 
 export interface IFormContext {

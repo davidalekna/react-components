@@ -20,45 +20,53 @@ export const FormContext = React.createContext<any>({
 
 function transformFields(initialFields: IField[]): any {
   const meta = { touched: false, loading: false, errors: [] };
-  const fields = new Map();
-  initialFields.map(({ requirements, ...field }: IField) => {
+  const fields = initialFields.reduce((acc, { requirements, ...field }) => {
     if (
       Array.isArray(requirements) &&
       requirements.filter(fn => typeof fn === 'function').filter(Boolean)
         .length > 0
     ) {
-      return fields.set(field.name, {
-        ...field,
-        requirements,
-        meta,
-      });
+      return {
+        ...acc,
+        [field.name]: {
+          ...field,
+          requirements,
+          meta,
+        },
+      };
     }
 
-    return fields.set(field.name, {
-      ...field,
-      meta,
-    });
-  });
-  return fields;
+    return {
+      ...acc,
+      [field.name]: {
+        ...field,
+        meta,
+      },
+    };
+  }, {});
+  return Object.freeze(fields);
 }
 
 function configureStore(initialFields: IField[]) {
   const initialState = transformFields(cloneDeep(initialFields));
-  return createStore(
-    { form: formReducer(cloneDeep(initialState)) },
-    cloneDeep(initialState),
-  );
+  const reducer = formReducer(initialState);
+  return createStore(reducer, initialState);
 }
 
 export const Form = ({
   children,
   initialFields = [],
   onSubmit = () => {},
+  onStateChange = () => {},
 }: IDefaultProps) => {
   const storeConfig = React.useMemo(() => configureStore(initialFields), [
     initialFields,
   ]);
-  const { state, dispatch } = useStore(storeConfig);
+  const { state, dispatch }: any = useStore(storeConfig);
+
+  React.useEffect(() => {
+    onStateChange(state);
+  }, [state]);
 
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');
@@ -90,7 +98,7 @@ export const Form = ({
 
   const onBlurAction = (name: string) => {
     if (!name) throw Error('no input name');
-    const item = state.form.get(name);
+    const item = state[name];
     dispatch(fieldBlur({ item }));
   };
 
@@ -119,7 +127,7 @@ export const Form = ({
 
   const handleSubmit = (evt: InputEvent) => {
     evt.preventDefault();
-    dispatch(formSubmit(state.form, onSubmit));
+    dispatch(formSubmit(state, onSubmit));
   };
 
   const clearValues = () => {
@@ -127,9 +135,9 @@ export const Form = ({
   };
 
   const findTouched = () => {
-    const touched = Array.from(state.form.values()).find(
-      (field: any) => field.meta && field.meta.touched,
-    );
+    const touched = Object.values(state).find((field: any) => {
+      return field.meta && field.meta.touched;
+    });
     return touched ? true : false;
   };
 
@@ -141,22 +149,25 @@ export const Form = ({
     touched: findTouched(),
   };
 
-  const fieldsWithHandlers = Array.from(state.form.values()).map(
-    ({ requirements, ...field }) => ({
-      ...field,
-      onBlur,
-      onFocus,
-      onChange,
-    }),
-  );
+  const withHandlers = Object.keys(state).reduce((acc, key: any) => {
+    return {
+      ...acc,
+      [state[key].name]: {
+        ...state[key],
+        onBlur,
+        onFocus,
+        onChange,
+      },
+    };
+  }, {});
 
   const ui =
     typeof children === 'function'
-      ? children({ fields: fieldsWithHandlers, ...fns })
+      ? children({ fields: withHandlers, ...fns })
       : children;
 
   return (
-    <FormContext.Provider value={{ fields: fieldsWithHandlers, ...fns }}>
+    <FormContext.Provider value={{ fields: withHandlers, ...fns }}>
       {ui}
     </FormContext.Provider>
   );
@@ -206,7 +217,7 @@ export const Field = ({
   render?: Function;
 }) => {
   const { fields } = useFormContext();
-  const field = fields.find((f: IField) => f.name === name);
+  const field = fields[name];
 
   if (children && render) {
     throw Error('children and render cannot be used together!');

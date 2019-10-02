@@ -76,9 +76,7 @@ export const formSubmit: any = (state: any, onSubmit: Function) => actions$ => {
     throttleTime(1500),
     switchMap(({ payload, onSubmit }: { payload: any; onSubmit: Function }) => {
       const errorsBuffer: IField[] = [];
-      const state$ = Array.from(payload.values()).map((item: IField) =>
-        of(item),
-      );
+      const state$ = Object.values(payload).map((item: IField) => of(item));
 
       return from(state$).pipe(
         mergeMap((field: any) => {

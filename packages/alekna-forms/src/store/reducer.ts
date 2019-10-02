@@ -13,51 +13,48 @@ import {
 } from './actions';
 
 export const getFromStateByName = (state: any) => (itemName: string) => {
-  const item = state.get(itemName);
+  const item = state[itemName];
   if (!item) {
     throw Error(`input name ${itemName} doesnt exist on provided fields`);
   }
   return item;
 };
 
-const formReducer = (initialState: FormState) => (
-  state: FormState = initialState,
+const formReducer = (initialState: any) => (
+  state: any = initialState,
   action: FormActions,
-): FormState => {
+): any => {
   const findByName = getFromStateByName(state);
   switch (action.type) {
     case UPDATE: {
       const item = findByName(action.payload.name);
       const newItem: IField = Object.assign(item, action.payload);
       newItem.meta.errors = [];
-      state.set(action.payload.name, newItem);
+      state[action.payload.name] = newItem;
       return cloneDeep(state);
     }
     case ERROR: {
       // TODO: should add error under meta?
       const { item } = action.payload;
-      state.set(item.name, item);
+      state[item.name] = item;
       return cloneDeep(state);
     }
     case FIELD_BLUR: {
       const { item } = action.payload;
-      state.set(item.name, item);
+      state[item.name] = item;
       return cloneDeep(state);
     }
     case FIELD_FOCUS: {
       const { name, loading } = action.payload;
       const item = findByName(name);
-      state.set(
-        name,
-        merge(item, {
-          meta: { touched: true, loading },
-        }),
-      );
+      state[name] = merge(item, {
+        meta: { touched: true, loading },
+      });
       return cloneDeep(state);
     }
     case FIELD_ERROR_UPDATE: {
       const { item } = action.payload;
-      state.set(item.name, item);
+      state[item.name] = item;
       return cloneDeep(state);
     }
     case ERRORS: {
@@ -70,7 +67,6 @@ const formReducer = (initialState: FormState) => (
       return cloneDeep(action.payload);
     }
     default: {
-      console.log('nothing');
       return state;
     }
   }
