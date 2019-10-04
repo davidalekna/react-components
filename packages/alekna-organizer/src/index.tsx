@@ -214,7 +214,13 @@ export default class Organizer extends Component<Props, State> {
     const currentMonth = month - 1; // back to 0 index
     const totalDays = this._getNumberOfDaysInAMonth(currentMonth, year);
     const today = new Date().getDate() - 1;
-    const now = isSameMonth(new Date(year, month, today), new Date()) && today;
+    // ERROR: the problem happens when it's the 1st day of the month, then
+    // it thinks that it's one month forward from current month.
+    const now =
+      isSameMonth(
+        new Date(year, today === 0 ? month : currentMonth, today),
+        new Date(),
+      ) && today;
 
     for (let i = 0; i < totalDays; i += 1) {
       const currentDay = i + 1;
