@@ -2,14 +2,13 @@ import React from 'react';
 import { sort } from 'ramda';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import ShowDocs from '../../__utils__/ShowDocs';
-import { getObjectPropertyByString } from '../../index';
-import { View } from '../../__components__/globals';
-import { TableHead, TableBody, Row, RowItem } from '../../__components__/table';
+import { getObjectPropertyByString } from '../../../src/index';
+import { View } from '../../components/globals';
+import { TableHead, TableBody, Row, RowItem } from '../../components/table';
 import { BaseTable } from '../base';
 import fieldReducer from './fieldReducer';
-import { Checkbox } from '../../__components__/formElements';
-import { HeadCell } from '../../__components__/table/components/HeadCell';
+import { Checkbox } from '../../components/formElements';
+import { HeadCell } from '../../components/table/components/HeadCell';
 
 const Body = ({
   defaultSortMethod,
@@ -125,15 +124,13 @@ function Demo({
   );
 }
 
-storiesOf('features', module)
-  .add('Docs', () => <ShowDocs md={require('../../../docs/sample.md')} />)
-  .add('Demo', () => (
-    <Demo
-      onSelectAll={action('onSelectAll')}
-      onDeselectAll={action('onDeselectAll')}
-      onCheckboxToggle={action('onCheckboxToggle')}
-      onTableRowClick={action('onTableRowClick')}
-      onToggleSort={action('onToggleSort')}
-      onSortData={action('onSortData')}
-    />
-  ));
+storiesOf('features', module).add('Demo', () => (
+  <Demo
+    onSelectAll={action('onSelectAll')}
+    onDeselectAll={action('onDeselectAll')}
+    onCheckboxToggle={action('onCheckboxToggle')}
+    onTableRowClick={action('onTableRowClick')}
+    onToggleSort={action('onToggleSort')}
+    onSortData={action('onSortData')}
+  />
+));

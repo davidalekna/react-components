@@ -2,16 +2,15 @@ import React from 'react';
 import { sort } from 'ramda';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import ShowDocs from '../../__utils__/ShowDocs';
-import { getObjectPropertyByString } from '../../index';
-import { View } from '../../__components__/globals';
+import { getObjectPropertyByString } from '../../../src/index';
+import { View } from '../../components/globals';
 import {
   TableHead,
   HeadRowItem,
   TableBody,
   TableRow,
   TableRowItem,
-} from '../../__components__/table';
+} from '../../components/table';
 import { BaseTable } from '../base';
 import fieldReducer from './fieldReducer';
 
@@ -61,11 +60,9 @@ function Demo({ onTableRowClick, onToggleSort }) {
   );
 }
 
-storiesOf('sort', module)
-  .add('Docs', () => <ShowDocs md={require('../../../docs/sample.md')} />)
-  .add('Demo', () => (
-    <Demo
-      onTableRowClick={action('onTableRowClick')}
-      onToggleSort={action('onToggleSort')}
-    />
-  ));
+storiesOf('sort', module).add('Demo', () => (
+  <Demo
+    onTableRowClick={action('onTableRowClick')}
+    onToggleSort={action('onToggleSort')}
+  />
+));

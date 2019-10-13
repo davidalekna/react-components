@@ -1,5 +1,5 @@
 import React from 'react';
-import { withDataBrowser } from '../../../index';
+import { withDataBrowser } from '../../../../src/index';
 import { HeadCellMenuPopup, CellWithMenu } from '../styles';
 import { pipe } from 'ramda';
 

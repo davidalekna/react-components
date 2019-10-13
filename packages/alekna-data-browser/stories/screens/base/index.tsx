@@ -1,6 +1,6 @@
 import * as React from 'react';
-import DataBrowser from '../../index';
-import useData from '../../__utils__/useData';
+import DataBrowser from '../../../src/index';
+import useData from '../../utils/useData';
 
 const columns = [
   { label: 'name', sortField: 'name', isLocked: true },
