@@ -9,15 +9,8 @@ export const TableHead = styled(Flex)`
   padding: 0 5px;
   font-size: 12px;
   user-select: none;
-`;
 
-export const HeadRowItem = styled(Flex)<{ flex?: string }>`
-  flex: ${({ flex }) => flex};
-  text-transform: uppercase;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  cursor: pointer;
+  background: #eee;
 `;
 
 export const TableBody = styled(Flex)`
@@ -27,14 +20,14 @@ export const TableBody = styled(Flex)`
   padding: 0 5px;
 `;
 
-export const TableRow = styled(Flex)<{ selectable?: boolean }>`
-  flex: 0 0 auto;
-  border-bottom: 1px solid #eee;
-  &:hover {
-    background: ${({ selectable }) => selectable && '#4286f4'};
-    color: ${({ selectable }) => selectable && 'white'};
-  }
-`;
+// export const TableRow = styled(Flex)<{ selectable?: boolean }>`
+//   flex: 0 0 auto;
+//   border-bottom: 1px solid #eee;
+//   &:hover {
+//     background: ${({ selectable }) => selectable && '#4286f4'};
+//     color: ${({ selectable }) => selectable && 'white'};
+//   }
+// `;
 
 export const TableRowItem = styled.div<{
   flex?: string;
@@ -75,17 +68,30 @@ export const FixedTableHead = styled(Flex)`
 export const Row = styled(Flex)<{ selectable?: boolean }>`
   flex: 0 0 auto;
   background: white;
-  border-bottom: 1px solid #f9f9f9;
+  border-bottom: 1px solid #eee;
   &:hover {
     background: ${({ selectable }) => selectable && '#f9f9f9'};
   }
 `;
 
-export const RowItem = styled(Flex)<{
+type RowItemProps = {
   flex?: string;
   checked?: boolean;
   cursor?: string;
-}>`
+};
+
+export const HeadRowItem = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  text-transform: uppercase;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 0 10px;
+  cursor: pointer;
+`;
+
+export const RowItem = styled(Flex)<RowItemProps>`
   display: flex;
   flex: ${({ flex }) => flex};
   height: 46px;
@@ -165,16 +171,18 @@ export const FlexButton = styled.button<{ active?: boolean }>`
     active ? theme.colours.neutral['100'] : theme.colours.neutral['900']};
 `;
 
-export const CellWithMenu = styled.div<{
+type CellWithMenuProps = {
   width?: number;
   top?: number;
   right?: number;
   left?: number;
-}>`
+};
+
+export const CellWithMenu = styled.div<CellWithMenuProps>`
   position: absolute;
   min-height: 120px;
   z-index: 10;
-  outline: none;
+
   border: 1px dashed red;
   background: white;
   width: ${({ width }) => (width ? `${width}px` : '170px')};

@@ -3,27 +3,34 @@ import Downshift from 'downshift';
 import { HeadRowItem } from '../styles';
 import HeadCellMenu from './HeadCellMenu';
 
-export const HeadCell = ({ style, render, selected, flex }) => (
+export const HeadCell = ({ style = {}, render, selected, flex }) => (
   <Downshift>
-    {({ isOpen, toggleMenu }) => (
-      <div style={{ flex, ...style }}>
-        <HeadRowItem>
-          {render({
-            id: `head-cell-${selected && selected.sortField}`,
-            onClick: toggleMenu,
-            'data-toggle': 'dropdown',
-            'aria-haspopup': 'true',
-            'aria-expanded': isOpen,
-            style: {
-              cursor: 'pointer',
-              color: isOpen && 'black',
-            },
-          })}
-          {isOpen && (
-            <HeadCellMenu selected={selected} toggleMenu={toggleMenu} />
-          )}
-        </HeadRowItem>
-      </div>
-    )}
+    {({
+      isOpen,
+      toggleMenu,
+      getToggleButtonProps,
+      getLabelProps,
+      getMenuProps,
+    }) => {
+      return (
+        <div style={{ display: 'flex', flex, ...style }}>
+          <HeadRowItem>
+            <label {...getLabelProps()}>
+              {render(
+                getToggleButtonProps({
+                  style: {
+                    cursor: 'pointer',
+                    color: isOpen && 'black',
+                  },
+                }),
+              )}
+            </label>
+            {isOpen && (
+              <HeadCellMenu selected={selected} toggleMenu={toggleMenu} />
+            )}
+          </HeadRowItem>
+        </div>
+      );
+    }}
   </Downshift>
 );

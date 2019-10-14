@@ -38,7 +38,7 @@ const Body = ({
               key={sortField}
               flex={columnFlex[index]}
               checked={checkboxState(row.id)}
-              onClick={() => onTableRowClick(`row id ${row.id}`)}
+              // onClick={() => onTableRowClick(`row id ${row.id}`)}
             >
               {fieldReducer(
                 getObjectPropertyByString(row, sortField),
@@ -62,7 +62,7 @@ function Demo({
   onSortData,
   onReplaceColumnFlex,
 }) {
-  const fixedColWidth = 40;
+  const fixedColWidth = 45;
 
   return (
     <BaseTable
@@ -81,7 +81,6 @@ function Demo({
           selectAllCheckboxState,
           onSelection,
         } = dbProps;
-
         return (
           <RootView>
             {/* HEAD */}
@@ -89,9 +88,7 @@ function Demo({
               {/* Head Columns */}
               <HeadCell
                 flex="0 0 auto"
-                selected
                 style={{
-                  position: 'relative',
                   width: fixedColWidth,
                 }}
                 render={() => (
@@ -111,14 +108,24 @@ function Demo({
                   key={index}
                   selected={cell}
                   flex={columnFlex[index]}
-                  style
                   // onClick={() => toggleSort({ sortField: cell.sortField })}
-                  render={props => <div {...props}>{cell.label}</div>}
+                  render={props => (
+                    <div
+                      {...props}
+                      style={{
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {cell.label}
+                    </div>
+                  )}
                 />
               ))}
             </TableHead>
             {viewSwitch({
-              list: Body,
+              list: props => <Body {...props} fixedColWidth={fixedColWidth} />,
             })}
           </RootView>
         );

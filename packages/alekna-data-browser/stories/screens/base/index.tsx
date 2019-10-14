@@ -66,7 +66,7 @@ export function BaseTable({ children, onToggleSort, ...rest }) {
         return [
           '0 0 15%',
           '1 1 25%',
-          '0 0 10%',
+          '0 0 20%',
           '0 0 10%',
           '0 0 10%',
           '0 0 10%',
