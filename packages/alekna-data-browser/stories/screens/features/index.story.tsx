@@ -60,6 +60,7 @@ function Demo({
   onSelectAll,
   onDeselectAll,
   onSortData,
+  onReplaceColumnFlex,
 }) {
   const fixedColWidth = 40;
 
@@ -71,6 +72,7 @@ function Demo({
       onDeselectAll={onDeselectAll}
       onSortData={onSortData}
       onTableRowClick={onTableRowClick}
+      onReplaceColumnFlex={onReplaceColumnFlex}
     >
       {(viewSwitch, data, loading, dbProps) => {
         const {
@@ -133,5 +135,6 @@ storiesOf('features', module).add('Demo', () => (
     onTableRowClick={action('onTableRowClick')}
     onToggleSort={action('onToggleSort')}
     onSortData={action('onSortData')}
+    onReplaceColumnFlex={action('onReplaceColumnFlex')}
   />
 ));
