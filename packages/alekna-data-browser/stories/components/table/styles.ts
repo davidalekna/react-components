@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { FlexRow, FlexCol } from '../globals';
+import styled, { css } from 'styled-components';
+import { Flex } from '../globals';
 
-export const TableHead = styled(FlexRow)`
+export const TableHead = styled(Flex)`
   flex: 0 0 auto;
   height: 46px;
   color: black;
@@ -11,7 +11,7 @@ export const TableHead = styled(FlexRow)`
   user-select: none;
 `;
 
-export const HeadRowItem = styled(FlexRow)`
+export const HeadRowItem = styled(Flex)<{ flex?: string }>`
   flex: ${({ flex }) => flex};
   text-transform: uppercase;
   align-items: center;
@@ -20,13 +20,14 @@ export const HeadRowItem = styled(FlexRow)`
   cursor: pointer;
 `;
 
-export const TableBody = styled(FlexCol)`
+export const TableBody = styled(Flex)`
+  flex-direction: column;
   flex: 1 1 auto;
   overflow-x: auto;
   padding: 0 5px;
 `;
 
-export const TableRow = styled(FlexRow)`
+export const TableRow = styled(Flex)<{ selectable?: boolean }>`
   flex: 0 0 auto;
   border-bottom: 1px solid #eee;
   &:hover {
@@ -35,7 +36,11 @@ export const TableRow = styled(FlexRow)`
   }
 `;
 
-export const TableRowItem = styled.div`
+export const TableRowItem = styled.div<{
+  flex?: string;
+  checked?: string;
+  cursor?: string;
+}>`
   display: flex;
   flex: ${({ flex }) => flex};
   height: 46px;
@@ -50,14 +55,15 @@ export const TableRowItem = styled.div`
   cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
 `;
 
-export const Table = styled(FlexCol)`
+export const Table = styled(Flex)`
+  flex-direction: column;
   position: relative;
   overflow: none;
   height: 100%;
   width: 100%;
 `;
 
-export const FixedTableHead = styled(FlexRow)`
+export const FixedTableHead = styled(Flex)`
   flex: 0 0 auto;
   background: white;
   color: ${({ theme }) => theme.colours.neutral['800']};
@@ -66,7 +72,7 @@ export const FixedTableHead = styled(FlexRow)`
   font-size: 12px;
 `;
 
-export const Row = styled(FlexRow)`
+export const Row = styled(Flex)<{ selectable?: boolean }>`
   flex: 0 0 auto;
   background: white;
   border-bottom: 1px solid #f9f9f9;
@@ -75,7 +81,11 @@ export const Row = styled(FlexRow)`
   }
 `;
 
-export const RowItem = styled.div`
+export const RowItem = styled(Flex)<{
+  flex?: string;
+  checked?: boolean;
+  cursor?: string;
+}>`
   display: flex;
   flex: ${({ flex }) => flex};
   height: 46px;
@@ -107,7 +117,7 @@ export const TableFooter = styled.div`
   border-bottom-right-radius: 6px;
 `;
 
-export const Placeholder = styled(FlexRow)`
+export const Placeholder = styled(Flex)<{ loading?: boolean; w?: number }>`
   flex: 0 0 auto;
   width: ${({ w }) => (w ? `${w}px` : '20px')};
   height: 20px;
@@ -135,7 +145,7 @@ export const Placeholder = styled(FlexRow)`
     `};
 `;
 
-export const FlexButton = styled.button`
+export const FlexButton = styled.button<{ active?: boolean }>`
   display: flex;
   flex: none;
   align-self: center;
@@ -155,7 +165,12 @@ export const FlexButton = styled.button`
     active ? theme.colours.neutral['100'] : theme.colours.neutral['900']};
 `;
 
-export const CellWithMenu = styled.div`
+export const CellWithMenu = styled.div<{
+  width?: number;
+  top?: number;
+  right?: number;
+  left?: number;
+}>`
   position: absolute;
   min-height: 120px;
   z-index: 10;

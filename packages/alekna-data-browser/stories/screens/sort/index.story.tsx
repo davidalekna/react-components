@@ -3,7 +3,7 @@ import { sort } from 'ramda';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { getObjectPropertyByString } from '../../../src/index';
-import { View } from '../../components/globals';
+import { RootView } from '../../components/globals';
 import {
   TableHead,
   HeadRowItem,
@@ -21,7 +21,7 @@ function Demo({ onTableRowClick, onToggleSort }) {
         data,
         { columnFlex, visibleColumns, defaultSortMethod, toggleSort },
       ) => (
-        <View>
+        <RootView>
           <TableHead>
             {visibleColumns.map((cell, index) => (
               <HeadRowItem
@@ -54,7 +54,7 @@ function Demo({ onTableRowClick, onToggleSort }) {
               </TableRow>
             ))}
           </TableBody>
-        </View>
+        </RootView>
       )}
     </BaseTable>
   );

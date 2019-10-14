@@ -3,7 +3,7 @@ import { sort } from 'ramda';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { getObjectPropertyByString } from '../../../src/index';
-import { View } from '../../components/globals';
+import { RootView } from '../../components/globals';
 import { TableHead, TableBody, Row, RowItem } from '../../components/table';
 import { BaseTable } from '../base';
 import fieldReducer from './fieldReducer';
@@ -17,14 +17,14 @@ const Body = ({
   checkboxState,
   checkboxToggle,
   visibleColumns,
-  columnFlex,
   onTableRowClick,
+  columnFlex,
 }: any) => {
   return (
     <TableBody>
       {sort(defaultSortMethod, data).map((row, key) => (
         <Row key={key} selectable>
-          <RowItem style={{ width: fixedColWidth }} flex="0 0 auto">
+          <RowItem width={fixedColWidth} flex="0 0 auto">
             <Checkbox
               id={row.id}
               checked={checkboxState(row.id)}
@@ -70,6 +70,7 @@ function Demo({
       onSelectAll={onSelectAll}
       onDeselectAll={onDeselectAll}
       onSortData={onSortData}
+      onTableRowClick={onTableRowClick}
     >
       {(viewSwitch, data, loading, dbProps) => {
         const {
@@ -80,7 +81,7 @@ function Demo({
         } = dbProps;
 
         return (
-          <View>
+          <RootView>
             {/* HEAD */}
             <TableHead>
               {/* Head Columns */}
@@ -117,7 +118,7 @@ function Demo({
             {viewSwitch({
               list: Body,
             })}
-          </View>
+          </RootView>
         );
       }}
     </BaseTable>

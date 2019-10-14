@@ -11,7 +11,6 @@ export default function useData() {
 
   async function fetchRows() {
     const [{ data }] = await Promise.all([api('')]);
-    console.log(data);
     setRows(data);
     setLoading(false);
   }

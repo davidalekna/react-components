@@ -80,6 +80,17 @@ export class DataBrowser extends React.Component<Props, State> {
     // views
     views: [LIST, GRID, LOADING],
     initialView: LIST,
+
+    // TODO: move static props under initialState
+    //
+    // initialState: {
+    //   sort: { dir: '', sortField: '' },
+    //   columnFlex: ['0 0 25%', '1 1 35%', '0 0 20%', '0 0 20%'],
+    //   checkedItems: [],
+    //   totalItems: 0,
+    //   availableViews: [LIST, GRID, LOADING],
+    //   selectedView: LIST,
+    // }
   };
   static stateChangeTypes = {
     deselectAll: '__deselect_all__',
@@ -99,15 +110,27 @@ export class DataBrowser extends React.Component<Props, State> {
       ? this.props.initialColumnFlex[0]
       : this.props.initialColumnFlex;
   };
+  componentDidUpdate(prevProps: Props) {
+    // replace columns if there was a change in initial column flex.
+    // helps on screen resizes if there is a requirement to show less columns.
+    if (
+      JSON.stringify(prevProps.initialColumnFlex) !==
+      JSON.stringify(this.props.initialColumnFlex)
+    ) {
+      this.replaceColumnFlex({
+        columnFlex: this.props.initialColumnFlex,
+      });
+    }
+  }
   /**
-   * switchColumns replaces visible column with selected one from the offset
+   * switchColumns replaces visible column with selected from the offset
    */
   switchColumns = ({
     type = DataBrowser.stateChangeTypes.switchColumns,
     from,
     to,
   }: { type?: string; to?: string; from?: string } = {}) => {
-    const { visibleColumns: columns, offsetColumns } = this.getState();
+    const { visibleColumns: columns, offsetColumns }: State = this.getState();
     if (columns && offsetColumns) {
       const index = columns.findIndex(x => x.sortField === from);
       const visibleColumns = columns.filter(col => col.sortField !== from);
@@ -126,8 +149,8 @@ export class DataBrowser extends React.Component<Props, State> {
    */
   replaceColumnFlex = ({
     type = DataBrowser.stateChangeTypes.replaceColumnFlex,
-    columnFlex = '',
-  }: { type?: string; columnFlex?: string } = {}) => {
+    columnFlex = [],
+  }: { type?: string; columnFlex?: string[] } = {}) => {
     this.internalSetState(
       state => {
         const visibleSortFields = state.visibleColumns
@@ -154,7 +177,7 @@ export class DataBrowser extends React.Component<Props, State> {
     );
   };
   /**
-   * offsetColumns returns columns that are note visible on the table
+   * offsetColumns returns items that are note visible
    */
   offsetColumns = () => {
     const { visibleColumns } = this.getState();
@@ -214,7 +237,7 @@ export class DataBrowser extends React.Component<Props, State> {
     );
   };
   /**
-   * checkboxToggle toggles or untoggles row
+   * checkboxToggle toggles or untoggles item
    */
   checkboxToggle = ({
     type = DataBrowser.stateChangeTypes.checkboxToggle,
@@ -264,7 +287,7 @@ export class DataBrowser extends React.Component<Props, State> {
   /**
    * checkboxState helps to determin current checkbox check state
    */
-  checkboxState = value => {
+  checkboxState = (value: unknown) => {
     const checkedItems = this.getState().checkedItems;
     if (!checkedItems) return false;
     return checkedItems.includes(value);
@@ -388,7 +411,7 @@ export class DataBrowser extends React.Component<Props, State> {
   /**
    * activeSort is used on every sort element to determine if the current sort is that field
    */
-  activeSort = (fieldName = '', sortDir = ''): boolean => {
+  activeSort = (fieldName: string = '', sortDir: string = ''): boolean => {
     const currentSort = this.getState().currentSort;
     const isActive = currentSort.sortField === fieldName;
     const isCurrentSortDir = currentSort.dir === sortDir;
@@ -483,14 +506,10 @@ export function withDataBrowser(Component) {
   const Wrapper = React.forwardRef((props, ref) => {
     return (
       <DataBrowser.Consumer>
-        {browserUtils => (
-          <Component {...props} dataBrowser={browserUtils} ref={ref} />
-        )}
+        {dbUtils => <Component {...props} {...dbUtils} ref={ref} />}
       </DataBrowser.Consumer>
     );
   });
-  Wrapper.displayName = `withDataBrowser(${Component.displayName ||
-    Component.name})`;
   return Wrapper;
 }
 

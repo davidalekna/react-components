@@ -5,7 +5,12 @@ import { pipe } from 'ramda';
 
 // onClick={() => toggleSort({ sortField: cell.sortField })}
 
-const HeadCellMenu = ({ dataBrowser, selected, toggleMenu, activeLabel }) => {
+const HeadCellMenu = ({
+  selected,
+  toggleMenu,
+  activeLabel,
+  ...dataBrowser
+}) => {
   const sortField = `${selected.sortField}`;
   const showFieldsMenu =
     !selected.isLocked &&
