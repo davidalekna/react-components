@@ -111,12 +111,16 @@ export class DataBrowser extends React.Component<Props, State> {
       : this.props.initialColumnFlex;
   };
   componentDidUpdate(prevProps: Props) {
-    // replace columns if there was a change in initial column flex.
-    // helps on screen resizes if there is a requirement to show less columns.
+    // NOTE: replace columns if there was a change on `initialColumnFlex` prop.
+    // helps on screen resizes if there is a requirement to show less/more columns.
     if (
       JSON.stringify(prevProps.initialColumnFlex) !==
-      JSON.stringify(this.props.initialColumnFlex)
+        JSON.stringify(this.props.initialColumnFlex) &&
+      Array.isArray(this.props.initialColumnFlex) &&
+      this.props.initialColumnFlex.length > 0
     ) {
+      // TODO: maybe we should check on the screen width and
+      // return columns from the `availableColumnFlex`?...
       this.replaceColumnFlex({
         columnFlex: this.props.initialColumnFlex,
       });
@@ -145,7 +149,7 @@ export class DataBrowser extends React.Component<Props, State> {
     }
   };
   /**
-   * replaceColumnFlex
+   * replaceColumnFlex will change the amount of visible columns
    */
   replaceColumnFlex = ({
     type = DataBrowser.stateChangeTypes.replaceColumnFlex,

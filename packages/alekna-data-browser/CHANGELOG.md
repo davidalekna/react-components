@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- componentDidUpdate will check for initialColumnFlex equality and call `replaceColumnFlex` fn if it changes with the new value
+
 ### Changed
 
 - withDataBrowser hoc utils were injected under `dataBrowser` props, now they are spread along other component props
