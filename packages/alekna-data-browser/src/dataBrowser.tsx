@@ -115,8 +115,9 @@ export class DataBrowser extends React.Component<Props, State> {
         ({ sortField }) => sortField === to,
       );
       visibleColumns.splice(index, 0, replacement);
-      this.internalSetState({ type, visibleColumns }, () =>
-        this.props.onSwitchColumns(this.getState().visibleColumns),
+      this.internalSetState(
+        () => ({ type, visibleColumns }),
+        () => this.props.onSwitchColumns(this.getState().visibleColumns),
       );
     }
   };
@@ -192,7 +193,7 @@ export class DataBrowser extends React.Component<Props, State> {
    */
   deselectAll = ({ type = DataBrowser.stateChangeTypes.deselectAll } = {}) => {
     this.internalSetState(
-      { type, selectAllCheckboxState: 'none', checkedItems: [] },
+      () => ({ type, selectAllCheckboxState: 'none', checkedItems: [] }),
       () => this.props.onDeselectAll(this.getState().checkedItems),
     );
   };
@@ -204,11 +205,11 @@ export class DataBrowser extends React.Component<Props, State> {
     items,
   }: { type?: string; items?: string[] } = {}) => {
     this.internalSetState(
-      {
+      () => ({
         type,
         selectAllCheckboxState: 'all',
         checkedItems: items,
-      },
+      }),
       () => this.props.onSelectAll(this.getState().checkedItems),
     );
   };
@@ -276,8 +277,9 @@ export class DataBrowser extends React.Component<Props, State> {
     viewType = '',
   } = {}) => {
     if (this.props.views.includes(viewType)) {
-      this.internalSetState({ type, viewType }, () =>
-        this.props.onSwitchViewType(viewType),
+      this.internalSetState(
+        () => ({ type, viewType }),
+        () => this.props.onSwitchViewType(viewType),
       );
     } else {
       console.warn(`${viewType} not in available views`);
@@ -376,10 +378,10 @@ export class DataBrowser extends React.Component<Props, State> {
     dir,
   }: { type?: string; sortField?: string; dir?: string } = {}) => {
     this.internalSetState(
-      {
+      () => ({
         type,
         currentSort: { sortField, dir },
-      },
+      }),
       () => this.props.onSortData(this.getState().currentSort),
     );
   };
@@ -433,11 +435,14 @@ export class DataBrowser extends React.Component<Props, State> {
       return state;
     }, {});
   }
-  internalSetState = (changes, callback = () => {}) => {
-    let allChanges;
+  internalSetState = (
+    changes: (state: State) => any, // return of an object doesn't work 🤔
+    callback = () => {},
+  ): void => {
+    let allChanges: unknown;
     this.setState(
       currentState => {
-        const combinedState = this.getState(currentState);
+        const combinedState: Readonly<State> = this.getState(currentState);
         return [changes]
           .map(c => (typeof c === 'function' ? c(currentState) : c))
           .map(c => {

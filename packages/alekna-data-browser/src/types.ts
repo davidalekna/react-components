@@ -4,18 +4,24 @@ type Column = {
 };
 
 export type Props = {
-  stateReducer: Function;
-  onStateChange: Function;
-  onSwitchColumns: Function;
-  onSwitchViewType: Function;
-  onChangeSortDirection: Function;
-  onSortData: Function;
-  onReplaceColumnFlex: Function;
-  onToggleSortDirection: Function;
-  onDeselectAll: Function;
-  onSelectAll: Function;
-  onCheckboxToggle: Function;
-  onToggleSort: Function;
+  stateReducer: (state: State, changes: unknown) => any;
+  onStateChange: (allChanges: any, state: State) => void;
+  onSwitchColumns: (visibleColumns: State['visibleColumns']) => void;
+  onSwitchViewType: (viewType: State['viewType']) => void;
+  onChangeSortDirection: (currentSort: State['currentSort']) => void;
+  onSortData: (currentSort: State['currentSort']) => void;
+  onReplaceColumnFlex: ({
+    columnFlex,
+    visibleColumns,
+  }: {
+    columnFlex: State['columnFlex'];
+    visibleColumns: State['visibleColumns'];
+  }) => void;
+  onToggleSortDirection: (currentSort: State['currentSort']) => void;
+  onDeselectAll: (checkedItems: State['checkedItems']) => void;
+  onSelectAll: (checkedItems: State['checkedItems']) => void;
+  onCheckboxToggle: (checkedItems: State['checkedItems']) => void;
+  onToggleSort: (currentSort: State['currentSort']) => void;
   initialSort: { dir: string; sortField: string };
   initialColumnFlex: string[];
   initialChecked: string[];
@@ -28,6 +34,7 @@ export type Props = {
 export type CheckboxAllState = 'all' | 'none' | 'some' | string;
 
 export type State = {
+  type?: any; // this is for passing a ref on an updated item
   columnFlex: string[] | string[][] | any;
   availableColumnFlex: null | string[];
   visibleColumns: Column[];
