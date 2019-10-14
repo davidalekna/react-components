@@ -1,8 +1,9 @@
-import 'react-testing-library/cleanup-after-each';
-import * as React from 'react';
-import { render } from 'react-testing-library';
+import React from 'react';
+import { render, cleanup } from '@testing-library/react';
+import mockColumns from '../__mocks__/columns';
 import DataBrowser from '../';
-import mockColumns from './mocks/columns';
+
+afterEach(cleanup);
 
 test('should return visibleColumns in shape of columnFlex', () => {
   const { columnFlex, visibleColumns } = renderDataBrowser({
