@@ -83,11 +83,23 @@ type RowItemProps = {
 export const HeadRowItem = styled.div`
   display: flex;
   flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 10px;
+`;
+
+export const HeadCellText = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
   text-transform: uppercase;
   align-items: center;
-  justify-content: space-between;
+  white-space: nowrap;
+  justify-content: flex-start;
   font-size: 11px;
-  padding: 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
 `;
 

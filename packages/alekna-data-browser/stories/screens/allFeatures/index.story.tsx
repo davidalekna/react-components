@@ -1,57 +1,14 @@
 import React from 'react';
-import { sort } from 'ramda';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import { getObjectPropertyByString } from '../../../src/index';
 import { RootView } from '../../components/globals';
-import { TableHead, TableBody, Row, RowItem } from '../../components/table';
-import { BaseTable } from '../base';
-import fieldReducer from './fieldReducer';
+import { TableHead, HeadCellText } from '../../components/table';
+import { BaseTable } from '../../utils/base';
 import { Checkbox } from '../../components/formElements';
 import { HeadCell } from '../../components/table/components/HeadCell';
+import TableListBody from './tableBody';
 
-const Body = ({
-  defaultSortMethod,
-  data,
-  fixedColWidth,
-  checkboxState,
-  checkboxToggle,
-  visibleColumns,
-  onTableRowClick,
-  columnFlex,
-}: any) => {
-  return (
-    <TableBody>
-      {sort(defaultSortMethod, data).map((row, key) => (
-        <Row key={key} selectable>
-          <RowItem width={fixedColWidth} flex="0 0 auto">
-            <Checkbox
-              id={row.id}
-              checked={checkboxState(row.id)}
-              onChange={() => {
-                checkboxToggle({ rowId: row.id });
-              }}
-            />
-          </RowItem>
-          {visibleColumns.map(({ sortField }, index) => (
-            <RowItem
-              key={sortField}
-              flex={columnFlex[index]}
-              checked={checkboxState(row.id)}
-              // onClick={() => onTableRowClick(`row id ${row.id}`)}
-            >
-              {fieldReducer(
-                getObjectPropertyByString(row, sortField),
-                sortField,
-                row,
-              )}
-            </RowItem>
-          ))}
-        </Row>
-      ))}
-    </TableBody>
-  );
-};
+// TODO: use css prop for the header text to truncate long string
 
 function Demo({
   onTableRowClick,
@@ -109,23 +66,18 @@ function Demo({
                   selected={cell}
                   flex={columnFlex[index]}
                   // onClick={() => toggleSort({ sortField: cell.sortField })}
-                  render={props => (
-                    <div
-                      {...props}
-                      style={{
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                      }}
-                    >
+                  render={({ isOpen, getToggleButtonProps }) => (
+                    <HeadCellText {...getToggleButtonProps({ isOpen })}>
                       {cell.label}
-                    </div>
+                    </HeadCellText>
                   )}
                 />
               ))}
             </TableHead>
             {viewSwitch({
-              list: props => <Body {...props} fixedColWidth={fixedColWidth} />,
+              list: props => (
+                <TableListBody {...props} fixedColWidth={fixedColWidth} />
+              ),
             })}
           </RootView>
         );
@@ -134,7 +86,7 @@ function Demo({
   );
 }
 
-storiesOf('features', module).add('Demo', () => (
+storiesOf('all features', module).add('Demo', () => (
   <Demo
     onSelectAll={action('onSelectAll')}
     onDeselectAll={action('onDeselectAll')}

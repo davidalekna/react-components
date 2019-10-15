@@ -13,22 +13,13 @@ export const HeadCell = ({ style = {}, render, selected, flex }) => (
       getMenuProps,
     }) => {
       return (
-        <div style={{ display: 'flex', flex, ...style }}>
-          <HeadRowItem>
-            <label {...getLabelProps()}>
-              {render(
-                getToggleButtonProps({
-                  style: {
-                    cursor: 'pointer',
-                    color: isOpen && 'black',
-                  },
-                }),
-              )}
-            </label>
-            {isOpen && (
-              <HeadCellMenu selected={selected} toggleMenu={toggleMenu} />
-            )}
+        <div style={{ display: 'flex', flex, overflow: 'hidden', ...style }}>
+          <HeadRowItem {...getLabelProps()}>
+            {render({ getToggleButtonProps, isOpen })}
           </HeadRowItem>
+          {isOpen && (
+            <HeadCellMenu selected={selected} toggleMenu={toggleMenu} />
+          )}
         </div>
       );
     }}

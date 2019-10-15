@@ -1,7 +1,7 @@
 import React from 'react';
-import DataBrowser from '../../../src/index';
-import useData from '../../utils/useData';
-import useWindowSize from '../../hooks/useWindowSize';
+import DataBrowser from '../../src/index';
+import useData from '../utils/useData';
+import useWindowSize from '../hooks/useWindowSize';
 
 const columns = [
   { label: 'name', sortField: 'name', isLocked: true },
@@ -32,7 +32,7 @@ const LOADING = 'LOADING';
 
 const views = [LIST, GRID, LOADING];
 
-const viewSwitch = ({ viewType, data, props }) => ({
+const viewSwitch = ({ viewType, data, props, rest: parentRest }) => ({
   loading: Loading = () => <div children="loading" />,
   list: List = () => <div children="list" />,
   ...rest
@@ -41,7 +41,7 @@ const viewSwitch = ({ viewType, data, props }) => ({
     case 'LOADING':
       return 'LOADING COMPONENT WILL REPLACE THIS TEXT';
     case 'LIST':
-      return <List data={data} {...props} {...rest} />;
+      return <List data={data} {...props} {...rest} {...parentRest} />;
     case 'GRID':
       return <div children="grid will be here" />;
     default:
@@ -89,7 +89,7 @@ export function BaseTable({ children, onToggleSort, ...rest }) {
     >
       {props => {
         return children(
-          viewSwitch({ viewType, data, props }),
+          viewSwitch({ viewType, data, props, rest }),
           data,
           loading,
           props,
