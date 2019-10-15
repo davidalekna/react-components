@@ -127,28 +127,6 @@ export class DataBrowser extends React.Component<Props, State> {
     }
   }
   /**
-   * switchColumns replaces visible column with selected from the offset
-   */
-  switchColumns = ({
-    type = DataBrowser.stateChangeTypes.switchColumns,
-    from,
-    to,
-  }: { type?: string; to?: string; from?: string } = {}) => {
-    const { visibleColumns: columns, offsetColumns }: State = this.getState();
-    if (columns && offsetColumns) {
-      const index = columns.findIndex(x => x.sortField === from);
-      const visibleColumns = columns.filter(col => col.sortField !== from);
-      const replacement = offsetColumns().find(
-        ({ sortField }) => sortField === to,
-      );
-      visibleColumns.splice(index, 0, replacement);
-      this.internalSetState(
-        () => ({ type, visibleColumns }),
-        () => this.props.onSwitchColumns(this.getState().visibleColumns),
-      );
-    }
-  };
-  /**
    * replaceColumnFlex will change the amount of visible columns
    */
   replaceColumnFlex = ({
@@ -179,6 +157,28 @@ export class DataBrowser extends React.Component<Props, State> {
           visibleColumns: this.getState().visibleColumns,
         }),
     );
+  };
+  /**
+   * switchColumns replaces visible column with selected from the offset
+   */
+  switchColumns = ({
+    type = DataBrowser.stateChangeTypes.switchColumns,
+    from,
+    to,
+  }: { type?: string; to?: string; from?: string } = {}) => {
+    const { visibleColumns: columns, offsetColumns }: State = this.getState();
+    if (columns && offsetColumns) {
+      const index = columns.findIndex(x => x.sortField === from);
+      const visibleColumns = columns.filter(col => col.sortField !== from);
+      const replacement = offsetColumns().find(
+        ({ sortField }) => sortField === to,
+      );
+      visibleColumns.splice(index, 0, replacement);
+      this.internalSetState(
+        () => ({ type, visibleColumns }),
+        () => this.props.onSwitchColumns(this.getState().visibleColumns),
+      );
+    }
   };
   /**
    * offsetColumns returns items that are note visible

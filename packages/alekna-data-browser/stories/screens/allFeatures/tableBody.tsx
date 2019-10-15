@@ -1,6 +1,6 @@
 import React from 'react';
 import { sort } from 'ramda';
-import { getObjectPropertyByString } from '../../../src/index';
+import { getBySortField } from '../../../src/index';
 import fieldReducer from './fieldReducer';
 import { Checkbox } from '../../components/formElements';
 import { TableBody, Row, RowItem } from '../../components/table';
@@ -35,11 +35,7 @@ const Body = ({
               checked={checkboxState(row.id)}
               onClick={() => onTableRowClick(`row id ${row.id}`)}
             >
-              {fieldReducer(
-                getObjectPropertyByString(row, sortField),
-                sortField,
-                row,
-              )}
+              {fieldReducer(getBySortField(row, sortField), sortField, row)}
             </RowItem>
           ))}
         </Row>

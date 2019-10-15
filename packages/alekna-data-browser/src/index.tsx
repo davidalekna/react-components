@@ -11,5 +11,6 @@ export {
   DataBrowserContext,
   withDataBrowser,
   useDataBrowser,
-  getObjectPropertyByString,
+  getObjectPropertyByString, // will be deprecated
+  getObjectPropertyByString as getBySortField,
 };
