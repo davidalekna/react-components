@@ -6,14 +6,14 @@ import { DataBrowser } from '../dataBrowser';
 
 afterEach(cleanup);
 
-test('should return visibleColumns in shape of columnFlex', () => {
+test('visibleColumns should have length of columnFlex', () => {
   const { columnFlex, visibleColumns } = setup({
     props: { initialColumnFlex: ['0 0 25%', '1 1 55%', '0 0 20%'] },
   });
   expect(visibleColumns.length).toEqual(columnFlex.length);
 });
 
-test('switchViewType should switch to selected available view', () => {
+test('switchViewType should change state to selected available view', () => {
   const handleStateChange = jest.fn();
   const { switchViewType } = setup({
     props: {
@@ -32,6 +32,20 @@ test('switchViewType should switch to selected available view', () => {
   expect(handleStateChange).toHaveBeenLastCalledWith(
     changes,
     expect.objectContaining({ viewType: changes.viewType }),
+  );
+});
+
+test('replaceColumnFlex if initial prop have been changed', () => {
+  const initialColumnFlex = ['0 0 20%', '1 1 40%', '0 0 20%', '0 0 20%'];
+  const { columnFlex } = setup({
+    props: {
+      initialColumnFlex: initialColumnFlex,
+    },
+  });
+  expect(columnFlex.toString()).toEqual(initialColumnFlex.toString());
+  initialColumnFlex.pop(); // modify initial prop
+  expect(columnFlex.toString()).toMatchInlineSnapshot(
+    `"0 0 20%,1 1 40%,0 0 20%"`,
   );
 });
 
