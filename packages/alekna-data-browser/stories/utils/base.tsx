@@ -1,6 +1,7 @@
-import * as React from 'react';
-import DataBrowser from '../../index';
-import useData from '../../__utils__/useData';
+import React from 'react';
+import DataBrowser from '../../src/index';
+import useData from '../utils/useData';
+import useWindowSize from '../hooks/useWindowSize';
 
 const columns = [
   { label: 'name', sortField: 'name', isLocked: true },
@@ -31,7 +32,7 @@ const LOADING = 'LOADING';
 
 const views = [LIST, GRID, LOADING];
 
-const viewSwitch = ({ viewType, data, props }) => ({
+const viewSwitch = ({ viewType, data, props, rest: parentRest }) => ({
   loading: Loading = () => <div children="loading" />,
   list: List = () => <div children="list" />,
   ...rest
@@ -40,7 +41,7 @@ const viewSwitch = ({ viewType, data, props }) => ({
     case 'LOADING':
       return 'LOADING COMPONENT WILL REPLACE THIS TEXT';
     case 'LIST':
-      return <List data={data} {...props} {...rest} />;
+      return <List data={data} {...props} {...rest} {...parentRest} />;
     case 'GRID':
       return <div children="grid will be here" />;
     default:
@@ -50,11 +51,30 @@ const viewSwitch = ({ viewType, data, props }) => ({
 
 export function BaseTable({ children, onToggleSort, ...rest }) {
   const { data, loading } = useData();
+  const { width } = useWindowSize();
   const [viewType, switchViewType] = React.useState(LOADING);
 
   React.useEffect(() => {
     switchViewType(loading ? LOADING : LIST);
   }, [loading]);
+
+  function generateColumnFlex() {
+    switch (true) {
+      case width <= 800:
+        return ['0 0 25%', '1 1 75%'];
+      case width >= 1200:
+        return [
+          '0 0 15%',
+          '1 1 25%',
+          '0 0 20%',
+          '0 0 10%',
+          '0 0 10%',
+          '0 0 10%',
+        ];
+      default:
+        return ['0 0 25%', '1 1 35%', '0 0 20%', '0 0 20%'];
+    }
+  }
 
   return (
     <DataBrowser
@@ -62,13 +82,14 @@ export function BaseTable({ children, onToggleSort, ...rest }) {
       totalItems={data.length}
       viewType={viewType}
       onSwitchViewType={switchViewType}
+      initialColumnFlex={generateColumnFlex()}
       // on trigger log
       onToggleSort={field => onToggleSort(`${field.sortField}-${field.dir}`)}
       {...rest}
     >
       {props => {
         return children(
-          viewSwitch({ viewType, data, props }),
+          viewSwitch({ viewType, data, props, rest }),
           data,
           loading,
           props,

@@ -20,6 +20,6 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   testURL: 'http://localhost',
 
-  testMatch: ['<rootDir>/src/**/__tests__/**/*.ts'],
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.(ts|tsx)'],
   testPathIgnorePatterns: [...ignores],
 };

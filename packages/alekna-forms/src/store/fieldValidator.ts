@@ -1,5 +1,5 @@
 import { of, merge, from, Observable, empty } from 'rxjs';
-import { UPDATE, FORM_RESET } from './actions';
+import { UPDATE, FORM_RESET, FORM_INITIALIZE } from './actions';
 import { FormActions } from './types';
 import { ofType } from './helpers';
 import { fieldErrorUpdate } from './actions';
@@ -50,6 +50,7 @@ const fieldValidator = (actions$: Observable<FormActions>) => {
       takeUntil(
         merge(
           actions$.pipe(ofType(FORM_RESET)),
+          actions$.pipe(ofType(FORM_INITIALIZE)),
           actions$.pipe(
             ofType(UPDATE),
             filter((innerAction: any) => {

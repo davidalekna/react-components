@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { FlexRow, Transition } from '../globals';
+import { Flex, Transition } from '../globals';
 
-export const StyledCheckboxWrapper = styled(FlexRow)`
+export const StyledCheckboxWrapper = styled(Flex)`
   color: ${({ theme }) => theme.colours.neutral['800']};
   align-items: ${props => props.align};
   line-height: 1.4;

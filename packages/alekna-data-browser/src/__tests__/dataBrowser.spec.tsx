@@ -1,19 +1,21 @@
-import 'react-testing-library/cleanup-after-each';
-import * as React from 'react';
-import { render } from 'react-testing-library';
-import DataBrowser from '../';
+import React from 'react';
+import { render, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import mockColumns from '../__mocks__/columns';
+import { DataBrowser } from '../dataBrowser';
 
-test('should return visibleColumns in shape of columnFlex', () => {
-  const { columnFlex, visibleColumns } = renderDataBrowser({
+afterEach(cleanup);
+
+test('visibleColumns should have length of columnFlex', () => {
+  const { columnFlex, visibleColumns } = setup({
     props: { initialColumnFlex: ['0 0 25%', '1 1 55%', '0 0 20%'] },
   });
   expect(visibleColumns.length).toEqual(columnFlex.length);
 });
 
-test('switchViewType should switch to selected available view', () => {
+test('switchViewType should change state to selected available view', () => {
   const handleStateChange = jest.fn();
-  const { switchViewType } = renderDataBrowser({
+  const { switchViewType } = setup({
     props: {
       onStateChange: handleStateChange,
       viewsAvailable: ['LIST', 'GRID', 'LOADING'],
@@ -33,9 +35,23 @@ test('switchViewType should switch to selected available view', () => {
   );
 });
 
+test('replaceColumnFlex if initial prop have been changed', () => {
+  const initialColumnFlex = ['0 0 20%', '1 1 40%', '0 0 20%', '0 0 20%'];
+  const { columnFlex } = setup({
+    props: {
+      initialColumnFlex: initialColumnFlex,
+    },
+  });
+  expect(columnFlex.toString()).toEqual(initialColumnFlex.toString());
+  initialColumnFlex.pop(); // modify initial prop
+  expect(columnFlex.toString()).toMatchInlineSnapshot(
+    `"0 0 20%,1 1 40%,0 0 20%"`,
+  );
+});
+
 test('switchColumns should switch column accordingly', () => {
   const handleStateChange = jest.fn();
-  const { switchColumns } = renderDataBrowser({
+  const { switchColumns } = setup({
     props: { onStateChange: handleStateChange },
   });
   switchColumns({ from: 'name', to: 'body' });
@@ -62,11 +78,7 @@ test('replaceColumnFlex should replace columns with chosen set of cols', () => {
     ['0 0 25%', '1 1 55%', '0 0 20%'],
     ['0 0 20%', '1 1 40%', '0 0 20%', '0 0 20%'],
   ];
-  const {
-    columnFlex,
-    availableColumnFlex,
-    replaceColumnFlex,
-  } = renderDataBrowser({
+  const { columnFlex, availableColumnFlex, replaceColumnFlex } = setup({
     props: {
       initialColumnFlex: initialColumnFlex,
       onStateChange: handleStateChange,
@@ -98,7 +110,7 @@ test('replaceColumnFlex should replace columns with chosen set of cols', () => {
 });
 
 test('checkboxState should check if checbox on or off', () => {
-  const { checkboxState } = renderDataBrowser({
+  const { checkboxState } = setup({
     props: { checkedItems: [1, 2, 3, 4] },
   });
   const result_1 = checkboxState(2);
@@ -116,7 +128,7 @@ test('checkboxState should check if checbox on or off', () => {
 });
 
 test('checkboxState returns false if checkedItems not available', () => {
-  const { checkboxState } = renderDataBrowser({
+  const { checkboxState } = setup({
     props: { checkedItems: undefined },
   });
   const result = checkboxState(2);
@@ -124,7 +136,7 @@ test('checkboxState returns false if checkedItems not available', () => {
 });
 
 test('offsetColumns should get all columns except with isLocked prop', () => {
-  const { offsetColumns } = renderDataBrowser();
+  const { offsetColumns } = setup();
   const columns = offsetColumns();
   const result = columns
     .map(item => (item.isLocked && 'exist') || false)
@@ -133,7 +145,7 @@ test('offsetColumns should get all columns except with isLocked prop', () => {
 });
 
 test('offsetColumns objects should contain prop visible', () => {
-  const { offsetColumns } = renderDataBrowser();
+  const { offsetColumns } = setup();
   const columns = offsetColumns();
   const result = columns
     .map(item => Object.keys(item).includes('visible'))
@@ -143,7 +155,7 @@ test('offsetColumns objects should contain prop visible', () => {
 
 test('offsetColumns state doesnt have visibleColumns', () => {
   // NOTE: not sure if it should return an empty array 🤔
-  const { offsetColumns } = renderDataBrowser({
+  const { offsetColumns } = setup({
     props: {
       visibleColumns: null,
     },
@@ -154,7 +166,7 @@ test('offsetColumns state doesnt have visibleColumns', () => {
 
 test('checkboxToggle select when unchecked', () => {
   const handleStateChange = jest.fn();
-  const { checkboxToggle } = renderDataBrowser({
+  const { checkboxToggle } = setup({
     props: {
       initialChecked: [0, 1, 2, 3, 4],
       totalItems: 6,
@@ -175,7 +187,7 @@ test('checkboxToggle select when unchecked', () => {
 
 test('checkboxToggle select when checkedItems', () => {
   const handleStateChange = jest.fn();
-  const { checkboxToggle } = renderDataBrowser({
+  const { checkboxToggle } = setup({
     props: {
       initialChecked: [0, 1, 2, 3, 4, 5],
       totalItems: 6,
@@ -198,7 +210,7 @@ test('checkboxToggle select when checkedItems', () => {
 test('onSelection selectAllCheckboxState toggle', () => {
   const items = [0, 1, 2, 3, 4, 5];
   const handleStateChange = jest.fn();
-  const { onSelection } = renderDataBrowser({
+  const { onSelection } = setup({
     props: {
       totalItems: items.length,
       onStateChange: handleStateChange,
@@ -245,7 +257,7 @@ test('onSelection selectAllCheckboxState toggle', () => {
 
 test('changeSortDirection', () => {
   const handleStateChange = jest.fn();
-  const { changeSortDirection } = renderDataBrowser({
+  const { changeSortDirection } = setup({
     props: {
       initialSort: { dir: 'asc', sortField: '_id' },
       onStateChange: handleStateChange,
@@ -270,7 +282,7 @@ test('defaultSortMethod', () => {});
 test('sortData', () => {});
 test('activeSort', () => {});
 
-function renderDataBrowser({
+function setup({
   render: renderFn = args => <div />,
   columns = mockColumns,
   props,

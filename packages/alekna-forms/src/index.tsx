@@ -1,64 +1,53 @@
-import * as React from 'react';
-import { isEqual, cloneDeep } from 'lodash';
-import { useStore, createStore } from '@alekna/react-store';
+import React, {
+  useMemo,
+  useEffect,
+  createContext,
+  useContext,
+  memo,
+} from 'react';
+import { isEqual } from 'lodash';
+import { useAsyncReducer } from '@alekna/react-store';
 import formReducer from './store/reducer';
-import { IField, InputEvent, ICustomInput, IDefaultProps } from './types';
+import transformFields from './transformFields';
+import {
+  FormContextType,
+  InputEvent,
+  ICustomInput,
+  IDefaultProps,
+} from './types';
 import {
   fieldUpdate,
   fieldBlur,
   fieldFocus,
   formReset,
   formSubmit,
+  formInitialize,
 } from './store/actions';
 
-export const FormContext = React.createContext<any>({
-  fields: [],
+export const FormContext = createContext<FormContextType>({
+  fields: {},
   handleSubmit: () => {},
   reset: () => {},
   touched: false,
+  dispatch: () => {},
+  initialize: () => {},
 });
-
-function transformFields(initialFields: IField[]): any {
-  const meta = { touched: false, loading: false, errors: [] };
-  const fields = new Map();
-  initialFields.map(({ requirements, ...field }: IField) => {
-    if (
-      Array.isArray(requirements) &&
-      requirements.filter(fn => typeof fn === 'function').filter(Boolean)
-        .length > 0
-    ) {
-      return fields.set(field.name, {
-        ...field,
-        requirements,
-        meta,
-      });
-    }
-
-    return fields.set(field.name, {
-      ...field,
-      meta,
-    });
-  });
-  return fields;
-}
-
-function configureStore(initialFields: IField[]) {
-  const initialState = transformFields(cloneDeep(initialFields));
-  return createStore(
-    { form: formReducer(cloneDeep(initialState)) },
-    cloneDeep(initialState),
-  );
-}
 
 export const Form = ({
   children,
-  initialFields = [],
+  initialState = [],
   onSubmit = () => {},
+  onStateChange = () => {},
 }: IDefaultProps) => {
-  const storeConfig = React.useMemo(() => configureStore(initialFields), [
-    initialFields,
+  const internalState = useMemo(() => transformFields(initialState), [
+    initialState,
   ]);
-  const { state, dispatch } = useStore(storeConfig);
+  const reducer = formReducer(internalState);
+  const [state, dispatch]: any = useAsyncReducer(reducer, internalState);
+
+  useEffect(() => {
+    onStateChange(state);
+  }, [state]);
 
   const onChangeTarget = ({ target }: InputEvent) => {
     if (!target.name) throw Error('no input name');
@@ -90,7 +79,7 @@ export const Form = ({
 
   const onBlurAction = (name: string) => {
     if (!name) throw Error('no input name');
-    const item = state.form.get(name);
+    const item = state[name];
     dispatch(fieldBlur({ item }));
   };
 
@@ -119,17 +108,13 @@ export const Form = ({
 
   const handleSubmit = (evt: InputEvent) => {
     evt.preventDefault();
-    dispatch(formSubmit(state.form, onSubmit));
-  };
-
-  const clearValues = () => {
-    dispatch(formReset());
+    dispatch(formSubmit(state, onSubmit));
   };
 
   const findTouched = () => {
-    const touched = Array.from(state.form.values()).find(
-      (field: any) => field.meta && field.meta.touched,
-    );
+    const touched = Object.values(state).find((field: any) => {
+      return field.meta && field.meta.touched;
+    });
     return touched ? true : false;
   };
 
@@ -137,33 +122,38 @@ export const Form = ({
 
   const fns = {
     handleSubmit,
-    reset: clearValues,
+    reset: () => dispatch(formReset()),
     touched: findTouched(),
+    dispatch,
+    initialize: newStatePayload => dispatch(formInitialize(newStatePayload)),
   };
 
-  const fieldsWithHandlers = Array.from(state.form.values()).map(
-    ({ requirements, ...field }) => ({
-      ...field,
-      onBlur,
-      onFocus,
-      onChange,
-    }),
-  );
+  const withHandlers = Object.keys(state).reduce((acc, key: any) => {
+    return {
+      ...acc,
+      [state[key].name]: {
+        ...state[key],
+        onBlur,
+        onFocus,
+        onChange,
+      },
+    };
+  }, {});
 
   const ui =
     typeof children === 'function'
-      ? children({ fields: fieldsWithHandlers, ...fns })
+      ? children({ fields: withHandlers, ...fns })
       : children;
 
   return (
-    <FormContext.Provider value={{ fields: fieldsWithHandlers, ...fns }}>
+    <FormContext.Provider value={{ fields: withHandlers, ...fns }}>
       {ui}
     </FormContext.Provider>
   );
 };
 
 export function useFormContext() {
-  const context = React.useContext(FormContext);
+  const context = useContext(FormContext);
   if (!context) {
     throw new Error(
       `Form compound components cannot be rendered outside the Form component`,
@@ -175,7 +165,7 @@ export function useFormContext() {
 /**
  * Useful when rendering fields from a map. Works with and without context.
  */
-export const MemoField = React.memo(
+export const MemoField = memo(
   ({ children, render, field }: any) => {
     if (children && render) {
       throw Error('children and render cannot be used together!');
@@ -206,13 +196,13 @@ export const Field = ({
   render?: Function;
 }) => {
   const { fields } = useFormContext();
-  const field = fields.find((f: IField) => f.name === name);
+  const field = fields[name];
 
   if (children && render) {
     throw Error('children and render cannot be used together!');
   }
   if (!field) {
-    const hasMatch = fields.find(f => f.name.includes(name));
+    const hasMatch = Object.values(fields).find(f => f.name.includes(name));
     if (hasMatch) {
       throw Error(
         `Field with name ${name} doesn\`t exist, did you mean ${hasMatch.name}?`,
@@ -222,7 +212,7 @@ export const Field = ({
     }
   }
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     // remove unused props from the dom
     const { requirements, ...fieldProps } = field;
     if (render) return render(fieldProps);
