@@ -1,7 +1,7 @@
 import { configure } from '@storybook/react';
 
 const req = require.context(
-  '../src/__stories__/',
+  '../stories',
   true,
   /.*\.(stories|story)\.(js|ts|tsx)?$/,
 );

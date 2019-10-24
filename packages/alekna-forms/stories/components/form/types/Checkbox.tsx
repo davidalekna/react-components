@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Checkbox as AntCheckbox } from 'antd';
 import { FieldErrors, FormLabel, StyledLabel } from '../../formElements';
 

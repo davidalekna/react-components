@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { Input } from 'antd';
-import { MemoField } from '../../../../index';
+import { MemoField } from '../../../../src/index';
 import {
   FieldErrors,
   FormLabel,
