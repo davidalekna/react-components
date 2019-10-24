@@ -10,7 +10,7 @@
   "sideEffects": false,
   "files": [
     "lib/bundle*",
-    "lib/index.d.ts"
+    "lib/*.d.ts"
   ],
   "repository": {
     "type": "git",
