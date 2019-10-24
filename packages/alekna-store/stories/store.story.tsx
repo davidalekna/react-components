@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import StoreProvider from '../index';
+import StoreProvider from '../src/index';
 import { addTodo } from './todo/actions';
 import { removeTodo } from './todos/actions';
 import { store } from './store';

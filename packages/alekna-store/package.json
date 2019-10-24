@@ -10,7 +10,7 @@
   "sideEffects": false,
   "files": [
     "lib/bundle*",
-    "lib/index.d.ts"
+    "lib/*.d.ts"
   ],
   "repository": {
     "type": "git",
@@ -53,6 +53,7 @@
     "@types/react-dom": "^16.8.4",
     "@types/styled-components": "^4.1.14",
     "antd": "^3.16.6",
+    "awesome-typescript-loader": "^5.2.1",
     "axios": "^0.18.0",
     "babel-jest": "^24.7.1",
     "babel-loader": "^8.0.5",
