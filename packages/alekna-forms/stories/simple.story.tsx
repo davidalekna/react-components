@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { Form } from '../index';
-import ShowDocs from '../__utils__/ShowDocs';
+import { Form } from '../src/index';
 import { renderFields } from './components/form/renderFields';
 import initialFields from './fields';
 
@@ -37,6 +36,4 @@ const Demo = () => {
   );
 };
 
-storiesOf('async validation', module)
-  .add('Docs', () => <ShowDocs md={require('../../docs/construct.md')} />)
-  .add('Demo', () => <Demo />);
+storiesOf('async validation', module).add('Demo', () => <Demo />);

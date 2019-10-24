@@ -231,10 +231,13 @@ export class DataBrowser extends React.Component<Props, State> {
     type = DataBrowser.stateChangeTypes.selectAll,
     items,
   }: { type?: string; items?: string[] } = {}) => {
+    // NOTE: selectAll can be used for range selection.
+    // could be renamed to `selectMany`
     this.internalSetState(
       () => ({
         type,
-        selectAllCheckboxState: 'all',
+        selectAllCheckboxState:
+          this.props.totalItems === items.length ? 'all' : 'some',
         checkedItems: items,
       }),
       () => this.props.onSelectAll(this.getState().checkedItems),
@@ -291,7 +294,7 @@ export class DataBrowser extends React.Component<Props, State> {
   /**
    * checkboxState helps to determin current checkbox check state
    */
-  checkboxState = (value: unknown) => {
+  checkboxState = (value: string | number) => {
     const checkedItems = this.getState().checkedItems;
     if (!checkedItems) return false;
     return checkedItems.includes(value);
@@ -316,6 +319,7 @@ export class DataBrowser extends React.Component<Props, State> {
    * defaultSortMethod is for sort function which is usually taken from ramda or lodash
    */
   defaultSortMethod = (a: object, b: object) => {
+    // TODO: could rename to clientSortMethod or clientSort
     const { sortField, dir } = this.getState().currentSort;
     if (sortField && dir) {
       let nameA = getObjectPropertyByString(a, sortField);

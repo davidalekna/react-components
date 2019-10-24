@@ -1,6 +1,6 @@
 import { REMOVE_TODO } from './actions';
 import { ADD_TODO } from '../todo/actions';
-import { SyncAction } from '../../types';
+import { SyncAction } from '../../src/types';
 
 const initialTodosState = [
   { title: 'Learn RxJS' },

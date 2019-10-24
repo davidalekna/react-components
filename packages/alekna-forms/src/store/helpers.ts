@@ -24,7 +24,7 @@ export const createObject = (obj: { [key: string]: unknown } | void) => {
 
 export const isBoolean = (val: unknown) => typeof val === 'boolean';
 
-export function ofType(actionType: string) {
+export function ofType(actionType: string): any {
   return filter(({ type }: FormActions) => type === actionType);
 }
 

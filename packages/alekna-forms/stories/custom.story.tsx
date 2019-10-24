@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { storiesOf } from '@storybook/react';
-import { Form, Field } from '../index';
-import ShowDocs from '../__utils__/ShowDocs';
+import { Form, Field } from '../src/index';
 import initialFields from './fields';
 import styled from 'styled-components';
 import { Text } from './components/form/types';
@@ -83,6 +82,4 @@ const Demo = () => {
   );
 };
 
-storiesOf('custom layout', module)
-  .add('Docs', () => <ShowDocs md={require('../../docs/construct.md')} />)
-  .add('Demo', () => <Demo />);
+storiesOf('custom layout', module).add('Demo', () => <Demo />);

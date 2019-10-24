@@ -13,7 +13,7 @@ import {
   takeUntil,
 } from 'rxjs/operators';
 
-const fieldValidator = (actions$: Observable<FormActions>) => {
+const fieldValidator = (actions$: Observable<FormActions>): any => {
   return switchMap(({ payload }) => {
     // add requests into an Observable from
     const requests = payload.item.requirements
