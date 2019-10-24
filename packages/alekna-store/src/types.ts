@@ -6,10 +6,10 @@ export type State = {
   [key: string]: any;
 };
 
-export type SyncAction = {
+export type SyncAction = Partial<{
   type: string;
-  payload?: any;
-};
+  payload: any;
+}>;
 
 type AsyncAction = Function;
 
