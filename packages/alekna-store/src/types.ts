@@ -1,7 +1,9 @@
 import { Subject } from 'rxjs';
 
+export type ReducerFunction = <T>(state?: T, action?: Action) => T;
+
 export type Reducers = {
-  // [key: string]: <T>(state: T, action: Action) => T;
+  // [key: string]: ReducerFunction;
   [key: string]: Function;
 };
 
