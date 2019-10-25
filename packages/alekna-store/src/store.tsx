@@ -11,12 +11,12 @@ type UseStoreProps<T> = {
   initialState?: T;
 };
 
-export const useStore = <T extends object | []>({
+export const useStore = <T extends {} | []>({
   actions$,
   reducers,
   initialState,
-}: UseStoreProps<T>) => {
-  const memoState = useMemo(() => initialState, [initialState]);
+}: UseStoreProps<T>): { state: T; dispatch: (args: Action) => void } => {
+  const memoState = useMemo<T>(() => initialState, [initialState]);
   const [state, update] = useState<T>(memoState);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export const useStore = <T extends object | []>({
               return empty();
           }
         }),
-        scan<Action, State>(mergeReducerState(reducers), memoState),
+        scan<Action, T>(mergeReducerState(reducers), memoState),
         // TODO: make this available to be extended by the user
       )
       .subscribe(update);
@@ -64,42 +64,43 @@ export const StoreContext = React.createContext<State>({
   dispatch: () => {},
 });
 
-export const StoreProvider = ({
+export const StoreProvider = <T extends {} | []>({
   store,
   children,
 }: {
-  store: Store;
-  children: ReactNode;
+  store: Store<T>;
+  children: ReactNode | Function;
 }) => {
   const stateProps = useStore(store);
   const ui = typeof children === 'function' ? children(stateProps) : children;
   return <StoreContext.Provider value={stateProps}>{ui}</StoreContext.Provider>;
 };
 
-export const useSelector = (callback: Function) => {
+// todo: improve callback return type
+export const useSelector = (callback: (args: State) => any) => {
   const { state } = React.useContext(StoreContext);
   const stateFromCallback = callback(state);
   return useMemo(() => stateFromCallback, [stateFromCallback]);
 };
 
-export const useDispatch = () => {
+export const useDispatch = (): ((args: Action) => void) => {
   const { dispatch } = React.useContext(StoreContext);
   return useMemo(() => dispatch, [dispatch]);
 };
 
-export const createStore = (
+export const createStore = <T extends {} | [] = {}>(
   reducers: Reducers | Function,
-  initialState: State = {},
-) => ({
+  initialState?: T,
+): Store<T> => ({
   actions$: new Subject(),
   reducers,
   initialState: generateInitialState(reducers, cloneDeep(initialState)),
 });
 
-export function useAsyncReducer<T extends object = {}>(
+export function useAsyncReducer<T extends {} | [] = {}>(
   reducer: Reducers | Function,
   initialState?: T,
-) {
+): [T, (args: Action) => void] {
   const storeConfig = useRef(createStore(reducer, initialState));
   const { state, dispatch } = useStore<T>(storeConfig.current);
   return [state, dispatch];

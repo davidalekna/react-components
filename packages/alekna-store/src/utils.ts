@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { Reducers, State, Action } from './types';
+import { Reducers, Action } from './types';
 
 export function rootReducerAsFunction(
   reducer: Function,
@@ -11,10 +11,10 @@ export function rootReducerAsFunction(
   // throw new Error('Initial reducer must be an object');
 }
 
-export const mergeReducerState = (reducers: Reducers | object) => (
-  prevState: object,
+export const mergeReducerState = <T>(reducers: Reducers | Function) => (
+  prevState: T,
   action: Action,
-) => {
+): T => {
   // 1. will accept single reducer function as well
   if (typeof reducers === 'function') {
     return rootReducerAsFunction(reducers, prevState, action);
@@ -35,10 +35,10 @@ export const mergeReducerState = (reducers: Reducers | object) => (
   return { ...prevState, ...newState };
 };
 
-export const generateInitialState = (
+export const generateInitialState = <T extends {} | [] = {}>(
   reducers: Reducers | Function,
-  initialState: State = {},
-) => {
+  initialState: T = {} as T,
+): T => {
   if (typeof reducers === 'function') {
     if (Object.keys(initialState).length) {
       return reducers(initialState, {});
