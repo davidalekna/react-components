@@ -7,7 +7,7 @@ const DataBrowserContext = createContext<DataBrowserState>({
   visibleColumns: [],
   // viewType: '',
   selectAllCheckboxState: "none",
-  currentSort: {},
+  currentSort: { sortField: "id", dir: "asc" },
   checkedItems: [],
   // fns
   getColumns: () => {},

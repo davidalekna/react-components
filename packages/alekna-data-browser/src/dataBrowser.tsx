@@ -2,7 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import DataBrowserContext from "./context";
 import { getObjectPropertyByString, arrayHasArrays } from "./utils";
-import { DataBrowserState, DataBrowserProps, SortDir, Dbm } from "./types";
+import {
+  DataBrowserState,
+  DataBrowserProps,
+  SortDir,
+  Dbm,
+  DataBrowserRenderProps
+} from "./types";
 
 const LIST = "LIST";
 const GRID = "GRID";
@@ -496,7 +502,9 @@ export class DataBrowser extends React.Component<
   };
   render() {
     const { children } = this.props;
-    const ui = typeof children === "function" ? children(this.state) : children;
+    const ui: DataBrowserRenderProps =
+      typeof children === "function" ? children(this.state) : children;
+
     return (
       <DataBrowserContext.Provider value={this.state}>
         {ui}
@@ -509,7 +517,9 @@ export function withDataBrowser(Component) {
   const Wrapper = React.forwardRef((props, ref) => {
     return (
       <DataBrowser.Consumer>
-        {dbUtils => <Component {...props} {...dbUtils} ref={ref} />}
+        {(dbUtils: DataBrowserState) => (
+          <Component {...props} {...dbUtils} ref={ref} />
+        )}
       </DataBrowser.Consumer>
     );
   });

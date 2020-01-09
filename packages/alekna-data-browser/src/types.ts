@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 export type DataBrowserColumn = {
   sortField: string;
   isLocked?: boolean;
@@ -73,3 +75,11 @@ export type DataBrowserState = {
   replaceColumnFlex: Function;
   toggleSort: Function;
 };
+
+type RenderPropsChildrenAsFunction = {
+  (utils: DataBrowserState): ReactElement | null;
+};
+
+export type DataBrowserRenderProps =
+  | RenderPropsChildrenAsFunction
+  | ReactElement;
