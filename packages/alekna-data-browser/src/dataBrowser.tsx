@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import DataBrowserContext from "./context";
 import { getObjectPropertyByString, arrayHasArrays } from "./utils";
-import { DataBrowserState, DataBrowserProps, Dbm } from "./types";
+import { DataBrowserState, DataBrowserProps, SortDir, Dbm } from "./types";
 
 const LIST = "LIST";
 const GRID = "GRID";
@@ -344,10 +344,12 @@ export class DataBrowser extends React.Component<
   /**
    * changeSortDirection changes direction to provided dir prop
    */
-  public changeSortDirection = ({
-    type = DataBrowser.stateChangeTypes.changeSortDirection,
-    dir = "asc"
-  } = {}) => {
+  public changeSortDirection = (
+    {
+      type = DataBrowser.stateChangeTypes.changeSortDirection,
+      dir = "asc"
+    }: Dbm<{ dir: SortDir }> = { dir: "asc" }
+  ) => {
     this.internalSetState(
       state => ({
         type,
@@ -395,7 +397,7 @@ export class DataBrowser extends React.Component<
     type = DataBrowser.stateChangeTypes.sortData,
     sortField,
     dir
-  }: Dbm<{ sortField?: string; dir?: string }> = {}) => {
+  }: Dbm<{ sortField?: string; dir?: SortDir }> = {}) => {
     this.internalSetState(
       {
         type,

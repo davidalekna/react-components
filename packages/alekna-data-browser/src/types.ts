@@ -3,6 +3,8 @@ export type DataBrowserColumn = {
   isLocked?: boolean;
 };
 
+export type SortDir = "asc" | "dsc";
+
 export type DataBrowserProps = {
   stateReducer: (state: Partial<DataBrowserState>, changes: unknown) => any;
   onStateChange: (allChanges: any, state: DataBrowserState) => void;
@@ -22,7 +24,7 @@ export type DataBrowserProps = {
   onSelectAll: (checkedItems: DataBrowserState["checkedItems"]) => void;
   onCheckboxToggle: (checkedItems: DataBrowserState["checkedItems"]) => void;
   onToggleSort: (currentSort: DataBrowserState["currentSort"]) => void;
-  initialSort: { dir: string; sortField: string };
+  initialSort: { dir: SortDir; sortField: string };
   initialColumnFlex: string[];
   initialChecked: string[];
   totalItems: number;
@@ -42,6 +44,11 @@ type MethodType = {
  */
 export type Dbm<T = {}> = MethodType & T;
 
+type CurrentSort = {
+  sortField: string;
+  dir: SortDir;
+};
+
 export type DataBrowserState = {
   type?: string | void; // this is for passing a ref on an updated item
   columnFlex: string[] | string[][] | any;
@@ -49,7 +56,7 @@ export type DataBrowserState = {
   visibleColumns: DataBrowserColumn[];
   viewType?: string;
   selectAllCheckboxState: SelectAllCheckboxStates;
-  currentSort: any;
+  currentSort: CurrentSort;
   checkedItems: any[];
   getColumns: () => DataBrowserColumn[] | void;
   getViews: () => string[] | void;
