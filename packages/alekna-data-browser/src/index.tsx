@@ -10,4 +10,4 @@ export {
   getObjectPropertyByString as getBySortField,
 } from './utils';
 
-export { ColumnProps, SortDirProps } from './types';
+export { ColumnProps, SortDirProps, DataBrowserProps } from './types';
