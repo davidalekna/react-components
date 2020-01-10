@@ -1,16 +1,13 @@
-import { getObjectPropertyByString } from './utils';
-import {
-  DataBrowserContext,
-  DataBrowser,
+export {
+  DataBrowser as default,
   withDataBrowser,
   useDataBrowser,
+  stateChangeTypes,
 } from './dataBrowser';
 
 export {
-  DataBrowser as default,
-  DataBrowserContext,
-  withDataBrowser,
-  useDataBrowser,
-  getObjectPropertyByString, // will be deprecated
+  getObjectPropertyByString,
   getObjectPropertyByString as getBySortField,
-};
+} from './utils';
+
+export { ColumnProps, SortDirProps, DataBrowserProps } from './types';

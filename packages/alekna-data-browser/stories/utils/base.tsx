@@ -63,14 +63,7 @@ export function BaseTable({ children, onToggleSort, ...rest }) {
       case width <= 800:
         return ['0 0 25%', '1 1 75%'];
       case width >= 1200:
-        return [
-          '0 0 15%',
-          '1 1 25%',
-          '0 0 20%',
-          '0 0 10%',
-          '0 0 10%',
-          '0 0 10%',
-        ];
+        return ['0 0 15%', '1 1 25%', '0 0 20%', '0 0 10%', '0 0 10%', '0 0 10%'];
       default:
         return ['0 0 25%', '1 1 35%', '0 0 20%', '0 0 20%'];
     }
