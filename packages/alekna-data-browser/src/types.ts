@@ -9,34 +9,33 @@ export type ColumnProps = {
 
 export type SortDirProps = 'asc' | 'dsc';
 
-export type DataBrowserProps = {
-  stateReducer: (state: Partial<DataBrowserState>, changes: unknown) => any;
-  onStateChange: (allChanges: any, state: DataBrowserState) => void;
-  onSwitchColumns: (visibleColumns: DataBrowserState['visibleColumns']) => void;
-  onSwitchViewType: (viewType: DataBrowserState['viewType']) => void;
-  onChangeSortDirection: (currentSort: DataBrowserState['currentSort']) => void;
-  onSortData: (currentSort: DataBrowserState['currentSort']) => void;
-  onReplaceColumnFlex: ({
-    columnFlex,
-    visibleColumns,
-  }: {
+export type DataBrowserDefaultProps = {
+  initialSort?: { dir: SortDirProps; sortField: string };
+  initialColumnFlex?: string[];
+  initialChecked?: string[];
+  totalItems?: number;
+  columns: ColumnProps[];
+  views?: string[];
+  initialView?: string;
+  children: DataBrowserRenderProps;
+  stateReducer?: (state: Partial<DataBrowserState>, changes: unknown) => any;
+  onStateChange?: (allChanges: any, state: DataBrowserState) => void;
+  onSwitchColumns?: (visibleColumns: DataBrowserState['visibleColumns']) => void;
+  onSwitchViewType?: (viewType: DataBrowserState['viewType']) => void;
+  onChangeSortDirection?: (currentSort: DataBrowserState['currentSort']) => void;
+  onSortData?: (currentSort: DataBrowserState['currentSort']) => void;
+  onReplaceColumnFlex?: (props: {
     columnFlex: DataBrowserState['columnFlex'];
     visibleColumns: DataBrowserState['visibleColumns'];
   }) => void;
-  onToggleSortDirection: (currentSort: DataBrowserState['currentSort']) => void;
-  onDeselectAll: (checkedItems: DataBrowserState['checkedItems']) => void;
-  onSelectAll: (checkedItems: DataBrowserState['checkedItems']) => void;
-  onCheckboxToggle: (checkedItems: DataBrowserState['checkedItems']) => void;
-  onToggleSort: (currentSort: DataBrowserState['currentSort']) => void;
-  initialSort: { dir: SortDirProps; sortField: string };
-  initialColumnFlex: string[];
-  initialChecked: string[];
-  totalItems: number;
-  columns: ColumnProps[];
-  views: string[];
-  initialView: string;
-  children: DataBrowserRenderProps;
+  onToggleSortDirection?: (currentSort: DataBrowserState['currentSort']) => void;
+  onDeselectAll?: (checkedItems: DataBrowserState['checkedItems']) => void;
+  onSelectAll?: (checkedItems: DataBrowserState['checkedItems']) => void;
+  onCheckboxToggle?: (checkedItems: DataBrowserState['checkedItems']) => void;
+  onToggleSort?: (currentSort: DataBrowserState['currentSort']) => void;
 };
+
+export type DataBrowserProps = Omit<DataBrowserDefaultProps, 'children'>;
 
 export type SelectAllCheckboxStates = 'all' | 'none' | 'some' | string;
 
