@@ -4,7 +4,7 @@ import DataBrowserContext from './context';
 import { getObjectPropertyByString, arrayHasArrays } from './utils';
 import {
   DataBrowserState,
-  DataBrowserProps,
+  DataBrowserDefaultProps,
   SortDirProps,
   Dbm,
   DataBrowserInternalChanges,
@@ -27,7 +27,10 @@ export const stateChangeTypes = {
   changeSortDirection: '__change_sort_directon__',
 };
 
-export class DataBrowser extends React.Component<DataBrowserProps, DataBrowserState> {
+export class DataBrowser extends React.Component<
+  DataBrowserDefaultProps,
+  DataBrowserState
+> {
   static propTypes = {
     children: PropTypes.func.isRequired,
     columnFlex: PropTypes.array,
@@ -53,7 +56,7 @@ export class DataBrowser extends React.Component<DataBrowserProps, DataBrowserSt
   };
   static defaultProps = {
     // on action
-    stateReducer: (state: Omit<DataBrowserState, 'type'>, changes: unknown) => changes, // c for changes
+    stateReducer: (state, changes: unknown) => changes, // c for changes
     onStateChange: () => {},
     onSwitchColumns: () => {},
     onSwitchViewType: () => {},
@@ -83,7 +86,7 @@ export class DataBrowser extends React.Component<DataBrowserProps, DataBrowserSt
       ? this.props.initialColumnFlex[0]
       : this.props.initialColumnFlex;
   };
-  public componentDidUpdate(prevProps: DataBrowserProps) {
+  public componentDidUpdate(prevProps: DataBrowserDefaultProps) {
     // NOTE: replace columns if there was a change on `initialColumnFlex` prop.
     // helps on screen resizes if there is a requirement to show less/more columns.
     if (

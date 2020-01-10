@@ -1,9 +1,15 @@
+import { Subject } from 'rxjs';
+
+export type ReducerFunction = <T>(state?: T, action?: Action) => T;
+
 export type Reducers = {
+  // [key: string]: ReducerFunction;
   [key: string]: Function;
 };
 
 export type State = {
   [key: string]: any;
+  dispatch: (args: Action) => void;
 };
 
 export type SyncAction = Partial<{
@@ -27,10 +33,10 @@ export type Epic = {
 
 export type Epics = Epic[];
 
-export type Store = {
-  actions$: any;
-  reducers: any;
-  initialState: any;
+export type Store<T> = {
+  actions$: Subject<Action>;
+  reducers: Reducers | Function;
+  initialState: T;
 };
 
 export type StoreProps = {

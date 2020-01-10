@@ -4,7 +4,7 @@ import { useAsyncReducer } from '../src/index';
 import { interval } from 'rxjs';
 import { map, take, startWith } from 'rxjs/operators';
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 function reducer(state = { count: 0 }, action) {
   switch (action.type) {
