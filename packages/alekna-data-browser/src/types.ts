@@ -1,41 +1,44 @@
-import { ReactElement } from "react";
+import { ReactElement } from 'react';
 
-export type DataBrowserColumn = {
+export type ColumnProps = {
+  label: string;
   sortField: string;
   isLocked?: boolean;
+  [key: string]: any;
 };
 
-export type SortDir = "asc" | "dsc";
+export type SortDirProps = 'asc' | 'dsc';
 
 export type DataBrowserProps = {
   stateReducer: (state: Partial<DataBrowserState>, changes: unknown) => any;
   onStateChange: (allChanges: any, state: DataBrowserState) => void;
-  onSwitchColumns: (visibleColumns: DataBrowserState["visibleColumns"]) => void;
-  onSwitchViewType: (viewType: DataBrowserState["viewType"]) => void;
-  onChangeSortDirection: (currentSort: DataBrowserState["currentSort"]) => void;
-  onSortData: (currentSort: DataBrowserState["currentSort"]) => void;
+  onSwitchColumns: (visibleColumns: DataBrowserState['visibleColumns']) => void;
+  onSwitchViewType: (viewType: DataBrowserState['viewType']) => void;
+  onChangeSortDirection: (currentSort: DataBrowserState['currentSort']) => void;
+  onSortData: (currentSort: DataBrowserState['currentSort']) => void;
   onReplaceColumnFlex: ({
     columnFlex,
-    visibleColumns
+    visibleColumns,
   }: {
-    columnFlex: DataBrowserState["columnFlex"];
-    visibleColumns: DataBrowserState["visibleColumns"];
+    columnFlex: DataBrowserState['columnFlex'];
+    visibleColumns: DataBrowserState['visibleColumns'];
   }) => void;
-  onToggleSortDirection: (currentSort: DataBrowserState["currentSort"]) => void;
-  onDeselectAll: (checkedItems: DataBrowserState["checkedItems"]) => void;
-  onSelectAll: (checkedItems: DataBrowserState["checkedItems"]) => void;
-  onCheckboxToggle: (checkedItems: DataBrowserState["checkedItems"]) => void;
-  onToggleSort: (currentSort: DataBrowserState["currentSort"]) => void;
-  initialSort: { dir: SortDir; sortField: string };
+  onToggleSortDirection: (currentSort: DataBrowserState['currentSort']) => void;
+  onDeselectAll: (checkedItems: DataBrowserState['checkedItems']) => void;
+  onSelectAll: (checkedItems: DataBrowserState['checkedItems']) => void;
+  onCheckboxToggle: (checkedItems: DataBrowserState['checkedItems']) => void;
+  onToggleSort: (currentSort: DataBrowserState['currentSort']) => void;
+  initialSort: { dir: SortDirProps; sortField: string };
   initialColumnFlex: string[];
   initialChecked: string[];
   totalItems: number;
-  columns: DataBrowserColumn[];
+  columns: ColumnProps[];
   views: string[];
   initialView: string;
+  children: DataBrowserRenderProps;
 };
 
-export type SelectAllCheckboxStates = "all" | "none" | "some" | string;
+export type SelectAllCheckboxStates = 'all' | 'none' | 'some' | string;
 
 type MethodType = {
   type?: string;
@@ -48,19 +51,19 @@ export type Dbm<T = {}> = MethodType & T;
 
 type CurrentSort = {
   sortField: string;
-  dir: SortDir;
+  dir: SortDirProps;
 };
 
 export type DataBrowserState = {
   type?: string | void; // this is for passing a ref on an updated item
   columnFlex: string[] | string[][] | any;
   availableColumnFlex: null | string[];
-  visibleColumns: DataBrowserColumn[];
+  visibleColumns: ColumnProps[];
   viewType?: string;
   selectAllCheckboxState: SelectAllCheckboxStates;
   currentSort: CurrentSort;
   checkedItems: any[];
-  getColumns: () => DataBrowserColumn[] | void;
+  getColumns: () => ColumnProps[] | void;
   getViews: () => string[] | void;
   switchViewType: Function;
   switchColumns: Function;
@@ -76,10 +79,12 @@ export type DataBrowserState = {
   toggleSort: Function;
 };
 
-type RenderPropsChildrenAsFunction = {
-  (utils: DataBrowserState): ReactElement | null;
+export type DataBrowserInternalChanges = {
+  (state: DataBrowserState): Partial<DataBrowserState>;
 };
 
-export type DataBrowserRenderProps =
-  | RenderPropsChildrenAsFunction
-  | ReactElement;
+interface RenderPropsAsFunction {
+  (utils: Omit<DataBrowserState, 'type'>): ReactElement | null;
+}
+
+export type DataBrowserRenderProps = RenderPropsAsFunction | ReactElement;
