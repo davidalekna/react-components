@@ -1,32 +1,34 @@
 import React, { useEffect, useState, ReactNode, useMemo, useRef } from 'react';
-import { Subject, of, empty, isObservable, from } from 'rxjs';
-import { scan, mergeMap } from 'rxjs/operators';
+import { Subject, of, empty, isObservable, from, BehaviorSubject } from 'rxjs';
+import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { Reducers, State, Store, Action } from './types';
 import { mergeReducerState, generateInitialState } from './utils';
 
 type UseStoreProps<T> = {
-  actions$: Subject<Action>;
+  _stateUpdates: Subject<Action>;
+  store$: BehaviorSubject<any>;
   reducers: Reducers | Function;
   initialState?: T;
 };
 
 export const useStore = <T extends {} | []>({
-  actions$,
+  _stateUpdates,
+  store$,
   reducers,
   initialState,
 }: UseStoreProps<T>): { state: T; dispatch: (args: Action) => void } => {
-  const memoState = useMemo<T>(() => initialState, [initialState]);
-  const [state, update] = useState<T>(memoState);
+  const initialMemoState = useMemo<T>(() => initialState, [initialState]);
+  const [state, update] = useState<T>(initialMemoState);
 
   useEffect(() => {
-    const s = actions$
+    const s = _stateUpdates
       .pipe(
         mergeMap((action: Action) => {
           switch (typeof action) {
             // async actions
             case 'function': {
-              const actionResult = action(actions$);
+              const actionResult = action(_stateUpdates);
               if (isObservable(actionResult)) {
                 return actionResult;
               } else {
@@ -44,17 +46,29 @@ export const useStore = <T extends {} | []>({
               return empty();
           }
         }),
-        scan<Action, T>(mergeReducerState(reducers), memoState),
+        scan<Action, T>(mergeReducerState(reducers), initialMemoState),
         // TODO: make this available to be extended by the user
       )
-      .subscribe(update);
+      .subscribe(store$);
+
+    const b = store$.subscribe(update);
 
     return () => {
       s.unsubscribe();
+      b.unsubscribe();
     };
-  }, [reducers, memoState]);
+  }, [reducers, initialMemoState]);
 
-  const dispatch = (next: Action) => actions$.next(next);
+  const dispatch = (next: Action) => _stateUpdates.next(next);
+
+  const selectState = (stateKey: string) => {
+    return store$.pipe(
+      distinctUntilKeyChanged(stateKey),
+      pluck(stateKey),
+    );
+  };
+
+  const stateChanges = () => store$.asObservable();
 
   return { state, dispatch };
 };
@@ -91,11 +105,15 @@ export const useDispatch = (): ((args: Action) => void) => {
 export const createStore = <T extends {} | [] = {}>(
   reducers: Reducers | Function,
   initialState?: T,
-): Store<T> => ({
-  actions$: new Subject(),
-  reducers,
-  initialState: generateInitialState(reducers, cloneDeep(initialState)),
-});
+): Store<T> => {
+  const generatedState = generateInitialState(reducers, cloneDeep(initialState));
+  return {
+    _stateUpdates: new Subject(),
+    store$: new BehaviorSubject(generatedState),
+    reducers,
+    initialState: generatedState,
+  };
+};
 
 export function useAsyncReducer<T extends {} | [] = {}>(
   reducer: Reducers | Function,

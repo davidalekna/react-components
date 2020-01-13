@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 export type ReducerFunction = <T>(state?: T, action?: Action) => T;
 
@@ -34,13 +34,14 @@ export type Epic = {
 export type Epics = Epic[];
 
 export type Store<T> = {
-  actions$: Subject<Action>;
+  _stateUpdates: Subject<Action>;
+  store$: BehaviorSubject<any>;
   reducers: Reducers | Function;
   initialState: T;
 };
 
 export type StoreProps = {
-  actions$: any;
+  _stateUpdates: any;
   reducers: Reducers | Function;
   initialState?: State | [];
 };
