@@ -26,7 +26,7 @@ export const useStore = <T extends {} | []>({
       .pipe(
         mergeMap((action: Action) => {
           switch (typeof action) {
-            // async actions
+            /** async actions */
             case 'function': {
               const actionResult = action(_stateUpdates);
               if (isObservable(actionResult)) {
@@ -35,19 +35,20 @@ export const useStore = <T extends {} | []>({
                 return from(Promise.resolve(actionResult));
               }
             }
-            // sync actions
-            case 'object':
+            /** sync actions */
+            case 'object': {
               return of(action);
-            // wrong type
-            default:
+            }
+            /** wrong type */
+            default: {
               console.error(
                 `Action must return a function or an object, your one has returned ${typeof action}`,
               );
               return empty();
+            }
           }
         }),
         scan<Action, T>(mergeReducerState(reducers), initialMemoState),
-        // TODO: make this available to be extended by the user
       )
       .subscribe(store$);
 
@@ -62,10 +63,7 @@ export const useStore = <T extends {} | []>({
   const dispatch = (next: Action) => _stateUpdates.next(next);
 
   const selectState = (stateKey: string) => {
-    return store$.pipe(
-      distinctUntilKeyChanged(stateKey),
-      pluck(stateKey),
-    );
+    return store$.pipe(distinctUntilKeyChanged(stateKey), pluck(stateKey));
   };
 
   const stateChanges = () => store$.asObservable();

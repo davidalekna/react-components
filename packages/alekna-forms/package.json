@@ -2,24 +2,6 @@
   "name": "@alekna/react-forms",
   "version": "1.0.9",
   "description": "A simple forms manager for react.",
-  "author": "David Alekna <alekna@live.co.uk>",
-  "license": "MIT",
-  "main": "./lib/bundle.cjs.js",
-  "module": "./lib/bundle.esm.js",
-  "typings": "./lib/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "lib/bundle*",
-    "lib/*.d.ts"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/davidalekna/alekna.git"
-  },
-  "bugs": {
-    "url": "https://github.com/davidalekna/alekna/issues"
-  },
-  "homepage": "https://github.com/davidalekna/alekna#readme",
   "keywords": [
     "react",
     "forms",
@@ -28,32 +10,50 @@
     "rxjs",
     "generators"
   ],
+  "homepage": "https://github.com/davidalekna/alekna#readme",
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidalekna/alekna.git"
+  },
+  "license": "MIT",
+  "author": "David Alekna <alekna@live.co.uk>",
+  "files": [
+    "lib/bundle*",
+    "lib/*.d.ts"
+  ],
+  "sideEffects": false,
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
-    "prepare": "npm run build",
-    "start": "yarn storybook",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
     "build": "yarn clean && tsc -b .",
     "postbuild": "npm run bundle",
     "bundle": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
+    "prepare": "npm run build",
     "report-coverage": "codecov",
+    "start": "yarn storybook",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
+    "storybook:clean": "rimraf storybook-static",
     "storybook:upload": "gh-pages -d storybook-static",
-    "storybook:clean": "rimraf storybook-static"
-  },
-  "peerDependencies": {
-    "lodash": "^4.17.11",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@alekna/react-store": "file:../alekna-store",
     "rxjs": "^6.5.3"
   },
-  "directories": {
-    "lib": "lib"
+  "peerDependencies": {
+    "lodash": "^4.17.11",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   },
   "gitHead": "7068104f92bec91ce8353fe030c9792c89554d8a"
 }
