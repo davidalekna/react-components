@@ -39,6 +39,7 @@
     "prepare": "npm run build",
     "report-coverage": "codecov",
     "start": "yarn storybook",
+    "dev": "yarn storybook",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
     "storybook:clean": "rimraf storybook-static",

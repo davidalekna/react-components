@@ -19,6 +19,7 @@ function reducer(state = { count: 0 }, action) {
 
 const Demo = () => {
   const [state, dispatch] = useAsyncReducer(reducer);
+
   return (
     <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
       <div style={{ display: 'flex', flexDirection: 'column' }}>

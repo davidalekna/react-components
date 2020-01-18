@@ -1,4 +1,5 @@
-import React, { useEffect, useState, ReactNode, useMemo, useRef } from 'react';
+import React, { useContext } from 'react';
+import { useEffect, useState, ReactNode, useMemo, useRef, useCallback } from 'react';
 import { Subject, of, empty, isObservable, from, BehaviorSubject } from 'rxjs';
 import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
@@ -12,14 +13,20 @@ type UseStoreProps<T> = {
   initialState?: T;
 };
 
+type UseStoreReturns<T> = {
+  dispatch: (args: Action) => void;
+  selectState: Function;
+  stateChanges: Function;
+  initialState: T;
+};
+
 export const useStore = <T extends {} | []>({
   _stateUpdates,
   store$,
   reducers,
   initialState,
-}: UseStoreProps<T>): { state: T; dispatch: (args: Action) => void } => {
-  const initialMemoState = useMemo<T>(() => initialState, [initialState]);
-  const [state, update] = useState<T>(initialMemoState);
+}: UseStoreProps<T>): UseStoreReturns<T> => {
+  const initialStateM = useMemo<T>(() => initialState, [initialState]);
 
   useEffect(() => {
     const s = _stateUpdates
@@ -48,32 +55,31 @@ export const useStore = <T extends {} | []>({
             }
           }
         }),
-        scan<Action, T>(mergeReducerState(reducers), initialMemoState),
+        scan<Action, T>(mergeReducerState(reducers), initialStateM),
       )
       .subscribe(store$);
 
-    const b = store$.subscribe(update);
-
     return () => {
       s.unsubscribe();
-      b.unsubscribe();
     };
-  }, [reducers, initialMemoState]);
+  }, [reducers, initialStateM]);
 
   const dispatch = (next: Action) => _stateUpdates.next(next);
 
   const selectState = (stateKey: string) => {
+    if (!stateKey.length) return store$;
     return store$.pipe(distinctUntilKeyChanged(stateKey), pluck(stateKey));
   };
 
   const stateChanges = () => store$.asObservable();
 
-  return { state, dispatch };
+  return { dispatch, selectState, stateChanges, initialState: initialStateM };
 };
 
 export const StoreContext = React.createContext<State>({
-  state: {},
   dispatch: () => {},
+  selectState: () => {},
+  stateChanges: () => {},
 });
 
 export const StoreProvider = <T extends {} | []>({
@@ -83,41 +89,94 @@ export const StoreProvider = <T extends {} | []>({
   store: Store<T>;
   children: ReactNode | Function;
 }) => {
-  const stateProps = useStore(store);
-  const ui = typeof children === 'function' ? children(stateProps) : children;
-  return <StoreContext.Provider value={stateProps}>{ui}</StoreContext.Provider>;
+  const storeUtils = useStore(store);
+  const ui = typeof children === 'function' ? children(storeUtils) : children;
+  return <StoreContext.Provider value={storeUtils}>{ui}</StoreContext.Provider>;
 };
 
-// todo: improve callback return type
-export const useSelector = (callback: (args: State) => any) => {
-  const { state } = React.useContext(StoreContext);
-  const stateFromCallback = callback(state);
-  return useMemo(() => stateFromCallback, [stateFromCallback]);
+export function useStoreContext() {
+  const storeUtils = useContext(StoreContext);
+  if (!storeUtils) {
+    throw new Error(
+      `Store compound components cannot be rendered outside the Form component`,
+    );
+  }
+  return storeUtils;
+}
+
+/**
+ * React Hook for using full state in a nested component
+ * within the StoreProvider. It has no optimizations so
+ * all tree will be re-rendered on state updates.
+ */
+export const useStoreState = <T extends any>(): [T, Function] => {
+  const { stateChanges, dispatch, initialState } = useStoreContext();
+  const [state, setState] = useState<T>(initialState);
+
+  useEffect(() => {
+    const s = stateChanges().subscribe(setState);
+    return () => s.unsubscribe();
+  }, [state, setState]);
+
+  return [state, dispatch];
 };
 
+/**
+ * React Hook for pre-selecting single state and watching it. Optimized for
+ * re-renders only when selected state updates.
+ */
+export const useSelector = (stateName: string, initialState: unknown = undefined) => {
+  const { selectState } = useStoreContext();
+  const [state, update] = useState(initialState);
+
+  useEffect(() => {
+    const s = selectState(stateName).subscribe(update);
+    return () => {
+      s.unsubscribe();
+    };
+  }, [state, update, stateName]);
+
+  return state;
+};
+
+/**
+ * React Hook dispatch event for dispatching actions into
+ * Subjects
+ */
 export const useDispatch = (): ((args: Action) => void) => {
-  const { dispatch } = React.useContext(StoreContext);
-  return useMemo(() => dispatch, [dispatch]);
+  const { dispatch } = useStoreContext();
+  return useCallback(() => dispatch, [dispatch]);
 };
 
 export const createStore = <T extends {} | [] = {}>(
   reducers: Reducers | Function,
   initialState?: T,
 ): Store<T> => {
-  const generatedState = generateInitialState(reducers, cloneDeep(initialState));
+  const processedState = generateInitialState(reducers, cloneDeep(initialState));
   return {
     _stateUpdates: new Subject(),
-    store$: new BehaviorSubject(generatedState),
+    store$: new BehaviorSubject(processedState),
     reducers,
-    initialState: generatedState,
+    initialState: processedState,
   };
 };
 
-export function useAsyncReducer<T extends {} | [] = {}>(
-  reducer: Reducers | Function,
+type UseAsyncReducerReturns<T> = [T, (args: Action) => void];
+
+export function useAsyncReducer<T>(
+  reducer: (state: any, action: any) => T | Reducers,
   initialState?: T,
-): [T, (args: Action) => void] {
+): UseAsyncReducerReturns<T> {
   const storeConfig = useRef(createStore(reducer, initialState));
-  const { state, dispatch } = useStore<T>(storeConfig.current);
+  const [state, update] = useState(storeConfig.current.initialState);
+  const { dispatch, stateChanges } = useStore<T>(storeConfig.current);
+
+  useEffect(() => {
+    const s = stateChanges().subscribe(update);
+    return () => {
+      s.unsubscribe();
+    };
+  }, [state, update]);
+
   return [state, dispatch];
 }

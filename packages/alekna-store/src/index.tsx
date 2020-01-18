@@ -7,6 +7,8 @@ import {
   createStore,
   useAsyncReducer,
   StoreProvider,
+  useStoreContext,
+  useStoreState,
 } from './store';
 
 export {
@@ -18,4 +20,6 @@ export {
   createStore,
   ofType,
   useAsyncReducer,
+  useStoreContext,
+  useStoreState,
 };
