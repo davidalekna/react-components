@@ -42,7 +42,7 @@ export interface IFormContext {
 }
 
 export type FormContextType = {
-  fields: { [key: string]: IField };
+  fields: IField[];
   handleSubmit: Function;
   reset: Function;
   touched: boolean;

@@ -13,6 +13,7 @@ const Demo = () => {
     <div style={{ padding: '20px 50px' }}>
       <Form initialState={initialFields} onSubmit={onSubmit}>
         {({ fields, handleSubmit, reset, touched }) => {
+          console.log(fields);
           return (
             <form onSubmit={evt => handleSubmit(evt)}>
               <fieldset>

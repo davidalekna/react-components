@@ -1,20 +1,9 @@
-import React, {
-  useMemo,
-  useEffect,
-  createContext,
-  useContext,
-  memo,
-} from 'react';
+import React, { useMemo, useEffect, createContext, useContext, memo } from 'react';
 import { isEqual } from 'lodash';
 import { useAsyncReducer } from '@alekna/react-store';
 import formReducer from './store/reducer';
 import transformFields from './transformFields';
-import {
-  FormContextType,
-  InputEvent,
-  ICustomInput,
-  IDefaultProps,
-} from './types';
+import { FormContextType, InputEvent, ICustomInput, IDefaultProps } from './types';
 import {
   fieldUpdate,
   fieldBlur,
@@ -25,7 +14,7 @@ import {
 } from './store/actions';
 
 export const FormContext = createContext<FormContextType>({
-  fields: {},
+  fields: [],
   handleSubmit: () => {},
   reset: () => {},
   touched: false,
@@ -39,9 +28,7 @@ export const Form = ({
   onSubmit = () => {},
   onStateChange = () => {},
 }: IDefaultProps) => {
-  const internalState = useMemo(() => transformFields(initialState), [
-    initialState,
-  ]);
+  const internalState = useMemo(() => transformFields(initialState), [initialState]);
   const reducer = formReducer(internalState);
   const [state, dispatch]: any = useAsyncReducer(reducer, internalState);
 
@@ -129,16 +116,16 @@ export const Form = ({
   };
 
   const withHandlers = Object.keys(state).reduce((acc, key: any) => {
-    return {
+    return [
       ...acc,
-      [state[key].name]: {
+      {
         ...state[key],
         onBlur,
         onFocus,
         onChange,
       },
-    };
-  }, {});
+    ];
+  }, []);
 
   const ui =
     typeof children === 'function'
@@ -177,10 +164,7 @@ export const MemoField = memo(
     return children(fieldProps);
   },
   ({ field: prevField }, { field: nextField }) =>
-    isEqual(
-      [prevField.value, prevField.meta],
-      [nextField.value, nextField.meta],
-    ),
+    isEqual([prevField.value, prevField.meta], [nextField.value, nextField.meta]),
 );
 
 /**
@@ -217,10 +201,5 @@ export const Field = ({
     const { requirements, ...fieldProps } = field;
     if (render) return render(fieldProps);
     if (children) return children(fieldProps);
-  }, [
-    field.value,
-    field.meta.touched,
-    field.meta.loading,
-    field.meta.errors.length,
-  ]);
+  }, [field.value, field.meta.touched, field.meta.loading, field.meta.errors.length]);
 };
