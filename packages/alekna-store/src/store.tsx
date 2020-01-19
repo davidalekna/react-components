@@ -3,58 +3,71 @@ import { useEffect, useState, ReactNode, useMemo, useRef, useCallback } from 're
 import { Subject, of, empty, isObservable, from, BehaviorSubject } from 'rxjs';
 import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
-import { Reducers, State, Store, Action } from './types';
+import { Reducers, StoreState, Action } from './types';
 import { mergeReducerState, generateInitialState } from './utils';
 
-type UseStoreProps<T> = {
+const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) => {
+  switch (typeof action) {
+    /** async actions */
+    case 'function': {
+      if (Array.isArray(action)) {
+        throw Error('Actions accept object, function or observable only.');
+      }
+
+      const actionResult = action(_stateUpdates);
+      if (isObservable(actionResult)) {
+        return actionResult;
+      } else {
+        return from(Promise.resolve(actionResult));
+      }
+    }
+    /** sync actions */
+    case 'object': {
+      return of(action);
+    }
+    /** wrong type */
+    default: {
+      console.error(
+        `Action must return a function or an object, your one has returned ${typeof action}`,
+      );
+      return empty();
+    }
+  }
+};
+
+export const StoreContext = React.createContext<StoreState>({
+  dispatch: () => {},
+  selectState: () => {},
+  stateChanges: () => {},
+  initialState: {},
+});
+
+type StoreProps<T> = {
   _stateUpdates: Subject<Action>;
   store$: BehaviorSubject<any>;
   reducers: Reducers | Function;
   initialState?: T;
 };
 
-type UseStoreReturns<T> = {
+type StoreReturnProps<T> = {
   dispatch: (args: Action) => void;
   selectState: Function;
   stateChanges: Function;
   initialState: T;
 };
 
-export const useStore = <T extends {} | []>({
+const useStore = <T extends {} | []>({
   _stateUpdates,
   store$,
   reducers,
   initialState,
-}: UseStoreProps<T>): UseStoreReturns<T> => {
+}: StoreProps<T>): StoreReturnProps<T> => {
   const initialStateM = useMemo<T>(() => initialState, [initialState]);
 
   useEffect(() => {
     const s = _stateUpdates
       .pipe(
-        mergeMap((action: Action) => {
-          switch (typeof action) {
-            /** async actions */
-            case 'function': {
-              const actionResult = action(_stateUpdates);
-              if (isObservable(actionResult)) {
-                return actionResult;
-              } else {
-                return from(Promise.resolve(actionResult));
-              }
-            }
-            /** sync actions */
-            case 'object': {
-              return of(action);
-            }
-            /** wrong type */
-            default: {
-              console.error(
-                `Action must return a function or an object, your one has returned ${typeof action}`,
-              );
-              return empty();
-            }
-          }
-        }),
+        mergeMap(actionDistributor(_stateUpdates)),
         scan<Action, T>(mergeReducerState(reducers), initialStateM),
       )
       .subscribe(store$);
@@ -76,19 +89,15 @@ export const useStore = <T extends {} | []>({
   return { dispatch, selectState, stateChanges, initialState: initialStateM };
 };
 
-export const StoreContext = React.createContext<State>({
-  dispatch: () => {},
-  selectState: () => {},
-  stateChanges: () => {},
-});
+type StoreProviderProps<T> = {
+  store: StoreProps<T>;
+  children: ReactNode | Function;
+};
 
 export const StoreProvider = <T extends {} | []>({
   store,
   children,
-}: {
-  store: Store<T>;
-  children: ReactNode | Function;
-}) => {
+}: StoreProviderProps<T>) => {
   const storeUtils = useStore(store);
   const ui = typeof children === 'function' ? children(storeUtils) : children;
   return <StoreContext.Provider value={storeUtils}>{ui}</StoreContext.Provider>;
@@ -98,7 +107,7 @@ export function useStoreContext() {
   const storeUtils = useContext(StoreContext);
   if (!storeUtils) {
     throw new Error(
-      `Store compound components cannot be rendered outside the Form component`,
+      `Store compound components cannot be rendered outside the StoreProvider component`,
     );
   }
   return storeUtils;
@@ -108,6 +117,8 @@ export function useStoreContext() {
  * React Hook for using full state in a nested component
  * within the StoreProvider. It has no optimizations so
  * all tree will be re-rendered on state updates.
+ *
+ * useSelector should be used for appropriate components in optimization favour
  */
 export const useStoreState = <T extends any>(): [T, Function] => {
   const { stateChanges, dispatch, initialState } = useStoreContext();
@@ -151,7 +162,7 @@ export const useDispatch = (): ((args: Action) => void) => {
 export const createStore = <T extends {} | [] = {}>(
   reducers: Reducers | Function,
   initialState?: T,
-): Store<T> => {
+): StoreProps<T> => {
   const processedState = generateInitialState(reducers, cloneDeep(initialState));
   return {
     _stateUpdates: new Subject(),
@@ -161,15 +172,13 @@ export const createStore = <T extends {} | [] = {}>(
   };
 };
 
-type UseAsyncReducerReturns<T> = [T, (args: Action) => void];
-
 export function useAsyncReducer<T>(
-  reducer: (state: any, action: any) => T | Reducers,
+  reducer: Reducers | Function,
   initialState?: T,
-): UseAsyncReducerReturns<T> {
-  const storeConfig = useRef(createStore(reducer, initialState));
-  const [state, update] = useState(storeConfig.current.initialState);
-  const { dispatch, stateChanges } = useStore<T>(storeConfig.current);
+): [T, (args: Action) => void] {
+  const storeConfig = useRef(createStore(reducer, initialState)).current;
+  const [state, update] = useState(storeConfig.initialState);
+  const { dispatch, stateChanges } = useStore<T>(storeConfig);
 
   useEffect(() => {
     const s = stateChanges().subscribe(update);

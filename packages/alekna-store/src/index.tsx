@@ -1,25 +1,13 @@
 import { ofType } from './helpers';
-import {
-  useStore,
-  StoreContext,
+
+export {
+  StoreProvider as default,
+  createStore,
   useSelector,
   useDispatch,
-  createStore,
   useAsyncReducer,
-  StoreProvider,
   useStoreContext,
   useStoreState,
 } from './store';
 
-export {
-  StoreProvider as default,
-  useStore,
-  StoreContext,
-  useSelector,
-  useDispatch,
-  createStore,
-  ofType,
-  useAsyncReducer,
-  useStoreContext,
-  useStoreState,
-};
+export { ofType };
