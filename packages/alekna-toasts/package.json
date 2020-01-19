@@ -2,71 +2,45 @@
   "name": "@alekna/react-toasts",
   "version": "1.0.2",
   "description": "Simple toasts for react.",
-  "author": "David Alekna <alekna@live.co.uk>",
-  "license": "MIT",
-  "main": "./lib/bundle.cjs.js",
-  "module": "./lib/bundle.esm.js",
-  "typings": "./lib/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "lib/bundle*",
-    "lib/index.d.ts"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/davidalekna/alekna.git"
-  },
-  "bugs": {
-    "url": "https://github.com/davidalekna/alekna/issues"
-  },
-  "homepage": "https://github.com/davidalekna/alekna#readme",
   "keywords": [
     "react",
     "toasts"
   ],
+  "homepage": "https://github.com/davidalekna/alekna#readme",
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidalekna/alekna.git"
+  },
+  "license": "MIT",
+  "author": "David Alekna <alekna@live.co.uk>",
+  "files": [
+    "lib/bundle*",
+    "lib/index.d.ts"
+  ],
+  "sideEffects": false,
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
-    "prepare": "npm run build",
-    "dev": "yarn storybook",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
     "build": "yarn clean && tsc -b .",
     "postbuild": "npm run bundle",
     "bundle": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
+    "dev": "yarn storybook",
+    "prepare": "npm run build",
     "report-coverage": "codecov",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
+    "storybook:clean": "rimraf storybook-static",
     "storybook:upload": "gh-pages -d storybook-static",
-    "storybook:clean": "rimraf storybook-static"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@storybook/react": "^5.1.8",
-    "@types/jest": "^24.0.15",
-    "@types/lodash": "^4.14.134",
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0",
-    "@types/styled-components": "^4.1.16",
-    "@types/uuid": "^3.4.4",
-    "babel-jest": "^24.7.1",
-    "babel-loader": "^8.0.5",
-    "css-loader": "^3.0.0",
-    "gh-pages": "^2.0.1",
-    "jest": "^24.7.1",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-testing-library": "^8.0.1",
-    "react-transition-group": "^4.1.1",
-    "rimraf": "^2.6.2",
-    "style-loader": "^0.23.1",
-    "ts-jest": "^24.0.2",
-    "ts-loader": "^6.0.3",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.2"
-  },
-  "peerDependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@alekna/react-store": "file:../alekna-store",
@@ -75,7 +49,8 @@
     "styled-components": "^4.3.1",
     "uuid": "^3.3.2"
   },
-  "directories": {
-    "lib": "lib"
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }

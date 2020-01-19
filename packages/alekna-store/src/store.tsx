@@ -1,107 +1,191 @@
-import React, { useEffect, useState, ReactNode, useMemo, useRef } from 'react';
-import { Subject, of, empty, isObservable, from } from 'rxjs';
-import { scan, mergeMap } from 'rxjs/operators';
+import React, { useContext } from 'react';
+import { useEffect, useState, ReactNode, useMemo, useRef, useCallback } from 'react';
+import { Subject, of, empty, isObservable, from, BehaviorSubject } from 'rxjs';
+import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
-import { Reducers, State, Store, Action } from './types';
+import { Reducers, StoreState, Action } from './types';
 import { mergeReducerState, generateInitialState } from './utils';
 
-type UseStoreProps<T> = {
-  actions$: Subject<Action>;
+const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) => {
+  switch (typeof action) {
+    /** async actions */
+    case 'function': {
+      if (Array.isArray(action)) {
+        throw Error('Actions accept object, function or observable only.');
+      }
+
+      const actionResult = action(_stateUpdates);
+      if (isObservable(actionResult)) {
+        return actionResult;
+      } else {
+        return from(Promise.resolve(actionResult));
+      }
+    }
+    /** sync actions */
+    case 'object': {
+      return of(action);
+    }
+    /** wrong type */
+    default: {
+      console.error(
+        `Action must return a function or an object, your one has returned ${typeof action}`,
+      );
+      return empty();
+    }
+  }
+};
+
+export const StoreContext = React.createContext<StoreState>({
+  dispatch: () => {},
+  selectState: () => {},
+  stateChanges: () => {},
+  initialState: {},
+});
+
+type StoreProps<T> = {
+  _stateUpdates: Subject<Action>;
+  store$: BehaviorSubject<any>;
   reducers: Reducers | Function;
   initialState?: T;
 };
 
-export const useStore = <T extends {} | []>({
-  actions$,
+type StoreReturnProps<T> = {
+  dispatch: (args: Action) => void;
+  selectState: Function;
+  stateChanges: Function;
+  initialState: T;
+};
+
+const useStore = <T extends {} | []>({
+  _stateUpdates,
+  store$,
   reducers,
   initialState,
-}: UseStoreProps<T>): { state: T; dispatch: (args: Action) => void } => {
-  const memoState = useMemo<T>(() => initialState, [initialState]);
-  const [state, update] = useState<T>(memoState);
+}: StoreProps<T>): StoreReturnProps<T> => {
+  const initialStateM = useMemo<T>(() => initialState, [initialState]);
 
   useEffect(() => {
-    const s = actions$
+    const s = _stateUpdates
       .pipe(
-        mergeMap((action: Action) => {
-          switch (typeof action) {
-            // async actions
-            case 'function': {
-              const actionResult = action(actions$);
-              if (isObservable(actionResult)) {
-                return actionResult;
-              } else {
-                return from(Promise.resolve(actionResult));
-              }
-            }
-            // sync actions
-            case 'object':
-              return of(action);
-            // wrong type
-            default:
-              console.error(
-                `Action must return a function or an object, your one has returned ${typeof action}`,
-              );
-              return empty();
-          }
-        }),
-        scan<Action, T>(mergeReducerState(reducers), memoState),
-        // TODO: make this available to be extended by the user
+        mergeMap(actionDistributor(_stateUpdates)),
+        scan<Action, T>(mergeReducerState(reducers), initialStateM),
       )
-      .subscribe(update);
+      .subscribe(store$);
 
     return () => {
       s.unsubscribe();
     };
-  }, [reducers, memoState]);
+  }, [reducers, initialStateM]);
 
-  const dispatch = (next: Action) => actions$.next(next);
+  const dispatch = (next: Action) => _stateUpdates.next(next);
 
-  return { state, dispatch };
+  const selectState = (stateKey: string) => {
+    if (!stateKey.length) return store$;
+    return store$.pipe(distinctUntilKeyChanged(stateKey), pluck(stateKey));
+  };
+
+  const stateChanges = () => store$.asObservable();
+
+  return { dispatch, selectState, stateChanges, initialState: initialStateM };
 };
 
-export const StoreContext = React.createContext<State>({
-  state: {},
-  dispatch: () => {},
-});
+type StoreProviderProps<T> = {
+  store: StoreProps<T>;
+  children: ReactNode | Function;
+};
 
 export const StoreProvider = <T extends {} | []>({
   store,
   children,
-}: {
-  store: Store<T>;
-  children: ReactNode | Function;
-}) => {
-  const stateProps = useStore(store);
-  const ui = typeof children === 'function' ? children(stateProps) : children;
-  return <StoreContext.Provider value={stateProps}>{ui}</StoreContext.Provider>;
+}: StoreProviderProps<T>) => {
+  const storeUtils = useStore(store);
+  const ui = typeof children === 'function' ? children(storeUtils) : children;
+  return <StoreContext.Provider value={storeUtils}>{ui}</StoreContext.Provider>;
 };
 
-// todo: improve callback return type
-export const useSelector = (callback: (args: State) => any) => {
-  const { state } = React.useContext(StoreContext);
-  const stateFromCallback = callback(state);
-  return useMemo(() => stateFromCallback, [stateFromCallback]);
+export function useStoreContext() {
+  const storeUtils = useContext(StoreContext);
+  if (!storeUtils) {
+    throw new Error(
+      `Store compound components cannot be rendered outside the StoreProvider component`,
+    );
+  }
+  return storeUtils;
+}
+
+/**
+ * React Hook for using full state in a nested component
+ * within the StoreProvider. It has no optimizations so
+ * all tree will be re-rendered on state updates.
+ *
+ * useSelector should be used for appropriate components in optimization favour
+ */
+export const useStoreState = <T extends any>(): [T, Function] => {
+  const { stateChanges, dispatch, initialState } = useStoreContext();
+  const [state, setState] = useState<T>(initialState);
+
+  useEffect(() => {
+    const s = stateChanges().subscribe(setState);
+    return () => s.unsubscribe();
+  }, [state, setState]);
+
+  return [state, dispatch];
 };
 
+/**
+ * React Hook for pre-selecting single state and watching it. Optimized for
+ * re-renders only when selected state updates.
+ */
+export const useSelector = (stateName: string, initialState: unknown = undefined) => {
+  const { selectState } = useStoreContext();
+  const [state, update] = useState(initialState);
+
+  useEffect(() => {
+    const s = selectState(stateName).subscribe(update);
+    return () => {
+      s.unsubscribe();
+    };
+  }, [state, update, stateName]);
+
+  return state;
+};
+
+/**
+ * React Hook dispatch event for dispatching actions into
+ * Subjects
+ */
 export const useDispatch = (): ((args: Action) => void) => {
-  const { dispatch } = React.useContext(StoreContext);
-  return useMemo(() => dispatch, [dispatch]);
+  const { dispatch } = useStoreContext();
+  return useCallback(() => dispatch, [dispatch]);
 };
 
 export const createStore = <T extends {} | [] = {}>(
   reducers: Reducers | Function,
   initialState?: T,
-): Store<T> => ({
-  actions$: new Subject(),
-  reducers,
-  initialState: generateInitialState(reducers, cloneDeep(initialState)),
-});
+): StoreProps<T> => {
+  const processedState = generateInitialState(reducers, cloneDeep(initialState));
+  return {
+    _stateUpdates: new Subject(),
+    store$: new BehaviorSubject(processedState),
+    reducers,
+    initialState: processedState,
+  };
+};
 
-export function useAsyncReducer<T extends {} | [] = {}>(
+export function useAsyncReducer<T>(
   reducer: Reducers | Function,
   initialState?: T,
 ): [T, (args: Action) => void] {
-  const storeConfig = useRef(createStore(reducer, initialState));
-  const { state, dispatch } = useStore<T>(storeConfig.current);
+  const storeConfig = useRef(createStore(reducer, initialState)).current;
+  const [state, update] = useState(storeConfig.initialState);
+  const { dispatch, stateChanges } = useStore<T>(storeConfig);
+
+  useEffect(() => {
+    const s = stateChanges().subscribe(update);
+    return () => {
+      s.unsubscribe();
+    };
+  }, [state, update]);
+
   return [state, dispatch];
 }

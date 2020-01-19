@@ -2,24 +2,6 @@
   "name": "@alekna/react-organizer",
   "version": "1.1.8",
   "description": "Organizer is a lightweight, fast and extendable render props component",
-  "author": "David Alekna <alekna@live.co.uk>",
-  "license": "MIT",
-  "main": "./lib/bundle.cjs.js",
-  "module": "./lib/bundle.esm.js",
-  "typings": "./lib/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "lib/bundle*",
-    "lib/*.d.ts"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/davidalekna/alekna.git"
-  },
-  "bugs": {
-    "url": "https://github.com/davidalekna/alekna/issues"
-  },
-  "homepage": "https://github.com/davidalekna/alekna#readme",
   "keywords": [
     "react",
     "react-component",
@@ -32,30 +14,49 @@
     "event",
     "events manager",
     "date-fns",
-    "calendar",
     "render-props"
   ],
+  "homepage": "https://github.com/davidalekna/alekna#readme",
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidalekna/alekna.git"
+  },
+  "license": "MIT",
+  "author": "David Alekna <alekna@live.co.uk>",
+  "files": [
+    "lib/bundle*",
+    "lib/*.d.ts"
+  ],
+  "sideEffects": false,
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/index.d.ts",
   "scripts": {
-    "prepare": "npm run build",
-    "dev": "yarn storybook",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
     "build": "yarn clean && tsc -b .",
     "postbuild": "npm run bundle",
     "bundle": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
+    "dev": "yarn storybook",
+    "prepare": "npm run build",
     "report-coverage": "codecov",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
+    "storybook:clean": "rimraf storybook-static",
     "storybook:upload": "gh-pages -d storybook-static",
-    "storybook:clean": "rimraf storybook-static"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "date-fns": "^2.6.0",
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@storybook/addon-actions": "^5.2.5",
-    "@storybook/addon-info": "^5.2.5",
     "@storybook/addon-links": "^5.2.5",
-    "@storybook/addons": "^5.2.5",
     "@storybook/react": "^5.2.5",
     "@types/jest": "^24.0.19",
     "@types/prop-types": "^15.7.2",
@@ -66,10 +67,8 @@
     "@types/styled-system": "^5.1.2",
     "awesome-typescript-loader": "^5.2.1",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.5",
-    "babel-runtime": "^6.26.0",
     "codecov": "^3.6.1",
     "eslint": "^6.5.1",
     "eslint-plugin-import": "^2.18.2",
@@ -90,9 +89,5 @@
     "tslib": "^1.10.0",
     "typescript": "^3.6.4"
   },
-  "peerDependencies": {},
-  "dependencies": {
-    "date-fns": "^2.6.0",
-    "prop-types": "^15.7.2"
-  }
+  "peerDependencies": {}
 }

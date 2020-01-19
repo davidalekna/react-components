@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useEffect,
-  createContext,
-  useContext,
-  memo,
-} from 'react';
+import React, { useMemo, useEffect, createContext, useContext, memo } from 'react';
 import { isEqual } from 'lodash';
 import { useAsyncReducer } from '@alekna/react-store';
 import formReducer from './store/reducer';
@@ -13,7 +7,8 @@ import {
   FormContextType,
   InputEvent,
   ICustomInput,
-  IDefaultProps,
+  FormProps,
+  FieldProps,
 } from './types';
 import {
   fieldUpdate,
@@ -25,7 +20,7 @@ import {
 } from './store/actions';
 
 export const FormContext = createContext<FormContextType>({
-  fields: {},
+  fields: [],
   handleSubmit: () => {},
   reset: () => {},
   touched: false,
@@ -33,17 +28,17 @@ export const FormContext = createContext<FormContextType>({
   initialize: () => {},
 });
 
-export const Form = ({
+type FormInitialState = FieldProps[] | { [key: string]: FieldProps };
+
+export const Form = <T extends FormInitialState>({
   children,
-  initialState = [],
+  initialState,
   onSubmit = () => {},
   onStateChange = () => {},
-}: IDefaultProps) => {
-  const internalState = useMemo(() => transformFields(initialState), [
-    initialState,
-  ]);
+}: FormProps<T>) => {
+  const internalState = useMemo(() => transformFields(initialState), [initialState]);
   const reducer = formReducer(internalState);
-  const [state, dispatch]: any = useAsyncReducer(reducer, internalState);
+  const [state, dispatch] = useAsyncReducer(reducer, internalState);
 
   useEffect(() => {
     onStateChange(state);
@@ -112,7 +107,7 @@ export const Form = ({
   };
 
   const findTouched = () => {
-    const touched = Object.values(state).find((field: any) => {
+    const touched = Object.values(state).find((field: FieldProps) => {
       return field.meta && field.meta.touched;
     });
     return touched ? true : false;
@@ -128,25 +123,29 @@ export const Form = ({
     initialize: newStatePayload => dispatch(formInitialize(newStatePayload)),
   };
 
-  const withHandlers = Object.keys(state).reduce((acc, key: any) => {
-    return {
-      ...acc,
-      [state[key].name]: {
-        ...state[key],
-        onBlur,
-        onFocus,
-        onChange,
-      },
-    };
-  }, {});
+  const fieldsWithHandlers = useMemo(
+    () =>
+      Object.keys(state).reduce((acc, key: any) => {
+        return [
+          ...acc,
+          {
+            ...state[key],
+            onBlur,
+            onFocus,
+            onChange,
+          },
+        ];
+      }, []),
+    [state],
+  );
 
   const ui =
     typeof children === 'function'
-      ? children({ fields: withHandlers, ...fns })
+      ? children({ fields: fieldsWithHandlers, ...fns })
       : children;
 
   return (
-    <FormContext.Provider value={{ fields: withHandlers, ...fns }}>
+    <FormContext.Provider value={{ fields: fieldsWithHandlers, ...fns }}>
       {ui}
     </FormContext.Provider>
   );
@@ -177,10 +176,7 @@ export const MemoField = memo(
     return children(fieldProps);
   },
   ({ field: prevField }, { field: nextField }) =>
-    isEqual(
-      [prevField.value, prevField.meta],
-      [nextField.value, nextField.meta],
-    ),
+    isEqual([prevField.value, prevField.meta], [nextField.value, nextField.meta]),
 );
 
 /**
@@ -196,7 +192,7 @@ export const Field = ({
   render?: Function;
 }) => {
   const { fields } = useFormContext();
-  const field = fields[name];
+  const field = fields.find(field => field.name === name);
 
   if (children && render) {
     throw Error('children and render cannot be used together!');
@@ -217,10 +213,5 @@ export const Field = ({
     const { requirements, ...fieldProps } = field;
     if (render) return render(fieldProps);
     if (children) return children(fieldProps);
-  }, [
-    field.value,
-    field.meta.touched,
-    field.meta.loading,
-    field.meta.errors.length,
-  ]);
+  }, [field.value, field.meta.touched, field.meta.loading, field.meta.errors.length]);
 };

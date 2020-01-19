@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useStore, createStore } from '@alekna/react-store';
+import { useAsyncReducer } from '@alekna/react-store';
 import DefaultToast from './renderer/toast';
 import { isClient } from './helpers';
 import { State, Config } from './types';
@@ -12,7 +12,7 @@ import {
   mouseLeave,
 } from './store/actions';
 import { generateId } from './store/helpers';
-import reducer, { initialState } from './store/reducer';
+import toastsReducer, { initialState } from './store/reducer';
 
 export { DefaultToast as ToastContainer };
 
@@ -33,10 +33,6 @@ const toastComponents = {
   bottomRight: DefaultToast,
 };
 
-const storeConfig = createStore({
-  toasts: reducer,
-});
-
 export function ToastsProvider({
   children,
   components = {},
@@ -44,7 +40,7 @@ export function ToastsProvider({
     padding: 10,
   },
 }) {
-  const { state, dispatch } = useStore(storeConfig);
+  const [toasts, dispatch] = useAsyncReducer(toastsReducer);
 
   const onMouseEnter = (id: string) => dispatch(mouseEnter(id));
   const onMouseLeave = (id: string) => dispatch(mouseLeave(id));
@@ -76,15 +72,12 @@ export function ToastsProvider({
   const mergedComponents: any = Object.assign(toastComponents, components);
   const fns = { create, dismiss, reset };
 
-  const ui =
-    typeof children === 'function'
-      ? children({ ...state.toasts, ...fns })
-      : children;
+  const ui = typeof children === 'function' ? children({ ...toasts, ...fns }) : children;
 
   return (
-    <ToastContext.Provider value={{ ...state.toasts, ...fns }}>
+    <ToastContext.Provider value={{ ...toasts, ...fns }}>
       {ui}
-      {isClient && createPortals(state.toasts, mergedComponents, style)}
+      {isClient && createPortals(toasts, mergedComponents, style)}
     </ToastContext.Provider>
   );
 }
