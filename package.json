@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "alekna-monorepo",
   "license": "MIT",
   "scripts": {
