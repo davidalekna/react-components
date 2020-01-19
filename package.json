@@ -6,13 +6,14 @@
     "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +",
     "coverage": "jest --verbose --coverage",
     "coverage:upload": "codecov",
+    "codecov": "echo TODO...",
     "deploy": "lerna publish",
     "diff": "check-if-folder-contents-changed-in-git-commit-range",
     "filesize": "lerna run build && bundlesize",
     "postinstall": "lerna exec -- npm install --package-lock=false && lerna run prepare",
     "sort-package-json": "npx sort-package-json",
     "test": "jest --verbose",
-    "test-ci": "npm run coverage -- --ci --maxWorkers=2 --reporters=default --reporters=jest-junit"
+    "posttest": "yarn lint"
   },
   "resolutions": {
     "@types/react": "16.9.17"
@@ -98,6 +99,17 @@
     "ts-node": "^8.4.1",
     "tslib": "^1.10.0",
     "typescript": "^3.6.4"
+  },
+  "jest": {
+    "projects": [
+      "<rootDir>/packages/*"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "bundlesize": [
     {

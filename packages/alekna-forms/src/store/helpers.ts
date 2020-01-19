@@ -1,7 +1,7 @@
 import { filter } from 'rxjs/operators';
 import { merge } from 'lodash';
 import { FormActions } from './types';
-import { FormState, IFinalValues, IField } from '../types';
+import { FormState, IFinalValues, FieldProps } from '../types';
 
 export const createObject = (obj: { [key: string]: unknown } | void) => {
   if (!obj) return {};
@@ -28,7 +28,7 @@ export function ofType(actionType: string): any {
   return filter(({ type }: FormActions) => type === actionType);
 }
 
-export function containsNoErrors(fields: IField[]) {
+export function containsNoErrors(fields: FieldProps[]) {
   return (
     fields
       .map((field: any) => field.meta.errors)
@@ -39,7 +39,7 @@ export function containsNoErrors(fields: IField[]) {
 }
 
 export function extractFinalValues(state: FormState): IFinalValues {
-  return Object.values(state).reduce((acc, field: IField) => {
+  return Object.values(state).reduce((acc, field: FieldProps) => {
     if ((field.value && !isBoolean(field.value)) || isBoolean(field.value)) {
       return merge(acc, createObject({ [field.name]: field.value }));
     }

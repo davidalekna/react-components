@@ -40,18 +40,9 @@ const Demo = () => {
                 />
                 <Field name="firstName" render={props => <Text {...props} />} />
                 <Field name="lastName" render={props => <Text {...props} />} />
-                <Field
-                  name="address.line_1"
-                  render={props => <Text {...props} />}
-                />
-                <Field
-                  name="address.line_2"
-                  render={props => <Text {...props} />}
-                />
-                <Field
-                  name="address.city"
-                  render={props => <Text {...props} />}
-                />
+                <Field name="address.line_1" render={props => <Text {...props} />} />
+                <Field name="address.line_2" render={props => <Text {...props} />} />
+                <Field name="address.city" render={props => <Text {...props} />} />
                 <Field
                   name="address.postcode"
                   render={props => (

@@ -1,19 +1,19 @@
-export interface IField {
+export interface FieldProps {
   name: string;
   value: any;
   type: string;
-  meta: {
+  meta?: {
     touched: boolean;
     loading: boolean;
     errors: unknown[];
   };
   label?: string;
   placeholder?: string;
-  requirements?: Function[];
+  requirements?: any[];
   [key: string]: any;
 }
 
-export type FormState = { readonly [K in keyof IField]: IField[K] };
+export type FormState = { readonly [K in keyof FieldProps]: FieldProps[K] };
 
 export type InputEvent = React.ChangeEvent<HTMLInputElement>;
 
@@ -26,12 +26,12 @@ export interface IFinalValues {
   [key: string]: any;
 }
 
-export interface IDefaultProps {
+export interface FormProps<T> {
   children: Function | unknown;
-  initialState: any[];
+  initialState: T;
   epics?: Function[];
   onSubmit: (values: any) => void;
-  onStateChange?: (params: FormState) => void;
+  onStateChange?: (params: { [key: string]: FieldProps }) => void;
 }
 
 export interface IFormContext {
@@ -42,7 +42,7 @@ export interface IFormContext {
 }
 
 export type FormContextType = {
-  fields: IField[];
+  fields: FieldProps[];
   handleSubmit: Function;
   reset: Function;
   touched: boolean;

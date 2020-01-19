@@ -3,7 +3,13 @@ import { isEqual } from 'lodash';
 import { useAsyncReducer } from '@alekna/react-store';
 import formReducer from './store/reducer';
 import transformFields from './transformFields';
-import { FormContextType, InputEvent, ICustomInput, IDefaultProps } from './types';
+import {
+  FormContextType,
+  InputEvent,
+  ICustomInput,
+  FormProps,
+  FieldProps,
+} from './types';
 import {
   fieldUpdate,
   fieldBlur,
@@ -22,15 +28,17 @@ export const FormContext = createContext<FormContextType>({
   initialize: () => {},
 });
 
-export const Form = ({
+type FormInitialState = FieldProps[] | { [key: string]: FieldProps };
+
+export const Form = <T extends FormInitialState>({
   children,
-  initialState = [],
+  initialState,
   onSubmit = () => {},
   onStateChange = () => {},
-}: IDefaultProps) => {
+}: FormProps<T>) => {
   const internalState = useMemo(() => transformFields(initialState), [initialState]);
   const reducer = formReducer(internalState);
-  const [state, dispatch]: any = useAsyncReducer(reducer, internalState);
+  const [state, dispatch] = useAsyncReducer(reducer, internalState);
 
   useEffect(() => {
     onStateChange(state);
@@ -99,7 +107,7 @@ export const Form = ({
   };
 
   const findTouched = () => {
-    const touched = Object.values(state).find((field: any) => {
+    const touched = Object.values(state).find((field: FieldProps) => {
       return field.meta && field.meta.touched;
     });
     return touched ? true : false;
@@ -115,25 +123,29 @@ export const Form = ({
     initialize: newStatePayload => dispatch(formInitialize(newStatePayload)),
   };
 
-  const withHandlers = Object.keys(state).reduce((acc, key: any) => {
-    return [
-      ...acc,
-      {
-        ...state[key],
-        onBlur,
-        onFocus,
-        onChange,
-      },
-    ];
-  }, []);
+  const fieldsWithHandlers = useMemo(
+    () =>
+      Object.keys(state).reduce((acc, key: any) => {
+        return [
+          ...acc,
+          {
+            ...state[key],
+            onBlur,
+            onFocus,
+            onChange,
+          },
+        ];
+      }, []),
+    [state],
+  );
 
   const ui =
     typeof children === 'function'
-      ? children({ fields: withHandlers, ...fns })
+      ? children({ fields: fieldsWithHandlers, ...fns })
       : children;
 
   return (
-    <FormContext.Provider value={{ fields: withHandlers, ...fns }}>
+    <FormContext.Provider value={{ fields: fieldsWithHandlers, ...fns }}>
       {ui}
     </FormContext.Provider>
   );
@@ -180,7 +192,7 @@ export const Field = ({
   render?: Function;
 }) => {
   const { fields } = useFormContext();
-  const field = fields[name];
+  const field = fields.find(field => field.name === name);
 
   if (children && render) {
     throw Error('children and render cannot be used together!');
