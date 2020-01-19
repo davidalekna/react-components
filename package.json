@@ -138,6 +138,5 @@
       "path": "./packages/alekna-organizer/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
     }
-  ],
-  "version": "1.0.1"
+  ]
 }
