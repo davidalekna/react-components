@@ -1,25 +1,7 @@
 {
   "name": "@alekna/react-forms",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "A simple forms manager for react.",
-  "author": "David Alekna <alekna@live.co.uk>",
-  "license": "MIT",
-  "main": "./lib/bundle.cjs.js",
-  "module": "./lib/bundle.esm.js",
-  "typings": "./lib/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "lib/bundle*",
-    "lib/*.d.ts"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/davidalekna/alekna.git"
-  },
-  "bugs": {
-    "url": "https://github.com/davidalekna/alekna/issues"
-  },
-  "homepage": "https://github.com/davidalekna/alekna#readme",
   "keywords": [
     "react",
     "forms",
@@ -28,60 +10,50 @@
     "rxjs",
     "generators"
   ],
+  "homepage": "https://github.com/davidalekna/alekna#readme",
+  "bugs": {
+    "url": "https://github.com/davidalekna/alekna/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidalekna/alekna.git"
+  },
+  "license": "MIT",
+  "author": "David Alekna <alekna@live.co.uk>",
+  "files": [
+    "lib/bundle*",
+    "lib/*.d.ts"
+  ],
+  "sideEffects": false,
+  "main": "./lib/bundle.cjs.js",
+  "module": "./lib/bundle.esm.js",
+  "typings": "./lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
-    "prepare": "npm run build",
-    "start": "yarn storybook",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
     "build": "yarn clean && tsc -b .",
     "postbuild": "npm run bundle",
     "bundle": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
+    "prepare": "npm run build",
     "report-coverage": "codecov",
+    "start": "yarn storybook",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
+    "storybook:clean": "rimraf storybook-static",
     "storybook:upload": "gh-pages -d storybook-static",
-    "storybook:clean": "rimraf storybook-static"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "@material-ui/core": "^4.5.1",
-    "@storybook/react": "^5.2.5",
-    "@types/jest": "^24.0.19",
-    "@types/lodash": "^4.14.144",
-    "@types/react": "^16.9.9",
-    "@types/styled-components": "^4.1.19",
-    "antd": "^3.24.2",
-    "awesome-typescript-loader": "^5.2.1",
-    "axios": "^0.19.0",
-    "babel-jest": "^24.9.0",
-    "babel-loader": "^8.0.5",
-    "css-loader": "^3.2.0",
-    "gh-pages": "^2.1.1",
-    "jest": "^24.9.0",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-select": "^3.0.8",
-    "react-testing-library": "^8.0.1",
-    "rimraf": "^3.0.0",
-    "style-loader": "^1.0.0",
-    "styled-components": "^4.4.0",
-    "ts-jest": "^24.1.0",
-    "ts-loader": "^6.2.1",
-    "ts-node": "^8.4.1",
-    "typescript": "^3.6.4"
-  },
-  "peerDependencies": {
-    "lodash": "^4.17.11",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@alekna/react-store": "file:../alekna-store",
     "rxjs": "^6.5.3"
   },
-  "directories": {
-    "lib": "lib"
+  "peerDependencies": {
+    "lodash": "^4.17.11",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   },
   "gitHead": "7068104f92bec91ce8353fe030c9792c89554d8a"
 }

@@ -1,12 +1,8 @@
-import { IField, FormState } from '../types';
+import { FieldProps, FormState } from '../types';
 import { mergeMap, filter, map, tap, switchMap } from 'rxjs/operators';
 import { of, Observable, from } from 'rxjs';
 import fieldValidator from './fieldValidator';
-import {
-  containsNoErrors,
-  extractFinalValues,
-  allErrorsEmitted,
-} from './helpers';
+import { containsNoErrors, extractFinalValues, allErrorsEmitted } from './helpers';
 
 export const UPDATE = '@form/UPDATE';
 export const FIELD_BLUR = '@form/FIELD_BLUR';
@@ -28,7 +24,7 @@ export function fieldUpdate({ name, value }: { name: string; value: any }) {
   };
 }
 
-export const fieldBlur: any = ({ item }: { item: IField }) => (
+export const fieldBlur: any = ({ item }: { item: FieldProps }) => (
   actions$: Observable<any>,
 ) => {
   return of({
@@ -39,8 +35,7 @@ export const fieldBlur: any = ({ item }: { item: IField }) => (
       return of(action).pipe(
         filter(
           ({ payload }) =>
-            Array.isArray(payload.item.requirements) &&
-            payload.item.requirements.length,
+            Array.isArray(payload.item.requirements) && payload.item.requirements.length,
         ),
         fieldValidator(actions$),
       );
@@ -68,12 +63,9 @@ export function formInitialize(initialValues) {
   };
 }
 
-export const formSubmit: any = (
-  payload: any,
-  onSubmit: Function,
-) => actions$ => {
-  const errorsBuffer: IField[] = [];
-  const state$ = Object.values(payload).map((item: IField) => of(item));
+export const formSubmit: any = (payload: any, onSubmit: Function) => actions$ => {
+  const errorsBuffer: FieldProps[] = [];
+  const state$ = Object.values(payload).map((item: FieldProps) => of(item));
 
   return from(state$).pipe(
     mergeMap((field: any) => {
@@ -104,7 +96,7 @@ export function formErrors(state: FormState) {
   };
 }
 
-export function fieldErrorUpdate(field: IField) {
+export function fieldErrorUpdate(field: FieldProps) {
   return {
     type: FIELD_ERROR_UPDATE,
     payload: field,

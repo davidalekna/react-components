@@ -1,4 +1,4 @@
-import { FormState, IField } from '../types';
+import { FormState, FieldProps } from '../types';
 import {
   UPDATE,
   FIELD_BLUR,
@@ -22,17 +22,17 @@ class FieldUpdate implements IAction {
 
 class FieldBlur implements IAction {
   readonly type = FIELD_BLUR;
-  constructor(public payload: { index: number; item: IField }) {}
+  constructor(public payload: { index: number; item: FieldProps }) {}
 }
 
 class FieldErrorUpdate implements IAction {
   readonly type = FIELD_ERROR_UPDATE;
-  constructor(public payload: { index: number; item: IField }) {}
+  constructor(public payload: { index: number; item: FieldProps }) {}
 }
 
 class FieldError implements IAction {
   readonly type = ERROR;
-  constructor(public payload: { index: number; item: IField }) {}
+  constructor(public payload: { index: number; item: FieldProps }) {}
 }
 
 class FieldTouched implements IAction {
