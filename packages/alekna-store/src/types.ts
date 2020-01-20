@@ -14,7 +14,7 @@ export type StoreState = {
 
 export type SyncAction = {
   type: string;
-  payload: any;
+  payload?: any;
 };
 
 type AsyncAction = Function;
