@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDirs": ["src", "stories"],
     "baseUrl": "src",
-    "composite": false,
+    "composite": true,
     "outDir": "lib",
     "jsx": "react",
     "noImplicitAny": false,

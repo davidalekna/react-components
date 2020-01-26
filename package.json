@@ -1,13 +1,13 @@
 {
-  "private": true,
   "name": "alekna-monorepo",
+  "private": true,
   "license": "MIT",
   "scripts": {
     "build": "lerna run build",
     "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +",
+    "codecov": "echo TODO...",
     "coverage": "jest --verbose --coverage",
     "coverage:upload": "codecov",
-    "codecov": "echo TODO...",
     "deploy": "lerna publish",
     "diff": "check-if-folder-contents-changed-in-git-commit-range",
     "filesize": "lerna run build && bundlesize",
@@ -16,15 +16,26 @@
     "test": "jest --verbose",
     "posttest": "yarn lint"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "jest": {
+    "projects": [
+      "<rootDir>/packages/*"
+    ]
+  },
   "resolutions": {
     "@types/react": "16.9.17"
   },
   "dependencies": {
-    "react-data-browser": "file:packages/alekna-data-browser",
-    "react-forms": "file:packages/alekna-forms",
-    "react-organizer": "file:packages/alekna-organizer",
-    "react-store": "file:packages/alekna-store",
-    "react-toasts": "file:packages/alekna-toasts"
+    "react-data-browser": "file:packages/react-data-browser",
+    "react-forms": "file:packages/react-forms",
+    "react-organizer": "file:packages/react-organizer",
+    "react-store": "file:packages/react-store",
+    "react-toasts": "file:packages/react-toasts"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
@@ -91,6 +102,7 @@
     "rollup-plugin-local-resolve": "^1.0.7",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-typescript2": "^0.25.3",
     "rxjs": "^6.5.3",
     "style-loader": "^1.0.0",
     "styled-components": "^5.0.0",
@@ -101,41 +113,30 @@
     "tslib": "^1.10.0",
     "typescript": "^3.6.4"
   },
-  "jest": {
-    "projects": [
-      "<rootDir>/packages/*"
-    ]
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
   "bundlesize": [
     {
-      "name": "alekna-forms",
-      "path": "./packages/alekna-forms/lib/bundle.cjs.min.js",
+      "name": "react-forms",
+      "path": "./packages/react-forms/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
     },
     {
-      "name": "alekna-data-browser",
-      "path": "./packages/alekna-data-browser/lib/bundle.cjs.min.js",
+      "name": "react-data-browser",
+      "path": "./packages/react-data-browser/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
     },
     {
-      "name": "alekna-toasts",
-      "path": "./packages/alekna-toasts/lib/bundle.cjs.min.js",
+      "name": "react-toasts",
+      "path": "./packages/react-toasts/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
     },
     {
-      "name": "alekna-store",
-      "path": "./packages/alekna-store/lib/bundle.cjs.min.js",
+      "name": "react-store",
+      "path": "./packages/react-store/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
     },
     {
-      "name": "alekna-organizer",
-      "path": "./packages/alekna-organizer/lib/bundle.cjs.min.js",
+      "name": "react-organizer",
+      "path": "./packages/react-organizer/lib/bundle.cjs.min.js",
       "maxSize": "10.6 kB"
     }
   ]
