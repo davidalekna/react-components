@@ -32,9 +32,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "build": "yarn clean && tsc -b .",
-    "postbuild": "npm run bundle",
-    "bundle": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
+    "build": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
     "prepare": "npm run build",
     "report-coverage": "codecov",
