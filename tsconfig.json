@@ -1,10 +1,10 @@
 {
   "extends": "./config/tsconfig.base.json",
   "references": [
-    { "path": "packages/alekna-data-browser" },
-    { "path": "packages/alekna-forms" },
-    { "path": "packages/alekna-organizer" },
-    { "path": "packages/alekna-store" },
-    { "path": "packages/alekna-toasts" }
+    { "path": "packages/react-data-browser" },
+    { "path": "packages/react-forms" },
+    { "path": "packages/react-organizer" },
+    { "path": "packages/react-store" },
+    { "path": "packages/react-toasts" }
   ]
 }

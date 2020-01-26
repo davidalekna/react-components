@@ -1,7 +1,7 @@
 {
-  "name": "@alekna/react-store",
-  "version": "1.2.1",
-  "description": "A redux like store managed by rxjs.",
+  "name": "@alekna/react-forms",
+  "version": "1.0.11",
+  "description": "A simple forms manager for react.",
   "keywords": [
     "react",
     "forms",
@@ -22,7 +22,7 @@
   "author": "David Alekna <alekna@live.co.uk>",
   "files": [
     "lib/bundle*",
-    "lib/*.d.ts"
+    "lib/**/*.d.ts"
   ],
   "sideEffects": false,
   "main": "./lib/bundle.cjs.js",
@@ -37,7 +37,6 @@
     "prepare": "npm run build",
     "report-coverage": "codecov",
     "start": "yarn storybook",
-    "dev": "yarn storybook",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
     "storybook:clean": "rimraf storybook-static",
@@ -46,11 +45,13 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "lodash": "^4.17.15",
+    "@alekna/react-store": "file:../react-store",
     "rxjs": "^6.5.3"
   },
   "peerDependencies": {
+    "lodash": "^4.17.11",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
-  }
+  },
+  "gitHead": "7068104f92bec91ce8353fe030c9792c89554d8a"
 }

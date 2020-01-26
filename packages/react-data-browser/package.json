@@ -26,8 +26,8 @@
   "license": "MIT",
   "author": "David Alekna <alekna@live.co.uk>",
   "files": [
-    "lib/*.d.ts",
-    "lib/bundle*"
+    "lib/bundle*",
+    "lib/**/*.d.ts"
   ],
   "sideEffects": false,
   "main": "./lib/bundle.cjs.js",

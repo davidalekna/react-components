@@ -1,10 +1,14 @@
 {
-  "name": "@alekna/react-toasts",
-  "version": "1.0.4",
-  "description": "Simple toasts for react.",
+  "name": "@alekna/react-store",
+  "version": "1.2.1",
+  "description": "A redux like store managed by rxjs.",
   "keywords": [
     "react",
-    "toasts"
+    "forms",
+    "form",
+    "streams",
+    "rxjs",
+    "generators"
   ],
   "homepage": "https://github.com/davidalekna/alekna#readme",
   "bugs": {
@@ -18,7 +22,7 @@
   "author": "David Alekna <alekna@live.co.uk>",
   "files": [
     "lib/bundle*",
-    "lib/index.d.ts"
+    "lib/**/*.d.ts"
   ],
   "sideEffects": false,
   "main": "./lib/bundle.cjs.js",
@@ -30,9 +34,10 @@
   "scripts": {
     "build": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
-    "dev": "yarn storybook",
     "prepare": "npm run build",
     "report-coverage": "codecov",
+    "start": "yarn storybook",
+    "dev": "yarn storybook",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
     "storybook:clean": "rimraf storybook-static",
@@ -41,11 +46,8 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@alekna/react-store": "file:../alekna-store",
-    "lodash": "^4.17.11",
-    "rxjs": "^6.5.1",
-    "styled-components": "^4.3.1",
-    "uuid": "^3.3.2"
+    "lodash": "^4.17.15",
+    "rxjs": "^6.5.3"
   },
   "peerDependencies": {
     "react": "^16.8.6",
