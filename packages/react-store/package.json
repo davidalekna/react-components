@@ -34,10 +34,10 @@
   "scripts": {
     "build": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
+    "dev": "yarn storybook",
     "prepare": "npm run build",
     "report-coverage": "codecov",
     "start": "yarn storybook",
-    "dev": "yarn storybook",
     "storybook": "start-storybook -p 6008",
     "storybook:build": "build-storybook",
     "storybook:clean": "rimraf storybook-static",
