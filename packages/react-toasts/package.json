@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-toasts",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "description": "Simple toasts for react.",
   "keywords": [
     "react",
@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "build": "../../node_modules/rollup/dist/bin/rollup -c rollup.config.js",
+    "build": "cross-env-shell \"../../node_modules/rollup/dist/bin/rollup\" -c rollup.config.js",
     "clean": "rimraf lib storybook-static esm",
     "dev": "yarn storybook",
     "prepare": "npm run build",
@@ -50,5 +50,6 @@
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
-  }
+  },
+  "gitHead": "71608173e3d5fa63ce563f9f6e83ae3cbf148308"
 }

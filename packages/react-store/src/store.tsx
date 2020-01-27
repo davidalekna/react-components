@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useEffect, useState, ReactNode, useMemo, useRef, useCallback } from 'react';
-import { Subject, of, empty, isObservable, from, BehaviorSubject } from 'rxjs';
+import { Subject, of, empty, isObservable, from, BehaviorSubject, Observable } from 'rxjs';
 import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { Reducers, StoreState, Action } from './types';
@@ -56,26 +56,26 @@ type StoreReturnProps<T> = {
   initialState: T;
 };
 
-const useStore = <T extends {} | []>({
+const useStore = <T extends any>({
   _stateUpdates,
   store$,
   reducers,
-  initialState,
+  initialState: is,
 }: StoreProps<T>): StoreReturnProps<T> => {
-  const initialStateM = useMemo<T>(() => initialState, [initialState]);
+  const initialState = useMemo<T>(() => is, [is]);
 
   useEffect(() => {
     const s = _stateUpdates
       .pipe(
         mergeMap(actionDistributor(_stateUpdates)),
-        scan<Action, T>(mergeReducerState(reducers), initialStateM),
+        scan<Action, T>(mergeReducerState(reducers), initialState),
       )
       .subscribe(store$);
 
     return () => {
       s.unsubscribe();
     };
-  }, [reducers, initialStateM]);
+  }, [reducers, initialState]);
 
   const dispatch = (next: Action) => _stateUpdates.next(next);
 
@@ -86,7 +86,7 @@ const useStore = <T extends {} | []>({
 
   const stateChanges = () => store$.asObservable();
 
-  return { dispatch, selectState, stateChanges, initialState: initialStateM };
+  return { dispatch, selectState, stateChanges, initialState };
 };
 
 type StoreProviderProps<T> = {
@@ -94,16 +94,13 @@ type StoreProviderProps<T> = {
   children: ReactNode | Function;
 };
 
-export const StoreProvider = <T extends {} | []>({
-  store,
-  children,
-}: StoreProviderProps<T>) => {
+export const StoreProvider = <T extends {} | []>({ store, children }: StoreProviderProps<T>) => {
   const storeUtils = useStore(store);
   const ui = typeof children === 'function' ? children(storeUtils) : children;
   return <StoreContext.Provider value={storeUtils}>{ui}</StoreContext.Provider>;
 };
 
-export function useStoreContext() {
+export function useStoreContext(): StoreState {
   const storeUtils = useContext(StoreContext);
   if (!storeUtils) {
     throw new Error(
@@ -136,14 +133,20 @@ export const useStoreState = <T extends any>(): [T, Function] => {
  * React Hook for pre-selecting single state and watching it. Optimized for
  * re-renders only when selected state updates.
  */
-export const useSelector = (stateName: string, initialState: unknown = undefined) => {
-  const { selectState } = useStoreContext();
-  const [state, update] = useState(initialState);
+export const useSelector = (
+  stateName: string,
+  streamPipe: <U extends Observable<any>>(_: U) => U = str => str,
+) => {
+  // ERROR: types are broken, return type is not working.
+  const { selectState, initialState } = useStoreContext();
+  const [state, update] = useState(initialState[stateName]);
 
   useEffect(() => {
-    const s = selectState(stateName).subscribe(update);
+    const stream = selectState(stateName)
+      .pipe(streamPipe)
+      .subscribe(update);
     return () => {
-      s.unsubscribe();
+      stream.unsubscribe();
     };
   }, [state, update, stateName]);
 
