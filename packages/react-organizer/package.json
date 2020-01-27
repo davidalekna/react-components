@@ -50,5 +50,6 @@
   "dependencies": {
     "date-fns": "^2.6.0",
     "prop-types": "^15.7.2"
-  }
+  },
+  "gitHead": "71608173e3d5fa63ce563f9f6e83ae3cbf148308"
 }
