@@ -69,7 +69,7 @@
     "babel-loader": "^8.0.6",
     "babel-runtime": "^6.26.0",
     "codecov": "^3.5.0",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.0",
     "css-loader": "^3.2.0",
     "downshift": "^3.3.4",
     "eslint": "^6.5.1",
@@ -112,32 +112,5 @@
     "ts-node": "^8.4.1",
     "tslib": "^1.10.0",
     "typescript": "^3.6.4"
-  },
-  "bundlesize": [
-    {
-      "name": "react-forms",
-      "path": "./packages/react-forms/lib/bundle.cjs.min.js",
-      "maxSize": "10.6 kB"
-    },
-    {
-      "name": "react-data-browser",
-      "path": "./packages/react-data-browser/lib/bundle.cjs.min.js",
-      "maxSize": "10.6 kB"
-    },
-    {
-      "name": "react-toasts",
-      "path": "./packages/react-toasts/lib/bundle.cjs.min.js",
-      "maxSize": "10.6 kB"
-    },
-    {
-      "name": "react-store",
-      "path": "./packages/react-store/lib/bundle.cjs.min.js",
-      "maxSize": "10.6 kB"
-    },
-    {
-      "name": "react-organizer",
-      "path": "./packages/react-organizer/lib/bundle.cjs.min.js",
-      "maxSize": "10.6 kB"
-    }
-  ]
+  }
 }
