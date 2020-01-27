@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useEffect, useState, ReactNode, useMemo, useRef, useCallback } from 'react';
-import { Subject, of, empty, isObservable, from, BehaviorSubject } from 'rxjs';
+import { Subject, of, empty, isObservable, from, BehaviorSubject, Observable } from 'rxjs';
 import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { Reducers, StoreState, Action } from './types';
@@ -94,10 +94,7 @@ type StoreProviderProps<T> = {
   children: ReactNode | Function;
 };
 
-export const StoreProvider = <T extends {} | []>({
-  store,
-  children,
-}: StoreProviderProps<T>) => {
+export const StoreProvider = <T extends {} | []>({ store, children }: StoreProviderProps<T>) => {
   const storeUtils = useStore(store);
   const ui = typeof children === 'function' ? children(storeUtils) : children;
   return <StoreContext.Provider value={storeUtils}>{ui}</StoreContext.Provider>;
@@ -136,14 +133,19 @@ export const useStoreState = <T extends any>(): [T, Function] => {
  * React Hook for pre-selecting single state and watching it. Optimized for
  * re-renders only when selected state updates.
  */
-export const useSelector = (stateName: string, initialState: unknown = undefined) => {
-  const { selectState } = useStoreContext();
-  const [state, update] = useState(initialState);
+export const useSelector = <T extends any>(
+  stateName: string,
+  streamPipe: <U extends Observable<any>>(_: U) => U = str => str,
+): T => {
+  const { selectState, initialState } = useStoreContext();
+  const [state, update] = useState<T>(initialState[stateName]);
 
   useEffect(() => {
-    const s = selectState(stateName).subscribe(update);
+    const stream = selectState(stateName)
+      .pipe(streamPipe)
+      .subscribe(update);
     return () => {
-      s.unsubscribe();
+      stream.unsubscribe();
     };
   }, [state, update, stateName]);
 
