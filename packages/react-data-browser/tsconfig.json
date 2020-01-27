@@ -1,7 +1,7 @@
 {
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
-    "rootDirs": ["src", "stories"],
+    "rootDir": "src",
     "baseUrl": "src",
     "composite": true,
     "outDir": "lib",

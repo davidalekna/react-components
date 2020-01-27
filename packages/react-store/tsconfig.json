@@ -1,7 +1,7 @@
 {
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
-    "rootDirs": ["src", "stories"],
+    "rootDir": "src",
     "baseUrl": "src",
     "composite": true,
     "outDir": "lib",
@@ -16,5 +16,5 @@
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib", "**/__tests__/**/*", "**/__mocks__/**/*"]
+  "exclude": ["node_modules", "lib", "**/__mocks__/**/*", "**/__tests__/**/*", "**/*.mdx"]
 }

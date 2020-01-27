@@ -1,6 +1,6 @@
 import { rollup } from '../../config/rollup.config';
 
 export default rollup({
-  name: 'alekna-store',
+  name: 'store',
   extraGlobals: {},
 });
