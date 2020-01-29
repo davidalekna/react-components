@@ -11,7 +11,7 @@ const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) =
     /** async actions */
     case 'function': {
       if (Array.isArray(action)) {
-        throw Error('Actions accept object, function or observable only.');
+        throw Error('Actions accepts object, function or observable only.');
       }
 
       const actionResult = action(_stateUpdates);
@@ -35,7 +35,7 @@ const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) =
   }
 };
 
-export const StoreContext = React.createContext<StoreState>({
+export const StoreContext = React.createContext<StoreState | undefined>({
   dispatch: () => {},
   selectState: () => {},
   stateChanges: () => {},
@@ -135,20 +135,23 @@ export const useStoreState = <T extends any>(): [T, Function] => {
  */
 export const useSelector = (
   stateName: string,
-  streamPipe: <U extends Observable<any>>(_: U) => U = str => str,
+  pipe: <T>(store$: Observable<T>) => Observable<T> = str => str,
 ) => {
   // ERROR: types are broken, return type is not working.
   const { selectState, initialState } = useStoreContext();
-  const [state, update] = useState(initialState[stateName]);
+  const initState = useMemo(() => initialState[stateName], [initialState, stateName]);
+  const [state, update] = useState(initState);
+  const streamPipe = useRef(pipe).current;
 
   useEffect(() => {
     const stream = selectState(stateName)
       .pipe(streamPipe)
       .subscribe(update);
+
     return () => {
       stream.unsubscribe();
     };
-  }, [state, update, stateName]);
+  }, [stateName, selectState, update, streamPipe]);
 
   return state;
 };
@@ -157,9 +160,9 @@ export const useSelector = (
  * React Hook dispatch event for dispatching actions into
  * Subjects
  */
-export const useDispatch = (): ((args: Action) => void) => {
+export const useDispatch = () => {
   const { dispatch } = useStoreContext();
-  return useCallback(() => dispatch, [dispatch]);
+  return useCallback(dispatch, [dispatch]);
 };
 
 export const createStore = <T extends {} | [] = {}>(
