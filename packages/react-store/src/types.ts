@@ -5,11 +5,11 @@ export type Reducers = {
   [key: string]: Function;
 };
 
-export type StoreState = {
+export type StoreState<T> = {
   selectState: Function;
   stateChanges: Function;
   dispatch: (args: Action) => void;
-  initialState: any;
+  initialState: T;
 };
 
 export type SyncAction = {
