@@ -1,5 +1,13 @@
-import React, { useContext } from 'react';
-import { useEffect, useState, ReactNode, useMemo, useRef, useCallback } from 'react';
+import React, {
+  useContext,
+  useLayoutEffect,
+  useEffect,
+  useState,
+  ReactNode,
+  useMemo,
+  useRef,
+  useCallback,
+} from 'react';
 import { Subject, of, empty, isObservable, from, BehaviorSubject, Observable } from 'rxjs';
 import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
@@ -11,7 +19,7 @@ const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) =
     /** async actions */
     case 'function': {
       if (Array.isArray(action)) {
-        throw Error('Actions accept object, function or observable only.');
+        throw Error('Actions accepts object, function or observable only.');
       }
 
       const actionResult = action(_stateUpdates);
@@ -35,7 +43,7 @@ const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) =
   }
 };
 
-export const StoreContext = React.createContext<StoreState>({
+export const StoreContext = React.createContext<StoreState<any> | undefined>({
   dispatch: () => {},
   selectState: () => {},
   stateChanges: () => {},
@@ -64,7 +72,7 @@ const useStore = <T extends any>({
 }: StoreProps<T>): StoreReturnProps<T> => {
   const initialState = useMemo<T>(() => is, [is]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const s = _stateUpdates
       .pipe(
         mergeMap(actionDistributor(_stateUpdates)),
@@ -77,9 +85,13 @@ const useStore = <T extends any>({
     };
   }, [reducers, initialState]);
 
-  const dispatch = (next: Action) => _stateUpdates.next(next);
+  const dispatch = (action: Action) => {
+    // console.log('dispatch');
+    _stateUpdates.next(action);
+  };
 
   const selectState = (stateKey: string) => {
+    // TODO: if no stateKey throw an Error.
     if (!stateKey.length) return store$;
     return store$.pipe(distinctUntilKeyChanged(stateKey), pluck(stateKey));
   };
@@ -100,7 +112,7 @@ export const StoreProvider = <T extends {} | []>({ store, children }: StoreProvi
   return <StoreContext.Provider value={storeUtils}>{ui}</StoreContext.Provider>;
 };
 
-export function useStoreContext(): StoreState {
+export function useStoreContext(): StoreState<{}> {
   const storeUtils = useContext(StoreContext);
   if (!storeUtils) {
     throw new Error(
@@ -117,38 +129,48 @@ export function useStoreContext(): StoreState {
  *
  * useSelector should be used for appropriate components in optimization favour
  */
-export const useStoreState = <T extends any>(): [T, Function] => {
+export const useStoreState = (
+  pipe: <T>(selectedStore$: Observable<T>) => Observable<T> = str => str,
+): [any, Function] => {
   const { stateChanges, dispatch, initialState } = useStoreContext();
-  const [state, setState] = useState<T>(initialState);
+  const [state, setState] = useState(initialState);
+  const extend = useRef(pipe).current;
 
   useEffect(() => {
-    const s = stateChanges().subscribe(setState);
+    const s = stateChanges()
+      .pipe(extend)
+      .subscribe(setState);
     return () => s.unsubscribe();
-  }, [state, setState]);
+  }, [state, setState, extend]);
 
   return [state, dispatch];
 };
 
 /**
  * React Hook for pre-selecting single state and watching it. Optimized for
- * re-renders only when selected state updates.
+ * re-renders on state updates and can be extended.
  */
-export const useSelector = (
+export const useSelector = <K extends any>(
   stateName: string,
-  streamPipe: <U extends Observable<any>>(_: U) => U = str => str,
+  extend: <T>(selectedStore$: Observable<T>) => Observable<T> = str => str,
 ) => {
-  // ERROR: types are broken, return type is not working.
-  const { selectState, initialState } = useStoreContext();
-  const [state, update] = useState(initialState[stateName]);
+  const { selectState, stateChanges, initialState: oldInitial } = useStoreContext();
+  // NOTE: grabbing initialState from observable source without subscribing to it.
+  // not sure if there are any caveats to this approach?
+  const initialState = stateChanges()?.source?.value || oldInitial;
+  const initialize = useMemo<K>(() => initialState[stateName], [initialState, stateName]);
+  const [state, update] = useState(initialize);
+  const pipe = useRef(extend).current;
 
   useEffect(() => {
     const stream = selectState(stateName)
-      .pipe(streamPipe)
+      .pipe(pipe)
       .subscribe(update);
+
     return () => {
       stream.unsubscribe();
     };
-  }, [state, update, stateName]);
+  }, [stateName, selectState, update, pipe]);
 
   return state;
 };
@@ -157,9 +179,9 @@ export const useSelector = (
  * React Hook dispatch event for dispatching actions into
  * Subjects
  */
-export const useDispatch = (): ((args: Action) => void) => {
+export const useDispatch = () => {
   const { dispatch } = useStoreContext();
-  return useCallback(() => dispatch, [dispatch]);
+  return useCallback(dispatch, [dispatch]);
 };
 
 export const createStore = <T extends {} | [] = {}>(
