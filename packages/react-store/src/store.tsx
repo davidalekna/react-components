@@ -101,7 +101,11 @@ const useStore = <T extends any>({
 
   const addState = (_stateKey: string, reducer: Function) => {
     if (!store$.value[_stateKey]) {
-      store$.next({ [_stateKey]: reducer });
+      store$.next(
+        Object.assign(store$.value, {
+          [_stateKey]: reducer,
+        }),
+      );
     }
   };
 
