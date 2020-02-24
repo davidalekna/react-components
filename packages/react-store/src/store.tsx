@@ -9,8 +9,8 @@ import React, {
   useCallback,
 } from 'react';
 import { Subject, of, empty, isObservable, from, BehaviorSubject, Observable } from 'rxjs';
-import { scan, mergeMap, pluck, distinctUntilKeyChanged, map } from 'rxjs/operators';
-import { cloneDeep } from 'lodash';
+import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
+import cloneDeep from 'lodash.clonedeep';
 import { Reducers, StoreState, Action } from './types';
 import { mergeReducerState, generateInitialState } from './utils';
 
@@ -70,10 +70,13 @@ type StoreReturnProps<T> = {
 const useStore = <T extends any>({
   _stateUpdates,
   store$,
-  reducers,
+  reducers: initialReducers,
   initialState: is,
 }: StoreProps<T>): StoreReturnProps<T> => {
+  const [reducers, addReducer] = useState(initialReducers);
   const initialState = useMemo<T>(() => is, [is]);
+
+  const addNewReducer = (_key, reducer) => addReducer({ ...initialReducers, [_key]: reducer });
 
   useLayoutEffect(() => {
     const s = _stateUpdates
@@ -101,9 +104,10 @@ const useStore = <T extends any>({
 
   const addState = (_stateKey: string, reducer: Function) => {
     if (!store$.value[_stateKey]) {
+      addNewReducer(_stateKey, reducer);
       store$.next(
         Object.assign(store$.value, {
-          [_stateKey]: reducer,
+          [_stateKey]: reducer(undefined, {}),
         }),
       );
     }

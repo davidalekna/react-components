@@ -1,11 +1,7 @@
-import { merge } from 'lodash';
+import merge from 'lodash.merge';
 import { Reducers, Action } from './types';
 
-export function rootReducerAsFunction(
-  reducer: Function,
-  state: {} = {},
-  action: Action | {},
-) {
+export function rootReducerAsFunction(reducer: Function, state: {} = {}, action: Action | {}) {
   const newState = reducer(state, action);
   return { ...state, ...newState };
   // throw new Error('Initial reducer must be an object');
