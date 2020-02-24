@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-store",
-  "version": "1.2.8-alpha.0",
+  "version": "1.2.9-alpha.0",
   "description": "A redux like store managed by rxjs.",
   "keywords": [
     "react",
