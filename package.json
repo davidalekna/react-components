@@ -13,7 +13,8 @@
     "filesize": "lerna run build && bundlesize",
     "postinstall": "lerna exec -- yarn --yarn.lock=false && lerna run prepare",
     "sort-package-json": "npx sort-package-json",
-    "test": "jest --verbose",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "posttest": "yarn lint"
   },
   "lint-staged": {
@@ -51,6 +52,7 @@
     "@storybook/react": "^5.2.5",
     "@testing-library/jest-dom": "^5.0.0",
     "@testing-library/react": "^9.4.0",
+    "@testing-library/react-hooks": "^3.2.1",
     "@types/axios": "^0.14.0",
     "@types/jest": "^24.0.19",
     "@types/lodash": "^4.14.144",
@@ -94,7 +96,6 @@
     "react-docgen-typescript-loader": "^3.3.0",
     "react-dom": "^16.11.0",
     "react-select": "^3.0.8",
-    "react-testing-library": "^8.0.1",
     "react-transition-group": "^4.1.1",
     "rimraf": "^3.0.0",
     "rollup": "^1.25.2",

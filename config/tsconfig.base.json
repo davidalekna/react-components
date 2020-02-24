@@ -9,7 +9,6 @@
     "importHelpers": true,
     "removeComments": true,
     "sourceMap": true,
-    "declarationMap": true,
     "target": "es5",
     "module": "esnext",
     "esModuleInterop": true,
