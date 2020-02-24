@@ -9,6 +9,7 @@ export type StoreState<T> = {
   selectState: Function;
   stateChanges: Function;
   dispatch: (args: Action) => void;
+  addState: Function;
   initialState: T;
 };
 

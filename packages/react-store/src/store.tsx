@@ -9,7 +9,7 @@ import React, {
   useCallback,
 } from 'react';
 import { Subject, of, empty, isObservable, from, BehaviorSubject, Observable } from 'rxjs';
-import { scan, mergeMap, pluck, distinctUntilKeyChanged } from 'rxjs/operators';
+import { scan, mergeMap, pluck, distinctUntilKeyChanged, map } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { Reducers, StoreState, Action } from './types';
 import { mergeReducerState, generateInitialState } from './utils';
@@ -47,6 +47,7 @@ export const StoreContext = React.createContext<StoreState<any> | undefined>({
   dispatch: () => {},
   selectState: () => {},
   stateChanges: () => {},
+  addState: () => {},
   initialState: {},
 });
 
@@ -60,6 +61,8 @@ type StoreProps<T> = {
 type StoreReturnProps<T> = {
   dispatch: (args: Action) => void;
   selectState: Function;
+  /** Add a new store with reducer later in time if required */
+  addState: Function;
   stateChanges: Function;
   initialState: T;
 };
@@ -90,15 +93,21 @@ const useStore = <T extends any>({
     _stateUpdates.next(action);
   };
 
-  const selectState = (stateKey: string) => {
-    // TODO: if no stateKey throw an Error.
-    if (!stateKey.length) return store$;
-    return store$.pipe(distinctUntilKeyChanged(stateKey), pluck(stateKey));
+  const selectState = (_stateKey: string) => {
+    // TODO: if no _stateKey throw an Error.
+    if (!_stateKey.length) return store$;
+    return store$.pipe(distinctUntilKeyChanged(_stateKey), pluck(_stateKey));
+  };
+
+  const addState = (_stateKey: string, reducer: Function) => {
+    if (!store$.value[_stateKey]) {
+      store$.next({ [_stateKey]: reducer });
+    }
   };
 
   const stateChanges = () => store$.asObservable();
 
-  return { dispatch, selectState, stateChanges, initialState };
+  return { dispatch, selectState, stateChanges, initialState, addState };
 };
 
 type StoreProviderProps<T> = {
