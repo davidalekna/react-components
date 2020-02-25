@@ -14,6 +14,8 @@ import cloneDeep from 'lodash.clonedeep';
 import { Reducers, StoreState, Action } from './types';
 import { mergeReducerState, generateInitialState } from './utils';
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 const actionDistributor = (_stateUpdates: Subject<Action>) => (action: Action) => {
   switch (typeof action) {
     /** async actions */
@@ -47,7 +49,6 @@ export const StoreContext = React.createContext<StoreState<any> | undefined>({
   dispatch: () => {},
   selectState: () => {},
   stateChanges: () => {},
-  addState: () => {},
   initialState: {},
 });
 
@@ -61,8 +62,6 @@ type StoreProps<T> = {
 type StoreReturnProps<T> = {
   dispatch: (args: Action) => void;
   selectState: Function;
-  /** Add a new store with reducer later in time if required */
-  addState: Function;
   stateChanges: Function;
   initialState: T;
 };
@@ -70,15 +69,12 @@ type StoreReturnProps<T> = {
 const useStore = <T extends any>({
   _stateUpdates,
   store$,
-  reducers: initialReducers,
+  reducers = {},
   initialState: is,
 }: StoreProps<T>): StoreReturnProps<T> => {
-  const [reducers, addReducer] = useState(initialReducers);
   const initialState = useMemo<T>(() => is, [is]);
 
-  const addNewReducer = (_key, reducer) => addReducer({ ...initialReducers, [_key]: reducer });
-
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const s = _stateUpdates
       .pipe(
         mergeMap(actionDistributor(_stateUpdates)),
@@ -92,7 +88,6 @@ const useStore = <T extends any>({
   }, [reducers, initialState]);
 
   const dispatch = (action: Action) => {
-    // console.log('dispatch');
     _stateUpdates.next(action);
   };
 
@@ -102,20 +97,9 @@ const useStore = <T extends any>({
     return store$.pipe(distinctUntilKeyChanged(_stateKey), pluck(_stateKey));
   };
 
-  const addState = (_stateKey: string, reducer: Function) => {
-    if (!store$.value[_stateKey]) {
-      addNewReducer(_stateKey, reducer);
-      store$.next(
-        Object.assign(store$.value, {
-          [_stateKey]: reducer(undefined, {}),
-        }),
-      );
-    }
-  };
-
   const stateChanges = () => store$.asObservable();
 
-  return { dispatch, selectState, stateChanges, initialState, addState };
+  return { dispatch, selectState, stateChanges, initialState };
 };
 
 type StoreProviderProps<T> = {

@@ -1,17 +1,21 @@
 {
   "compilerOptions": {
     "noImplicitAny": true,
+    "noUnusedLocals": true,
     "declaration": true,
     "noUnusedParameters": false,
-    "noUnusedLocals": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "removeComments": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "target": "es5",
     "module": "esnext",
+    "pretty": true,
     "esModuleInterop": true,
-    "typeRoots": ["../node_modules/@types"]
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["../node_modules/@types"],
+    "lib": ["es2018", "dom"]
   }
 }
