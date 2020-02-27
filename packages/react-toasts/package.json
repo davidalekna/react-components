@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-toasts",
-  "version": "1.0.14-alpha.0",
+  "version": "1.0.15-alpha.0",
   "description": "Simple toasts for react.",
   "keywords": [
     "react",
