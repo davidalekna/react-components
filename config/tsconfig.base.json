@@ -10,7 +10,7 @@
     "removeComments": true,
     "sourceMap": false,
     "target": "es5",
-    "module": "CommonJS",
+    "module": "ESNext",
     "pretty": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

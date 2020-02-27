@@ -8,7 +8,7 @@
     "codecov": "echo TODO...",
     "coverage": "jest --verbose --coverage",
     "coverage:upload": "codecov",
-    "deploy": "lerna publish",
+    "deploy": "npx lerna run build && lerna publish",
     "diff": "check-if-folder-contents-changed-in-git-commit-range",
     "filesize": "lerna run build && bundlesize",
     "postinstall": "lerna exec -- yarn --yarn.lock=false && lerna run prepare",
