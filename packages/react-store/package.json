@@ -1,6 +1,6 @@
 {
   "name": "@alekna/react-store",
-  "version": "1.2.10-alpha.0",
+  "version": "1.2.12-alpha.0",
   "description": "A redux like store managed by rxjs.",
   "keywords": [
     "react",
@@ -24,8 +24,7 @@
     "lib/*"
   ],
   "sideEffects": false,
-  "main": "./lib/bundle.cjs.js",
-  "module": "./lib/bundle.esm.js",
+  "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
     "build": "tsc -b .",
